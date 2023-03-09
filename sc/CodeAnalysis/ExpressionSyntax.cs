@@ -10,7 +10,7 @@
 // | '--------------' || '--------------' || '--------------' || '--------------' || '--------------' |
 //  '----------------'  '----------------'  '----------------'  '----------------'  '----------------' 
 
-namespace sc
+namespace Syron
 
 {
     // The ExpressionSyntax class is the base class for all expressions in the language.

@@ -5,7 +5,7 @@
 // /_______  / ____| |__|   \____/|___|  /
 //         \/\/                        \/ 
 
-namespace sc
+namespace Syron
 
 {
     // The SyntaxKind enum is used to represent the different kinds of tokens that the lexer can produce.

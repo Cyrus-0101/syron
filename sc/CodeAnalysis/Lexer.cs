@@ -7,7 +7,7 @@ using System.Collections.Generic;
 // /_______  / ____| |__|   \____/|___|  /
 //         \/\/                        \/ 
 
-namespace sc
+namespace Syron
 
 {
     // The Lexer class is responsible for breaking the input text into tokens.

@@ -14,7 +14,7 @@ using System.Linq;
 // | '--------------' || '--------------' || '--------------' || '--------------' || '--------------' |
 //  '----------------'  '----------------'  '----------------'  '----------------'  '----------------' 
 
-namespace sc
+namespace Syron
 
 {
     // 
@@ -80,10 +80,9 @@ namespace sc
 
                 if (showTree)
                 {
-                    var color = Console.ForegroundColor;
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                     PrettyPrint(syntaxTree.Root);
-                    Console.ForegroundColor = color;
+                    Console.ResetColor();
                 }
 
                 if (!syntaxTree.Diagnostics.Any())
@@ -95,14 +94,12 @@ namespace sc
                 }
                 else
                 {
-                    var dcolor = Console.ForegroundColor;
-
                     Console.ForegroundColor = ConsoleColor.DarkRed;
 
                     foreach (var diagnostic in syntaxTree.Diagnostics)
                         Console.WriteLine(diagnostic);
 
-                    Console.ForegroundColor = dcolor;
+                    Console.ResetColor();
                 }
             }
         }
