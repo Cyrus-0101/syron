@@ -10,6 +10,7 @@ using System.Collections.Generic;
 namespace Syron.CodeAnalysis
 
 {
+
     // The Parser class is responsible for taking the tokens produced by the lexer and turning them into an abstract syntax tree.
     internal sealed class Parser
     {
@@ -95,7 +96,7 @@ namespace Syron.CodeAnalysis
 
             while (true)
             {
-                var precedence = GetBinaryOperatorPrecedence(Current.Kind);
+                var precedence = Current.Kind.GetBinaryOperatorPrecedence();
 
                 if (precedence == 0 || precedence <= parentPrecedence)
                     break;
@@ -106,25 +107,6 @@ namespace Syron.CodeAnalysis
             }
 
             return left;
-        }
-
-        // GetBinaryOperatorPrecedence returns the precedence of a binary operator token.
-        // This is used to determine whether an operator should be parsed before or after another.
-
-        private static int GetBinaryOperatorPrecedence(SyntaxKind kind)
-        {
-            switch (kind)
-            {
-                case SyntaxKind.StarToken:
-                case SyntaxKind.SlashToken:
-                    return 2;
-                case SyntaxKind.PlusToken:
-                case SyntaxKind.MinusToken:
-                    return 1;
-
-                default:
-                    return 0;
-            }
         }
 
         // ParsePrimaryExpression deals with numbers and parentheses
