@@ -50,7 +50,7 @@ In our parser (which is a handwritten [recursive descent parser][rdp]) we
 achieved this by [structuring our method calls accordingly][parsing].
 
 [rdp]: https://en.wikipedia.org/wiki/Recursive_descent_parser
-[parsing]: https://github.com/terrajobst/minsk/blob/c6812a81e81611c13ed3a1b1a8b5e802507c95ac/mc/CodeAnalysis/Parser.cs#L74-L102
+[parsing]: https://github.com/Cyrus-0101/syron/blob/lexer-and-parser/sc/CodeAnalysis/Parser.cs
 
 ### Fabricating tokens
 
