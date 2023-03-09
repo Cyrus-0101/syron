@@ -8,12 +8,12 @@ using System.Linq;
 // /_______  / ____| |__|   \____/|___|  /
 //         \/\/                        \/ 
 
-namespace sc
+namespace Syron.CodeAnalysis.Syntax
 
 {
     // The SyntaxTree class represents the entire syntax tree of the parsed source code.
     // It contains the root of the tree, the end-of-file token, and a list of any diagnostics produced during parsing.
-    sealed class SyntaxTree
+    public sealed class SyntaxTree
     {
         public SyntaxTree(ExpressionSyntax root, SyntaxToken endOfFileToken, IEnumerable<string> diagnostics)
         {

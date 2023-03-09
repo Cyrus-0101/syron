@@ -10,11 +10,11 @@
 // | '--------------' || '--------------' || '--------------' || '--------------' || '--------------' |
 //  '----------------'  '----------------'  '----------------'  '----------------'  '----------------' 
 
-namespace sc
+namespace Syron.CodeAnalysis.Syntax
 
 {
     // The ExpressionSyntax class is the base class for all expressions in the language.
-    abstract class ExpressionSyntax : SyntaxNode
+    public abstract class ExpressionSyntax : SyntaxNode
     {
     }
 }

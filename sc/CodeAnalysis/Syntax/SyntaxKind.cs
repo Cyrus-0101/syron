@@ -5,23 +5,27 @@
 // /_______  / ____| |__|   \____/|___|  /
 //         \/\/                        \/ 
 
-namespace sc
+namespace Syron.CodeAnalysis.Syntax
 
 {
     // The SyntaxKind enum is used to represent the different kinds of tokens that the lexer can produce.
-    enum SyntaxKind
+    public enum SyntaxKind
     {
-        NumberToken,
+        // Tokens
+        BadToken,
+        EndOfFileToken,
         WhiteSpaceToken,
+        NumberToken,
         PlusToken,
         MinusToken,
         StarToken,
         SlashToken,
         OpenParenthesisToken,
         CloseParenthesisToken,
-        EndOfFileToken,
-        BadToken,
-        NumberExpression,
+
+        // Expressions
+        LiteralExpression,
+        UnaryExpression,
         BinaryExpression,
         ParenthesizedExpression,
     }
