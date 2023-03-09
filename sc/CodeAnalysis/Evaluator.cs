@@ -7,7 +7,7 @@ using System;
 // /_______  / ____| |__|   \____/|___|  /
 //         \/\/                        \/ 
 
-namespace Syron
+namespace Syron.CodeAnalysis
 
 {
     // The Evaluator class is responsible for taking an abstract syntax tree and evaluating it.

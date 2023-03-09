@@ -7,7 +7,7 @@ using System.Collections.Generic;
 // /_______  / ____| |__|   \____/|___|  /
 //         \/\/                        \/ 
 
-namespace Syron
+namespace Syron.CodeAnalysis
 
 {
     // The ParenthesizedExpressionSyntax class represents a parenthesized expression in the language.

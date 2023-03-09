@@ -7,7 +7,7 @@ using System.Collections.Generic;
 // /_______  / ____| |__|   \____/|___|  /
 //         \/\/                        \/ 
 
-namespace Syron
+namespace Syron.CodeAnalysis
 
 {
     // The BinaryExpressionSyntax class represents a binary expression in the language.
