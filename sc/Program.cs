@@ -34,11 +34,11 @@ namespace Syron
     //       / \
     //      2   3
     // 
-    class Program
+    internal static class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            bool showTree = false;
+            var showTree = false;
 
             string startText = @"
   _________
