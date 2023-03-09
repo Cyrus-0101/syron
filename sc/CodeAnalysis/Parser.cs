@@ -72,8 +72,8 @@ namespace Syron.CodeAnalysis
             return ParseTerm();
         }
 
-        // Match a token of the expected kind and consume it.
-        private SyntaxToken Match(SyntaxKind kind)
+        // MatchToken a token of the expected kind and consume it.
+        private SyntaxToken MatchToken(SyntaxKind kind)
         {
             if (Current.Kind == kind)
                 return NextToken();
@@ -89,7 +89,7 @@ namespace Syron.CodeAnalysis
         public SyntaxTree Parse()
         {
             var expression = ParseTerm();
-            var endOfFileToken = Match(SyntaxKind.EndOfFileToken);
+            var endOfFileToken = MatchToken(SyntaxKind.EndOfFileToken);
             return new SyntaxTree(expression, endOfFileToken, _diagnostics);
         }
 
@@ -132,11 +132,11 @@ namespace Syron.CodeAnalysis
             {
                 var left = NextToken();
                 var expression = ParseExpression();
-                var right = Match(SyntaxKind.CloseParenthesisToken);
+                var right = MatchToken(SyntaxKind.CloseParenthesisToken);
                 return new ParenthesizedExpressionSyntax(left, expression, right);
             }
 
-            var numberToken = Match(SyntaxKind.NumberToken);
+            var numberToken = MatchToken(SyntaxKind.NumberToken);
             return new NumberExpressionSyntax(numberToken);
         }
     }
