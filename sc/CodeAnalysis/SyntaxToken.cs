@@ -12,7 +12,7 @@ namespace Syron.CodeAnalysis
 
 {
     // The SyntaxToken class represents a single token produced by the lexer.
-    class SyntaxToken : SyntaxNode
+    public sealed class SyntaxToken : SyntaxNode
     {
         public SyntaxToken(SyntaxKind kind, int position, string text, object value)
         {

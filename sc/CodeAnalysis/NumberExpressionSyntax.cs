@@ -13,7 +13,7 @@ namespace Syron.CodeAnalysis
     // The NumberExpressionSyntax class represents a number literal expression.
     // For example, the number 42 is represented by a NumberExpressionSyntax node with a value of 42.
     // Meaning it's a leaf in the tree
-    sealed class NumberExpressionSyntax : ExpressionSyntax
+    public sealed class NumberExpressionSyntax : ExpressionSyntax
     {
         public NumberExpressionSyntax(SyntaxToken numberToken)
         {

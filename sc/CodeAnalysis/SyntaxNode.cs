@@ -11,7 +11,7 @@ namespace Syron.CodeAnalysis
 
 {
     // SyntaxNode is the base class for all nodes in the abstract syntax tree.
-    abstract class SyntaxNode
+    public abstract class SyntaxNode
     {
         public abstract SyntaxKind Kind { get; }
 

@@ -14,7 +14,7 @@ namespace Syron.CodeAnalysis
 
 {
     // The ExpressionSyntax class is the base class for all expressions in the language.
-    abstract class ExpressionSyntax : SyntaxNode
+    public abstract class ExpressionSyntax : SyntaxNode
     {
     }
 }

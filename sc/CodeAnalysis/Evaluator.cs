@@ -11,7 +11,7 @@ namespace Syron.CodeAnalysis
 
 {
     // The Evaluator class is responsible for taking an abstract syntax tree and evaluating it.
-    class Evaluator
+    public sealed class Evaluator
     {
         private readonly ExpressionSyntax _root;
 

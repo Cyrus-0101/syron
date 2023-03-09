@@ -9,7 +9,7 @@ namespace Syron.CodeAnalysis
 
 {
     // The SyntaxKind enum is used to represent the different kinds of tokens that the lexer can produce.
-    enum SyntaxKind
+    public enum SyntaxKind
     {
         NumberToken,
         WhiteSpaceToken,

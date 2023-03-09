@@ -12,7 +12,7 @@ namespace Syron.CodeAnalysis
 {
     // The ParenthesizedExpressionSyntax class represents a parenthesized expression in the language.
     // For example, (1 + 2) is represented by a ParenthesizedExpressionSyntax node with an open parenthesis token, a nested BinaryExpressionSyntax node, and a close parenthesis token.
-    sealed class ParenthesizedExpressionSyntax : ExpressionSyntax
+    public sealed class ParenthesizedExpressionSyntax : ExpressionSyntax
     {
         public ParenthesizedExpressionSyntax(SyntaxToken openParenthesisToken, ExpressionSyntax expression, SyntaxToken closeParenthesisToken)
         {

@@ -13,7 +13,7 @@ namespace Syron.CodeAnalysis
     // The Lexer class is responsible for breaking the input text into tokens.
     // It does this by looking at the current character and then deciding what kind of token it is.
     // Leaves in your tree
-    class Lexer
+    internal sealed class Lexer
     {
         private readonly string _text;
         private List<string> _diagnostics = new List<string>();

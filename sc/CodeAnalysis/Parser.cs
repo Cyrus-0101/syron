@@ -11,7 +11,7 @@ namespace Syron.CodeAnalysis
 
 {
     // The Parser class is responsible for taking the tokens produced by the lexer and turning them into an abstract syntax tree.
-    class Parser
+    internal sealed class Parser
     {
         private readonly SyntaxToken[] _tokens;
         private int _position;
