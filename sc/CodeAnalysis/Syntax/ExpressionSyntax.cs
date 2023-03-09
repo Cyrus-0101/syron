@@ -10,7 +10,7 @@
 // | '--------------' || '--------------' || '--------------' || '--------------' || '--------------' |
 //  '----------------'  '----------------'  '----------------'  '----------------'  '----------------' 
 
-namespace Syron.CodeAnalysis
+namespace Syron.CodeAnalysis.Syntax
 
 {
     // The ExpressionSyntax class is the base class for all expressions in the language.

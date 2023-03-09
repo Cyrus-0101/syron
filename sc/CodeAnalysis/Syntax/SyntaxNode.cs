@@ -7,7 +7,7 @@ using System.Collections.Generic;
 // /_______  / ____| |__|   \____/|___|  /
 //         \/\/                        \/ 
 
-namespace Syron.CodeAnalysis
+namespace Syron.CodeAnalysis.Syntax
 
 {
     // SyntaxNode is the base class for all nodes in the abstract syntax tree.

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 // /_______  / ____| |__|   \____/|___|  /
 //         \/\/                        \/ 
 
-namespace Syron.CodeAnalysis
+namespace Syron.CodeAnalysis.Syntax
 
 {
     // The LiteralExpressionSyntax class represents a number literal expression.

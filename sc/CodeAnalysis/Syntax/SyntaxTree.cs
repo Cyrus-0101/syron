@@ -8,7 +8,7 @@ using System.Linq;
 // /_______  / ____| |__|   \____/|___|  /
 //         \/\/                        \/ 
 
-namespace Syron.CodeAnalysis
+namespace Syron.CodeAnalysis.Syntax
 
 {
     // The SyntaxTree class represents the entire syntax tree of the parsed source code.

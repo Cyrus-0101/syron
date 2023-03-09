@@ -8,7 +8,7 @@ using System.Linq;
 // /_______  / ____| |__|   \____/|___|  /
 //         \/\/                        \/ 
 
-namespace Syron.CodeAnalysis
+namespace Syron.CodeAnalysis.Syntax
 
 {
     // The SyntaxToken class represents a single token produced by the lexer.

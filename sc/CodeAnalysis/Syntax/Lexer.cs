@@ -7,7 +7,7 @@ using System.Collections.Generic;
 // /_______  / ____| |__|   \____/|___|  /
 //         \/\/                        \/ 
 
-namespace Syron.CodeAnalysis
+namespace Syron.CodeAnalysis.Syntax
 
 {
     // The Lexer class is responsible for breaking the input text into tokens.
