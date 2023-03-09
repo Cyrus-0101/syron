@@ -8,16 +8,15 @@ using System.Collections.Generic;
 //         \/\/                        \/ 
 
 namespace Syron.CodeAnalysis.Syntax
-
 {
-    // The Lexer class is responsible for breaking the input text into tokens.
-    // It does this by looking at the current character and then deciding what kind of token it is.
-    // Leaves in your tree
+
+    // The Lexer class is responsible for taking the text of a program and turning it 
+    // into a sequence of tokens.
     internal sealed class Lexer
     {
         private readonly string _text;
-        private List<string> _diagnostics = new List<string>();
         private int _position;
+        private List<string> _diagnostics = new List<string>();
 
         public Lexer(string text)
         {
@@ -28,7 +27,6 @@ namespace Syron.CodeAnalysis.Syntax
 
         private char Current
         {
-            // TODO: Handle end of file
             get
             {
                 if (_position >= _text.Length)
@@ -43,20 +41,10 @@ namespace Syron.CodeAnalysis.Syntax
             _position++;
         }
 
-        public SyntaxToken NextToken()
+        public SyntaxToken Lex()
         {
-            // Looking for <numbers>
-            // Looking for <whitespace>
-            // Looking for <operators> : + - * / ( )
-
-            // Create an empty object
-            object nullObj = new object();
-
-            // Zero terminator 
             if (_position >= _text.Length)
-            {
-                return new SyntaxToken(SyntaxKind.EndOfFileToken, _position, "\0", nullObj);
-            }
+                return new SyntaxToken(SyntaxKind.EndOfFileToken, _position, "\0", null);
 
             if (char.IsDigit(Current))
             {
@@ -66,11 +54,9 @@ namespace Syron.CodeAnalysis.Syntax
                     Next();
 
                 var length = _position - start;
-
                 var text = _text.Substring(start, length);
-
                 if (!int.TryParse(text, out var value))
-                    _diagnostics.Add($"ERROR: The number {_text} isn't valid int32.");
+                    _diagnostics.Add($"The number {_text} isn't valid Int32.");
 
                 return new SyntaxToken(SyntaxKind.NumberToken, start, text, value);
             }
@@ -83,46 +69,28 @@ namespace Syron.CodeAnalysis.Syntax
                     Next();
 
                 var length = _position - start;
-
                 var text = _text.Substring(start, length);
-
-                return new SyntaxToken(SyntaxKind.WhiteSpaceToken, start, text, nullObj);
+                return new SyntaxToken(SyntaxKind.WhiteSpaceToken, start, text, null);
             }
 
-            if (Current == '+')
+            switch (Current)
             {
-                return new SyntaxToken(SyntaxKind.PlusToken, _position++, "+", nullObj);
+                case '+':
+                    return new SyntaxToken(SyntaxKind.PlusToken, _position++, "+", null);
+                case '-':
+                    return new SyntaxToken(SyntaxKind.MinusToken, _position++, "-", null);
+                case '*':
+                    return new SyntaxToken(SyntaxKind.StarToken, _position++, "*", null);
+                case '/':
+                    return new SyntaxToken(SyntaxKind.SlashToken, _position++, "/", null);
+                case '(':
+                    return new SyntaxToken(SyntaxKind.OpenParenthesisToken, _position++, "(", null);
+                case ')':
+                    return new SyntaxToken(SyntaxKind.CloseParenthesisToken, _position++, ")", null);
             }
 
-            else if (Current == '-')
-            {
-                return new SyntaxToken(SyntaxKind.MinusToken, _position++, "-", nullObj);
-            }
-
-            else if (Current == '*')
-            {
-                return new SyntaxToken(SyntaxKind.StarToken, _position++, "*", nullObj);
-            }
-
-            else if (Current == '/')
-            {
-                return new SyntaxToken(SyntaxKind.SlashToken, _position++, "/", nullObj);
-            }
-
-            else if (Current == '(')
-            {
-                return new SyntaxToken(SyntaxKind.OpenParenthesisToken, _position++, "(", nullObj);
-            }
-
-            else if (Current == ')')
-            {
-                return new SyntaxToken(SyntaxKind.CloseParenthesisToken, _position++, ")", nullObj);
-            }
-
-            _diagnostics.Add($"ERROR: bad token character input: {Current}");
-
-            return new SyntaxToken(SyntaxKind.BadToken, _position++, _text.Substring(_position - 1, 1), nullObj);
+            _diagnostics.Add($"ERROR: bad character input: '{Current}'");
+            return new SyntaxToken(SyntaxKind.BadToken, _position++, _text.Substring(_position - 1, 1), null);
         }
-
     }
 }

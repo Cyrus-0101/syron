@@ -15,18 +15,18 @@ namespace Syron.CodeAnalysis.Syntax
     // Meaning it's a leaf in the tree
     public sealed class LiteralExpressionSyntax : ExpressionSyntax
     {
-        public LiteralExpressionSyntax(SyntaxToken numberToken)
+        public LiteralExpressionSyntax(SyntaxToken literalToken)
         {
-            NumberToken = numberToken;
+            LiteralToken = literalToken;
         }
 
-        public override SyntaxKind Kind => SyntaxKind.NumberExpression;
+        public override SyntaxKind Kind => SyntaxKind.LiteralExpression;
 
-        public SyntaxToken NumberToken { get; }
+        public SyntaxToken LiteralToken { get; }
 
         public override IEnumerable<SyntaxNode> GetChildren()
         {
-            yield return NumberToken;
+            yield return LiteralToken;
         }
     }
 }

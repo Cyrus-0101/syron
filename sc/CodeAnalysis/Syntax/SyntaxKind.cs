@@ -11,19 +11,22 @@ namespace Syron.CodeAnalysis.Syntax
     // The SyntaxKind enum is used to represent the different kinds of tokens that the lexer can produce.
     public enum SyntaxKind
     {
-        NumberToken,
+        // Tokens
+        BadToken,
+        EndOfFileToken,
         WhiteSpaceToken,
+        NumberToken,
         PlusToken,
         MinusToken,
         StarToken,
         SlashToken,
         OpenParenthesisToken,
         CloseParenthesisToken,
-        EndOfFileToken,
-        BadToken,
-        NumberExpression,
-        BinaryExpression,
+
+        // Expressions
+        LiteralExpression,
         UnaryExpression,
+        BinaryExpression,
         ParenthesizedExpression,
     }
 }

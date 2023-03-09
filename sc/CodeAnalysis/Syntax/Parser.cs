@@ -8,58 +8,48 @@ using System.Collections.Generic;
 //         \/\/                        \/ 
 
 namespace Syron.CodeAnalysis.Syntax
-
 {
-
-    // The Parser class is responsible for taking the tokens produced by the lexer and turning them into an abstract syntax tree.
     internal sealed class Parser
     {
         private readonly SyntaxToken[] _tokens;
-        private int _position;
+
         private List<string> _diagnostics = new List<string>();
+        private int _position;
 
         public Parser(string text)
         {
-
             var tokens = new List<SyntaxToken>();
 
             var lexer = new Lexer(text);
             SyntaxToken token;
-
             do
             {
-                token = lexer.NextToken();
+                token = lexer.Lex();
 
                 if (token.Kind != SyntaxKind.WhiteSpaceToken &&
-                   token.Kind != SyntaxKind.BadToken)
+                    token.Kind != SyntaxKind.BadToken)
                 {
                     tokens.Add(token);
                 }
-
             } while (token.Kind != SyntaxKind.EndOfFileToken);
 
             _tokens = tokens.ToArray();
             _diagnostics.AddRange(lexer.Diagnostics);
         }
 
-        // IEnumerable<T> is a generic interface that represents a sequence of elements of type T.
         public IEnumerable<string> Diagnostics => _diagnostics;
 
-        // Peek at the next token without consuming it.
         private SyntaxToken Peek(int offset)
         {
             var index = _position + offset;
-
             if (index >= _tokens.Length)
                 return _tokens[_tokens.Length - 1];
 
             return _tokens[index];
         }
 
-        // Peek the current token without consuming it.
         private SyntaxToken Current => Peek(0);
 
-        // Peek the next token without consuming it.
         private SyntaxToken NextToken()
         {
             var current = Current;
@@ -67,36 +57,26 @@ namespace Syron.CodeAnalysis.Syntax
             return current;
         }
 
-        // MatchToken a token of the expected kind and consume it.
         private SyntaxToken MatchToken(SyntaxKind kind)
         {
             if (Current.Kind == kind)
                 return NextToken();
 
-            _diagnostics.Add($"ERROR: bad token character input: <{Current.Kind}>, expected <{kind}>");
-            // Create an empty object
-            object nullObj = new object();
-
-            return new SyntaxToken(kind, Current.Position, "", nullObj);
+            _diagnostics.Add($"ERROR: Unexpected token <{Current.Kind}>, expected <{kind}>");
+            return new SyntaxToken(kind, Current.Position, null, null);
         }
 
-        // Parse() 
         public SyntaxTree Parse()
         {
-            var expression = ParseExpression();
+            var expresion = ParseExpression();
             var endOfFileToken = MatchToken(SyntaxKind.EndOfFileToken);
-            return new SyntaxTree(expression, endOfFileToken, _diagnostics);
+            return new SyntaxTree(expresion, endOfFileToken, _diagnostics);
         }
 
-        // ParseExpression deals with precedence
-        // This means that it will parse the expression with the highest precedence first.
-        public ExpressionSyntax ParseExpression(int parentPrecedence = 0)
+        private ExpressionSyntax ParseExpression(int parentPrecedence = 0)
         {
-
             ExpressionSyntax left;
-
             var unaryOperatorPrecedence = Current.Kind.GetUnaryOperatorPrecedence();
-
             if (unaryOperatorPrecedence != 0 && unaryOperatorPrecedence >= parentPrecedence)
             {
                 var operatorToken = NextToken();
@@ -106,14 +86,11 @@ namespace Syron.CodeAnalysis.Syntax
             else
             {
                 left = ParsePrimaryExpression();
-
             }
-
 
             while (true)
             {
                 var precedence = Current.Kind.GetBinaryOperatorPrecedence();
-
                 if (precedence == 0 || precedence <= parentPrecedence)
                     break;
 
@@ -125,7 +102,6 @@ namespace Syron.CodeAnalysis.Syntax
             return left;
         }
 
-        // ParsePrimaryExpression deals with numbers and parentheses
         private ExpressionSyntax ParsePrimaryExpression()
         {
             if (Current.Kind == SyntaxKind.OpenParenthesisToken)
