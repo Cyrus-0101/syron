@@ -29,7 +29,7 @@ namespace Syron.CodeAnalysis
         {
             // BinaryExpression && NumberExpression
 
-            if (node is NumberExpressionSyntax n)
+            if (node is LiteralExpressionSyntax n)
                 return (int)n.NumberToken.Value;
 
             if (node is BinaryExpressionSyntax b)

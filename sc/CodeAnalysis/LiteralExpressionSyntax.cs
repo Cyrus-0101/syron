@@ -10,12 +10,12 @@ using System.Collections.Generic;
 namespace Syron.CodeAnalysis
 
 {
-    // The NumberExpressionSyntax class represents a number literal expression.
-    // For example, the number 42 is represented by a NumberExpressionSyntax node with a value of 42.
+    // The LiteralExpressionSyntax class represents a number literal expression.
+    // For example, the number 42 is represented by a LiteralExpressionSyntax node with a value of 42.
     // Meaning it's a leaf in the tree
-    public sealed class NumberExpressionSyntax : ExpressionSyntax
+    public sealed class LiteralExpressionSyntax : ExpressionSyntax
     {
-        public NumberExpressionSyntax(SyntaxToken numberToken)
+        public LiteralExpressionSyntax(SyntaxToken numberToken)
         {
             NumberToken = numberToken;
         }
