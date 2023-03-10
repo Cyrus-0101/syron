@@ -11,20 +11,19 @@ namespace Syron.CodeAnalysis.Binding
 
         }
 
-        private BoundBinaryOperator(SyntaxKind syntaxKind, BoundBinaryOperatorKind kind, Type operandType, Type type)
-            : this(syntaxKind, kind, operandType, operandType, type)
+        private BoundBinaryOperator(SyntaxKind syntaxKind, BoundBinaryOperatorKind kind, Type operandType, Type resultType)
+            : this(syntaxKind, kind, operandType, operandType, resultType)
         {
 
         }
 
-
-        private BoundBinaryOperator(SyntaxKind syntaxKind, BoundBinaryOperatorKind kind, Type leftType, Type rightType, Type type)
+        private BoundBinaryOperator(SyntaxKind syntaxKind, BoundBinaryOperatorKind kind, Type leftType, Type rightType, Type resultType)
         {
             SyntaxKind = syntaxKind;
             Kind = kind;
             LeftType = leftType;
             RightType = rightType;
-            Type = type;
+            Type = resultType;
         }
 
         public SyntaxKind SyntaxKind { get; }
@@ -50,6 +49,9 @@ namespace Syron.CodeAnalysis.Binding
 
             new BoundBinaryOperator(SyntaxKind.AmpersandAmpersandToken, BoundBinaryOperatorKind.LogicalAnd, typeof(bool)),
             new BoundBinaryOperator(SyntaxKind.PipePipeToken, BoundBinaryOperatorKind.LogicalOr, typeof(bool)),
+            new BoundBinaryOperator(SyntaxKind.EqualsEqualsToken, BoundBinaryOperatorKind.Equals, typeof(bool)),
+            new BoundBinaryOperator(SyntaxKind.BangEqualsToken, BoundBinaryOperatorKind.NotEquals, typeof(bool)),
+
         };
         public static BoundBinaryOperator Bind(SyntaxKind syntaxKind, Type leftType, Type rightType)
         {
