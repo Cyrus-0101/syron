@@ -7,8 +7,9 @@ namespace Syron.CodeAnalysis.Binding
             Value = value;
         }
 
-        public override Type Type => Value.GetType();
         public override BoundNodeKind Kind => BoundNodeKind.LiteralExpression;
+        public override Type Type => Value.GetType();
+
         public object Value { get; }
     }
 }
