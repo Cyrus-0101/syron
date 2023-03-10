@@ -4,6 +4,7 @@ namespace Syron.CodeAnalysis.Binding
     {
         LiteralExpression,
         UnaryExpression,
+        BinaryExpression,
 
     }
 }
