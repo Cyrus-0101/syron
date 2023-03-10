@@ -8,5 +8,7 @@ namespace Syron.CodeAnalysis.Binding
         Division,
         LogicalAnd,
         LogicalOr,
+        Equals,
+        NotEquals
     }
 }
