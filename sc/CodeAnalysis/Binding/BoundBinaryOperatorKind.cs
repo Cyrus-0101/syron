@@ -6,6 +6,7 @@ namespace Syron.CodeAnalysis.Binding
         Subtraction,
         Multiplication,
         Division,
-
+        LogicalAnd,
+        LogicalOr,
     }
 }

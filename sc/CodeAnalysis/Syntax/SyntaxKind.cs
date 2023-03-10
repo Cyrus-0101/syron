@@ -20,6 +20,9 @@ namespace Syron.CodeAnalysis.Syntax
         MinusToken,
         StarToken,
         SlashToken,
+        BangToken,
+        AmpersandAmpersandToken,
+        PipePipeToken,
         OpenParenthesisToken,
         CloseParenthesisToken,
         IdentifierToken,
@@ -33,6 +36,5 @@ namespace Syron.CodeAnalysis.Syntax
         UnaryExpression,
         BinaryExpression,
         ParenthesizedExpression,
-
     }
 }
