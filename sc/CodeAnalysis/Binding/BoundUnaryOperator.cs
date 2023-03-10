@@ -11,12 +11,12 @@ namespace Syron.CodeAnalysis.Binding
         {
         }
 
-        private BoundUnaryOperator(SyntaxKind syntaxKind, BoundUnaryOperatorKind kind, Type operandType, Type type)
+        private BoundUnaryOperator(SyntaxKind syntaxKind, BoundUnaryOperatorKind kind, Type operandType, Type resultType)
         {
             SyntaxKind = syntaxKind;
             Kind = kind;
             OperandType = operandType;
-            Type = type;
+            Type = resultType;
         }
 
         public SyntaxKind SyntaxKind { get; }
@@ -31,6 +31,7 @@ namespace Syron.CodeAnalysis.Binding
         private static BoundUnaryOperator[] _operators =
         {
             new BoundUnaryOperator(SyntaxKind.BangToken, BoundUnaryOperatorKind.LogicalNegation, typeof(bool)),
+
             new BoundUnaryOperator(SyntaxKind.PlusToken, BoundUnaryOperatorKind.Identity, typeof(int)),
             new BoundUnaryOperator(SyntaxKind.MinusToken, BoundUnaryOperatorKind.Negation, typeof(int)),
         };
