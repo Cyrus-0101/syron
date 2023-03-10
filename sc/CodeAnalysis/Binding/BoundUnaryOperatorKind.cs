@@ -4,5 +4,6 @@ namespace Syron.CodeAnalysis.Binding
     {
         Identity,
         Negation,
+        LogicalNegation,
     }
 }
