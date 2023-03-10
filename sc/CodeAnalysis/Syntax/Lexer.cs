@@ -111,7 +111,7 @@ namespace Syron.CodeAnalysis.Syntax
                     break;
                 case '|':
                     if (LookAhead == '|')
-                        return new SyntaxToken(SyntaxKind.PipePipeToken, _position += 2, "&&", null);
+                        return new SyntaxToken(SyntaxKind.PipePipeToken, _position += 2, "||", null);
                     break;
             }
 
