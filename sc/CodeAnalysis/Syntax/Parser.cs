@@ -21,7 +21,9 @@ namespace Syron.CodeAnalysis.Syntax
             var tokens = new List<SyntaxToken>();
 
             var lexer = new Lexer(text);
+
             SyntaxToken token;
+
             do
             {
                 token = lexer.Lex();
@@ -42,6 +44,7 @@ namespace Syron.CodeAnalysis.Syntax
         private SyntaxToken Peek(int offset)
         {
             var index = _position + offset;
+
             if (index >= _tokens.Length)
                 return _tokens[_tokens.Length - 1];
 
@@ -76,7 +79,9 @@ namespace Syron.CodeAnalysis.Syntax
         private ExpressionSyntax ParseExpression(int parentPrecedence = 0)
         {
             ExpressionSyntax left;
+
             var unaryOperatorPrecedence = Current.Kind.GetUnaryOperatorPrecedence();
+
             if (unaryOperatorPrecedence != 0 && unaryOperatorPrecedence >= parentPrecedence)
             {
                 var operatorToken = NextToken();
