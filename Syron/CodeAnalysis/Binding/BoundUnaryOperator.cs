@@ -1,9 +1,8 @@
+using System;
 using Syron.CodeAnalysis.Syntax;
-
 
 namespace Syron.CodeAnalysis.Binding
 {
-    // Introduce concept of operators
     internal sealed class BoundUnaryOperator
     {
         private BoundUnaryOperator(SyntaxKind syntaxKind, BoundUnaryOperatorKind kind, Type operandType)
@@ -20,13 +19,9 @@ namespace Syron.CodeAnalysis.Binding
         }
 
         public SyntaxKind SyntaxKind { get; }
-
         public BoundUnaryOperatorKind Kind { get; }
-
         public Type OperandType { get; }
-
         public Type Type { get; }
-
 
         private static BoundUnaryOperator[] _operators =
         {
@@ -46,6 +41,5 @@ namespace Syron.CodeAnalysis.Binding
 
             return null;
         }
-
     }
 }

@@ -1,19 +1,12 @@
 using System.Collections.Generic;
 
-//   _________
-//  /   _____/__.__._______  ____   ____  
-//  \_____  <   |  |\_  __ \/  _ \ /    \ 
-//  /        \___  | |  | \(  <_> )   |  \
-// /_______  / ____| |__|   \____/|___|  /
-//         \/\/                        \/ 
-
 namespace Syron.CodeAnalysis.Syntax
 {
     internal sealed class Parser
     {
         private readonly SyntaxToken[] _tokens;
 
-        private List<string> _diagnostics = new List<string>();
+        private DiagnosticBag _diagnostics = new DiagnosticBag();
         private int _position;
 
         public Parser(string text)
@@ -21,14 +14,12 @@ namespace Syron.CodeAnalysis.Syntax
             var tokens = new List<SyntaxToken>();
 
             var lexer = new Lexer(text);
-
             SyntaxToken token;
-
             do
             {
                 token = lexer.Lex();
 
-                if (token.Kind != SyntaxKind.WhiteSpaceToken &&
+                if (token.Kind != SyntaxKind.WhitespaceToken &&
                     token.Kind != SyntaxKind.BadToken)
                 {
                     tokens.Add(token);
@@ -39,12 +30,11 @@ namespace Syron.CodeAnalysis.Syntax
             _diagnostics.AddRange(lexer.Diagnostics);
         }
 
-        public IEnumerable<string> Diagnostics => _diagnostics;
+        public DiagnosticBag Diagnostics => _diagnostics;
 
         private SyntaxToken Peek(int offset)
         {
             var index = _position + offset;
-
             if (index >= _tokens.Length)
                 return _tokens[_tokens.Length - 1];
 
@@ -65,7 +55,7 @@ namespace Syron.CodeAnalysis.Syntax
             if (Current.Kind == kind)
                 return NextToken();
 
-            _diagnostics.Add($"ERROR: Unexpected token <{Current.Kind}>, expected <{kind}>");
+            _diagnostics.ReportUnexpectedToken(Current.Span, Current.Kind, kind);
             return new SyntaxToken(kind, Current.Position, null, null);
         }
 
@@ -73,15 +63,13 @@ namespace Syron.CodeAnalysis.Syntax
         {
             var expresion = ParseExpression();
             var endOfFileToken = MatchToken(SyntaxKind.EndOfFileToken);
-            return new SyntaxTree(expresion, endOfFileToken, _diagnostics);
+            return new SyntaxTree(_diagnostics, expresion, endOfFileToken);
         }
 
         private ExpressionSyntax ParseExpression(int parentPrecedence = 0)
         {
             ExpressionSyntax left;
-
             var unaryOperatorPrecedence = Current.Kind.GetUnaryOperatorPrecedence();
-
             if (unaryOperatorPrecedence != 0 && unaryOperatorPrecedence >= parentPrecedence)
             {
                 var operatorToken = NextToken();
@@ -119,17 +107,20 @@ namespace Syron.CodeAnalysis.Syntax
                         return new ParenthesizedExpressionSyntax(left, expression, right);
                     }
 
-                case SyntaxKind.TrueKeyword:
                 case SyntaxKind.FalseKeyword:
+                case SyntaxKind.TrueKeyword:
                     {
                         var keywordToken = NextToken();
                         var value = keywordToken.Kind == SyntaxKind.TrueKeyword;
                         return new LiteralExpressionSyntax(keywordToken, value);
                     }
-            }
 
-            var numberToken = MatchToken(SyntaxKind.NumberToken);
-            return new LiteralExpressionSyntax(numberToken);
+                default:
+                    {
+                        var numberToken = MatchToken(SyntaxKind.NumberToken);
+                        return new LiteralExpressionSyntax(numberToken);
+                    }
+            }
         }
     }
 }

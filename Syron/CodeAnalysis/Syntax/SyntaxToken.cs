@@ -8,10 +8,9 @@ using System.Linq;
 // /_______  / ____| |__|   \____/|___|  /
 //         \/\/                        \/ 
 
-namespace Syron.CodeAnalysis.Syntax
 
+namespace Syron.CodeAnalysis.Syntax
 {
-    // The SyntaxToken class represents a single token produced by the lexer.
     public sealed class SyntaxToken : SyntaxNode
     {
         public SyntaxToken(SyntaxKind kind, int position, string text, object value)
@@ -24,10 +23,9 @@ namespace Syron.CodeAnalysis.Syntax
 
         public override SyntaxKind Kind { get; }
         public int Position { get; }
-
         public string Text { get; }
-
         public object Value { get; }
+        public TextSpan Span => new TextSpan(Position, Text.Length);
 
         public override IEnumerable<SyntaxNode> GetChildren()
         {

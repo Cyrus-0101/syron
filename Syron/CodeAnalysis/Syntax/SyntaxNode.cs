@@ -8,9 +8,7 @@ using System.Collections.Generic;
 //         \/\/                        \/ 
 
 namespace Syron.CodeAnalysis.Syntax
-
 {
-    // SyntaxNode is the base class for all nodes in the abstract syntax tree.
     public abstract class SyntaxNode
     {
         public abstract SyntaxKind Kind { get; }

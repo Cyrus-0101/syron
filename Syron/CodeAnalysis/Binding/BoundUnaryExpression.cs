@@ -1,3 +1,5 @@
+using System;
+
 namespace Syron.CodeAnalysis.Binding
 {
     internal sealed class BoundUnaryExpression : BoundExpression
@@ -9,11 +11,8 @@ namespace Syron.CodeAnalysis.Binding
         }
 
         public override BoundNodeKind Kind => BoundNodeKind.UnaryExpression;
-
         public override Type Type => Op.Type;
         public BoundUnaryOperator Op { get; }
-
         public BoundExpression Operand { get; }
-
     }
 }

@@ -9,22 +9,19 @@ using System.Linq;
 //         \/\/                        \/ 
 
 namespace Syron.CodeAnalysis.Syntax
-
 {
-    // The SyntaxTree class represents the entire syntax tree of the parsed source code.
-    // It contains the root of the tree, the end-of-file token, and a list of any diagnostics produced during parsing.
     public sealed class SyntaxTree
     {
-        public SyntaxTree(ExpressionSyntax root, SyntaxToken endOfFileToken, IEnumerable<string> diagnostics)
+        public SyntaxTree(IEnumerable<Diagnostic> diagnostics, ExpressionSyntax root, SyntaxToken endOfFileToken)
         {
+            Diagnostics = diagnostics.ToArray();
             Root = root;
             EndOfFileToken = endOfFileToken;
-            Diagnostics = diagnostics.ToArray();
         }
 
+        public IReadOnlyList<Diagnostic> Diagnostics { get; }
         public ExpressionSyntax Root { get; }
         public SyntaxToken EndOfFileToken { get; }
-        public IReadOnlyList<string> Diagnostics { get; }
 
         public static SyntaxTree Parse(string text)
         {

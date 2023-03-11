@@ -1,3 +1,5 @@
+using System;
+
 namespace Syron.CodeAnalysis.Binding
 {
     internal sealed class BoundLiteralExpression : BoundExpression
@@ -9,7 +11,6 @@ namespace Syron.CodeAnalysis.Binding
 
         public override BoundNodeKind Kind => BoundNodeKind.LiteralExpression;
         public override Type Type => Value.GetType();
-
         public object Value { get; }
     }
 }
