@@ -1,6 +1,5 @@
 using System;
 using Syron.CodeAnalysis.Binding;
-using Syron.CodeAnalysis.Syntax;
 
 //   _________
 //  /   _____/__.__._______  ____   ____  
@@ -43,7 +42,7 @@ namespace Syron.CodeAnalysis
                     case BoundUnaryOperatorKind.LogicalNegation:
                         return !(bool)operand;
                     default:
-                        throw new Exception($"Unexpected unary operator {u.Op.Kind}");
+                        throw new Exception($"Unexpected unary operator {u.Op}");
                 }
             }
 
@@ -70,8 +69,11 @@ namespace Syron.CodeAnalysis
                         return Equals(left, right);
                     case BoundBinaryOperatorKind.NotEquals:
                         return !Equals(left, right);
+                    case BoundBinaryOperatorKind.Exponentiation:
+                        return Math.Pow((int)left, (int)right);
+
                     default:
-                        throw new Exception($"Unexpected binary operator {b.Op.Kind}");
+                        throw new Exception($"Unexpected binary operator {b.Op}");
                 }
             }
 

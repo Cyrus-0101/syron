@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 //   _________
 //  /   _____/__.__._______  ____   ____  
 //  \_____  <   |  |\_  __ \/  _ \ /    \ 
@@ -6,10 +8,7 @@
 //         \/\/                        \/ 
 
 namespace Syron.CodeAnalysis.Syntax
-
 {
-    // The UnaryExpressionSyntax class represents a unary expression in the language.
-    // For example, -1 is represented by a UnaryExpressionSyntax node with a left of null, an operator token of -, and a right of 1.
     public sealed class UnaryExpressionSyntax : ExpressionSyntax
     {
         public UnaryExpressionSyntax(SyntaxToken operatorToken, ExpressionSyntax operand)
@@ -19,7 +18,6 @@ namespace Syron.CodeAnalysis.Syntax
         }
 
         public override SyntaxKind Kind => SyntaxKind.UnaryExpression;
-
         public SyntaxToken OperatorToken { get; }
         public ExpressionSyntax Operand { get; }
 
@@ -29,4 +27,5 @@ namespace Syron.CodeAnalysis.Syntax
             yield return Operand;
         }
     }
+
 }

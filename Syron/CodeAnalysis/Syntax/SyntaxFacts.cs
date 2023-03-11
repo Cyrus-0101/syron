@@ -1,16 +1,9 @@
-//   _________
-//  /   _____/__.__._______  ____   ____  
-//  \_____  <   |  |\_  __ \/  _ \ /    \ 
-//  /        \___  | |  | \(  <_> )   |  \
-// /_______  / ____| |__|   \____/|___|  /
-//         \/\/                        \/ 
+using System;
 
 namespace Syron.CodeAnalysis.Syntax
 {
-    // SyntaxFacts is a static class that contains helper methods for working with syntax nodes.
     internal static class SyntaxFacts
     {
-        // GetUnaryOperatorPrecedence returns the precedence of a unary operator token.
         public static int GetUnaryOperatorPrecedence(this SyntaxKind kind)
         {
             switch (kind)
@@ -25,13 +18,13 @@ namespace Syron.CodeAnalysis.Syntax
             }
         }
 
-        // GetBinaryOperatorPrecedence returns the precedence of a binary operator token.
         public static int GetBinaryOperatorPrecedence(this SyntaxKind kind)
         {
             switch (kind)
             {
                 case SyntaxKind.StarToken:
                 case SyntaxKind.SlashToken:
+                case SyntaxKind.HatToken:
                     return 5;
 
                 case SyntaxKind.PlusToken:
@@ -61,7 +54,6 @@ namespace Syron.CodeAnalysis.Syntax
                     return SyntaxKind.TrueKeyword;
                 case "false":
                     return SyntaxKind.FalseKeyword;
-
                 default:
                     return SyntaxKind.IdentifierToken;
             }

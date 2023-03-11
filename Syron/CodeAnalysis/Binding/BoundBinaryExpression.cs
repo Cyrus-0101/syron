@@ -1,3 +1,5 @@
+using System;
+
 namespace Syron.CodeAnalysis.Binding
 {
     internal sealed class BoundBinaryExpression : BoundExpression
@@ -8,12 +10,11 @@ namespace Syron.CodeAnalysis.Binding
             Op = op;
             Right = right;
         }
+
         public override BoundNodeKind Kind => BoundNodeKind.BinaryExpression;
         public override Type Type => Op.Type;
         public BoundExpression Left { get; }
         public BoundBinaryOperator Op { get; }
         public BoundExpression Right { get; }
-
     }
 }
-
