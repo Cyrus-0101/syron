@@ -85,10 +85,14 @@ namespace Syron.CodeAnalysis.Syntax
                     return new SyntaxToken(SyntaxKind.MinusToken, _position++, "–", null);
                 case '*':
                     return new SyntaxToken(SyntaxKind.StarToken, _position++, "*", null);
+                case 'x':
+                    return new SyntaxToken(SyntaxKind.StarToken, _position++, "x", null);
                 case '^':
                     return new SyntaxToken(SyntaxKind.HatToken, _position++, "^", null);
                 case '/':
                     return new SyntaxToken(SyntaxKind.SlashToken, _position++, "/", null);
+                case '÷':
+                    return new SyntaxToken(SyntaxKind.SlashToken, _position++, "÷", null);
                 case '(':
                     return new SyntaxToken(SyntaxKind.OpenParenthesisToken, _position++, "(", null);
                 case ')':
@@ -112,6 +116,11 @@ namespace Syron.CodeAnalysis.Syntax
                     {
                         _position += 2;
                         return new SyntaxToken(SyntaxKind.EqualsEqualsToken, start, "==", null);
+                    }
+                    else
+                    {
+                        _position += 1;
+                        return new SyntaxToken(SyntaxKind.EqualsToken, start, "=", null);
                     }
                     break;
                 case '!':

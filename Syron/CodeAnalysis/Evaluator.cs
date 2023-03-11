@@ -71,6 +71,8 @@ namespace Syron.CodeAnalysis
                         return !Equals(left, right);
                     case BoundBinaryOperatorKind.Exponentiation:
                         return Math.Pow((int)left, (int)right);
+                    case BoundBinaryOperatorKind.Assignment:
+                        return right;
 
                     default:
                         throw new Exception($"Unexpected binary operator {b.Op}");
