@@ -82,7 +82,7 @@ the `*` and `/` operators in another method `ParseFactor`. However, this doesn't
 scale very well if you have a dozen operators. In this episode, we've replaced
 this with [unified method][precedence-parsing].
 
-[precedence-parsing]: https://github.com/terrajobst/minsk/blob/b9e0a3f8858b410ead4afbc3e165c316a628208e/mc/CodeAnalysis/Syntax/Parser.cs#L69-L96
+[precedence-parsing]: https://github.com/Cyrus-0101/syron/blob/3eba244062e27d472750535b2847679ac19bcf36/sc/CodeAnalysis/Syntax/Parser.cs#L69-L96
 
 ### Bound tree
 
@@ -103,7 +103,7 @@ binds `BinaryExpressionSyntax` to a [BoundBinaryExpression][bound-binary]. The
 operator is looked up by using the types of the left and right expressions in
 [BoundBinaryOperator.Bind][bind-binary-op].
 
-[binder]: https://github.com/terrajobst/minsk/blob/9fa4ecb5347575cd5699afb659074c76f3f2e0fa/mc/CodeAnalysis/Binding/Binder.cs
-[bind-binary]: https://github.com/terrajobst/minsk/blob/9fa4ecb5347575cd5699afb659074c76f3f2e0fa/mc/CodeAnalysis/Binding/Binder.cs#L48-L60
-[bound-binary]: https://github.com/terrajobst/minsk/blob/9fa4ecb5347575cd5699afb659074c76f3f2e0fa/mc/CodeAnalysis/Binding/BoundBinaryExpression.cs#L5-L18
-[bind-binary-op]: https://github.com/terrajobst/minsk/blob/9fa4ecb5347575cd5699afb659074c76f3f2e0fa/mc/CodeAnalysis/Binding/BoundBinaryOperator.cs#L50-L59
+[binder]: https://github.com/terrajobst/Syron/blob/9fa4ecb5347575cd5699afb659074c76f3f2e0fa/mc/CodeAnalysis/Binding/Binder.cs
+[bind-binary]: https://github.com/Cyrus-0101/syron/blob/3eba244062e27d472750535b2847679ac19bcf36/sc/CodeAnalysis/Binding/Binder.cs#L48-L60
+[bound-binary]: https://github.com/Cyrus-0101/syron/blob/3eba244062e27d472750535b2847679ac19bcf36/sc/CodeAnalysis/Binding/BoundBinaryExpression.cs#L5-L18
+[bind-binary-op]: https://github.com/Cyrus-0101/syron/blob/3eba244062e27d472750535b2847679ac19bcf36/sc/CodeAnalysis/Binding/BoundBinaryOperator.cs#L50-L59
