@@ -40,6 +40,8 @@ namespace Syron
         {
             var showTree = false;
 
+            var variables = new Dictionary<string, object>();
+
             string startText = @"
   _________
  /   _____/__.__._______  ____   ____  
@@ -77,7 +79,7 @@ namespace Syron
                 var syntaxTree = SyntaxTree.Parse(line);
 
                 var compilation = new Compilation(syntaxTree);
-                var result = compilation.Evaluate();
+                var result = compilation.Evaluate(variables);
 
                 var diagnostics = result.Diagnostics;
 
