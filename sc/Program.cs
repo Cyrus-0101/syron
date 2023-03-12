@@ -40,7 +40,7 @@ namespace Syron
         {
             var showTree = false;
 
-            var variables = new Dictionary<string, object>();
+            var variables = new Dictionary<VariableSymbol, object>();
 
             string startText = @"
   _________

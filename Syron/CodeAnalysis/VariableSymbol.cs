@@ -1,3 +1,5 @@
+using System;
+
 //   _________
 //  /   _____/__.__._______  ____   ____  
 //  \_____  <   |  |\_  __ \/  _ \ /    \ 
@@ -16,7 +18,6 @@ namespace Syron.CodeAnalysis
         }
 
         public string Name { get; }
-
         public Type Type { get; }
     }
 }
