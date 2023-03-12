@@ -71,8 +71,6 @@ the syntax tree have to assume anything could be null.
 * Support for conditions such as `1 == 3 && 2 != 3 || true` 
 * Internal representation for type checking (`Binder`, and `BoundNode`)
 
-## Interesting aspects
-
 ### Generalized precedence parsing
 
 In the first iteration, we've written our recursive descent
@@ -107,3 +105,74 @@ operator is looked up by using the types of the left and right expressions in
 [bind-binary]: https://github.com/Cyrus-0101/syron/blob/3eba244062e27d472750535b2847679ac19bcf36/sc/CodeAnalysis/Binding/Binder.cs#L48-L60
 [bound-binary]: https://github.com/Cyrus-0101/syron/blob/3eba244062e27d472750535b2847679ac19bcf36/sc/CodeAnalysis/Binding/BoundBinaryExpression.cs#L5-L18
 [bind-binary-op]: https://github.com/Cyrus-0101/syron/blob/3eba244062e27d472750535b2847679ac19bcf36/sc/CodeAnalysis/Binding/BoundBinaryOperator.cs#L50-L59
+
+
+# Third Iteration: 12/03/2022
+## Completed items
+
+* Extracted compiler into a separate library
+* Exposed span on diagnostics that indicate where the error occurred
+* Support for assignments and variables.
+
+### Compilation API
+
+We've added a type called `Compilation` that holds onto the entire state of the
+program. It will eventually expose declared symbols as well and house all
+compiler operations, such as emitting code. For now, it only exposes an
+`Evaluate` API that will interpret the expression:
+
+```C#
+var syntaxTree = SyntaxTree.Parse(line);
+var compilation = new Compilation(syntaxTree);
+var result = compilation.Evaluate();
+Console.WriteLine(result.Value);
+```
+
+### Assignments as expressions
+
+One controversial aspect of the C language family is that assignments are
+usually treated as expressions, rather than isolated top-level statements. This
+allows writing code like this:
+
+```C#
+a = b = 5
+```
+
+It is tempting to think about assignments as binary operators but they will have
+to parse very differently. For instance, consider the parse tree for the
+expression `a + b + 5`:
+
+```
+    +
+   / \
+  +   5
+ / \
+a   b
+```
+
+This tree shape isn't desired for assignments. Rather, you'd want:
+
+```
+  =
+ / \
+a   =
+   / \
+  b   5
+```
+
+which means that first `b` is assigned the value `5` and then `a` is assigned
+the value `5`. In other words, the `=` is *right associative*.
+
+Furthermore one needs to decide what the left-hand-side of the assignment
+expression can be. It usually is just a variable name, but it could also be a
+qualified name or an array index. Thus, most compilers will simply represent it
+as an expression. However, not all expressions can be assigned to, for example
+the literal `5` couldn't. The ones that can be assigned to, are often referred
+to as *L-values* because they can be on the left-hand-side of an assignment.
+
+In our case, we currently only allow variable names, so we just represent it as
+[single token][token], rather than as a general expression. This also makes
+parsing them very easy as [can just peek ahead][peek].
+
+[token]: https://github.com/Cyrus-0101/syron/blob/2f622fb3836db774f5998e350cc3f9345ffd9973/Syron/CodeAnalysis/Syntax/AssignmentExpressionSyntax.cs#L15
+[peek]: https://github.com/Cyrus-0101/syron/blob/2f622fb3836db774f5998e350cc3f9345ffd9973/Syron/CodeAnalysis/Syntax/Parser.cs#L74-L86
