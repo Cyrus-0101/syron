@@ -20,6 +20,7 @@ namespace Syron.CodeAnalysis.Syntax
         OpenParenthesisToken,
         CloseParenthesisToken,
         IdentifierToken,
+        EqualsToken,
 
         // Keywords
         FalseKeyword,
@@ -30,5 +31,7 @@ namespace Syron.CodeAnalysis.Syntax
         UnaryExpression,
         BinaryExpression,
         ParenthesizedExpression,
+        NameExpression,
+        AssignmentExpression,
     }
 }
