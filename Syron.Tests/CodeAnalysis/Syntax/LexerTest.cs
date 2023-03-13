@@ -78,6 +78,7 @@ namespace Syron.Tests.CodeAnalysis.Syntax
                 (SyntaxKind.MinusToken, "-"),
                 (SyntaxKind.StarToken, "*"),
                 (SyntaxKind.SlashToken, "/"),
+                (SyntaxKind.HatToken, "^"),
                 (SyntaxKind.BangToken, "!"),
                 (SyntaxKind.EqualsToken, "="),
                 (SyntaxKind.AmpersandAmpersandToken, "&&"),
