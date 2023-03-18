@@ -83,7 +83,7 @@ namespace Syron.CodeAnalysis
                     case BoundBinaryOperatorKind.NotEquals:
                         return !Equals(left, right);
                     case BoundBinaryOperatorKind.Exponentiation:
-                        return Math.Pow((int)left, (int)right);
+                        return (int)Math.Pow((int)left, (int)right);
                     case BoundBinaryOperatorKind.Assignment:
                         return right;
 

@@ -11,8 +11,11 @@ pool:
 
 variables:
   buildConfiguration: "Release"
+  tests: "./Syron.Tests/Syron.Tests.csproj"
 
 steps:
   - script: dotnet build --configuration $(buildConfiguration)
     displayName: "dotnet build $(buildConfiguration)"
+  - script: dotnet test $(tests)
+    displayName: "dotnet test"
 
