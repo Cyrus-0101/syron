@@ -1,5 +1,7 @@
 using System;
 using System.Linq;
+using System.Collections.Immutable;
+
 using Syron.CodeAnalysis.Binding;
 using Syron.CodeAnalysis.Syntax;
 
@@ -28,11 +30,11 @@ namespace Syron.CodeAnalysis
 
             var diagnostics = SyntaxTree.Diagnostics.Concat(binder.Diagnostics).ToArray();
             if (diagnostics.Any())
-                return new EvaluationResult(diagnostics, null);
+                return new EvaluationResult(diagnostics.ToImmutableArray(), null);
 
             var evaluator = new Evaluator(boundExpression, variables);
             var value = evaluator.Evaluate();
-            return new EvaluationResult(Array.Empty<Diagnostic>(), value);
+            return new EvaluationResult(ImmutableArray<Diagnostic>.Empty, value);
         }
     }
 }

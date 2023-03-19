@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 //   _________
@@ -12,7 +13,7 @@ namespace Syron.CodeAnalysis
 {
     public sealed class EvaluationResult
     {
-        public EvaluationResult(IEnumerable<Diagnostic> diagnostics, object value)
+        public EvaluationResult(ImmutableArray<Diagnostic> diagnostics, object value)
         {
             Diagnostics = diagnostics.ToArray();
             Value = value;
