@@ -109,7 +109,7 @@ namespace Syron
                         Console.WriteLine();
 
                         Console.ForegroundColor = ConsoleColor.DarkRed;
-                        Console.Write($"({lineNumber}, {character}): ");
+                        Console.Write($"(Line Number: {lineNumber}, Position: {character}): ");
                         Console.WriteLine(diagnostic);
                         Console.ResetColor();
 
