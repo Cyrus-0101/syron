@@ -1,6 +1,7 @@
 using System;
-using Xunit;
 using System.Collections.Generic;
+using System.Linq;
+using Xunit;
 
 using Syron.CodeAnalysis.Syntax;
 
@@ -72,28 +73,21 @@ namespace Syron.Tests.CodeAnalysis.Syntax
 
         private static IEnumerable<(SyntaxKind kind, string text)> GetTokens()
         {
-            return new[]
+            var fixedTokens = Enum.GetValues(typeof(SyntaxKind))
+                                  .Cast<SyntaxKind>()
+                                  .Select(k => (kind: k, text: SyntaxFacts.GetText(k)))
+                                  .Where(t => t.text != null);
+
+
+            var dynamicTokens = new[]
             {
-                (SyntaxKind.PlusToken, "+"),
-                (SyntaxKind.MinusToken, "-"),
-                (SyntaxKind.StarToken, "*"),
-                (SyntaxKind.SlashToken, "/"),
-                (SyntaxKind.HatToken, "^"),
-                (SyntaxKind.BangToken, "!"),
-                (SyntaxKind.EqualsToken, "="),
-                (SyntaxKind.AmpersandAmpersandToken, "&&"),
-                (SyntaxKind.PipePipeToken, "||"),
-                (SyntaxKind.EqualsEqualsToken, "=="),
-                (SyntaxKind.BangEqualsToken, "!="),
-                (SyntaxKind.OpenParenthesisToken, "("),
-                (SyntaxKind.CloseParenthesisToken, ")"),
-                (SyntaxKind.FalseKeyword, "false"),
-                (SyntaxKind.TrueKeyword, "true"),
                 (SyntaxKind.NumberToken, "1"),
                 (SyntaxKind.NumberToken, "123"),
                 (SyntaxKind.IdentifierToken, "a"),
                 (SyntaxKind.IdentifierToken, "abc"),
             };
+
+            return fixedTokens.Concat(dynamicTokens);
         }
 
         private static IEnumerable<(SyntaxKind kind, string text)> GetSeparators()
