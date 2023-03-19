@@ -29,6 +29,7 @@ namespace Syron.CodeAnalysis
             var boundExpression = binder.BindExpression(SyntaxTree.Root);
 
             var diagnostics = SyntaxTree.Diagnostics.Concat(binder.Diagnostics).ToArray();
+
             if (diagnostics.Any())
                 return new EvaluationResult(diagnostics.ToImmutableArray(), null);
 
