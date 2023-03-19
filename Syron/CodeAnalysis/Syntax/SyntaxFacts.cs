@@ -115,7 +115,7 @@ namespace Syron.CodeAnalysis.Syntax
                     return "true";
 
                 default:
-                    return "Unknown";
+                    return null;
             }
         }
     }
