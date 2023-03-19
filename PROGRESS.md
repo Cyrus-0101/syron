@@ -1,5 +1,7 @@
 # First Iteration: 09/03/2023
 
+[Pull Request](https://github.com/Cyrus-0101/syron/pull/1)
+
 ## Completed items
 
 * Basic REPL (read-eval-print loop) for an expression evaluator
@@ -63,6 +65,9 @@ This is useful as it avoids cases where later parts of the compiler that walk
 the syntax tree have to assume anything could be null.
 
 # Second Iteration: 10/03/2023
+
+[Pull Request](https://github.com/Cyrus-0101/syron/pull/2)
+
 ## Completed items
 
 * Generalized parsing using precedences
@@ -107,7 +112,10 @@ operator is looked up by using the types of the left and right expressions in
 [bind-binary-op]: https://github.com/Cyrus-0101/syron/blob/3eba244062e27d472750535b2847679ac19bcf36/sc/CodeAnalysis/Binding/BoundBinaryOperator.cs#L50-L59
 
 
-# Third Iteration: 12/03/2022
+# Third Iteration: 12/03/2023
+
+[Pull Request: #3](https://github.com/Cyrus-0101/syron/pull/3) | [Pull Request: #4](https://github.com/Cyrus-0101/syron/pull/4) | [Pull Request: #5](https://github.com/Cyrus-0101/syron/pull/5)
+
 ## Completed items
 
 * Extracted compiler into a separate library
@@ -177,7 +185,11 @@ parsing them very easy as [can just peek ahead][peek].
 [token]: https://github.com/Cyrus-0101/syron/blob/2f622fb3836db774f5998e350cc3f9345ffd9973/Syron/CodeAnalysis/Syntax/AssignmentExpressionSyntax.cs#L15
 [peek]: https://github.com/Cyrus-0101/syron/blob/2f622fb3836db774f5998e350cc3f9345ffd9973/Syron/CodeAnalysis/Syntax/Parser.cs#L74-L86
 
-## Completed items: 18/03/2023
+# Fourth Iteration: 18/03/2023
+
+[Pull Request](https://github.com/Cyrus-0101/syron/pull/6)
+
+## Completed items
 
 * Added tests for lexing all tokens and their combinations
 * Added tests for parsing unary and binary operators
@@ -349,3 +361,68 @@ We've done this both for [binary operators][parser-binary-op] as well as for
 [asserting-enumerator]: https://github.com/Cyrus-0101/syron/blob/bfd03c34fe53894fa8fef9a61568a28c8dec9236/Syron.Tests/CodeAnalysis/Syntax/AssertingEnumerator.cs
 [parser-binary-op]: https://github.com/Cyrus-0101/syron/blob/bfd03c34fe53894fa8fef9a61568a28c8dec9236/Syron.Tests/CodeAnalysis/Syntax/ParserTests.cs#L11-L66
 [parser-unary-op]: https://github.com/Cyrus-0101/syron/blob/bfd03c34fe53894fa8fef9a61568a28c8dec9236/Syron.Tests/CodeAnalysis/Syntax/ParserTests.cs#L68-L119
+
+# Fifth Iteration: 19/02/2023
+
+[Pull Request](https://github.com/Cyrus-0101/syron/pull/7)
+
+## Completed items
+
+* A ton of clean-up
+* Added `SourceText`, which allows us to compute line number information
+* Enabled multiline REPL
+
+## Interesting aspects
+
+### Positions and Line Numbers
+
+Our entire frontend is referring to the input as positions, i.e. a zero-based
+offset into the text that was parsed. Positions are awesome because you can
+easily do math on them. Unfortunately, they aren't great for error reporting.
+What you really want line number and character position.
+
+We added the concept of [`SourceText`][SourceText] which you an think of as
+representing the document the user is editing. It's immutable and it has a
+collection of line information. The `SourceText` is stored on the `SyntaxTree`
+and can be used to get a line index given a position:
+
+```C#
+var lineIndex = syntaxTree.Text.GetLineIndex(diagnostic.Span.Start);
+var line = syntaxTree.Text.Lines[lineIndex];
+var lineNumber = lineIndex + 1;
+var character = diagnostic.Span.Start - line.Start + 1;
+```
+
+### Computing line indexes
+
+`SourceText` has a collection of [`TextLines`][TextLine] which know the start
+and end positions for each ine. In order to compute a line index, we only
+have to [perform a binary search][GetLineIndex]:
+
+```C#
+public int GetLineIndex(int position)
+{
+    var lower = 0;
+    var upper = Lines.Length - 1;
+    while (lower <= upper)
+    {
+        var index = lower + (upper - lower) / 2;
+        var start = Lines[index].Start;
+        if (position == start)
+            return index;
+        if (start > position)
+        {
+            upper = index - 1;
+        }
+        else
+        {
+            lower = index + 1;
+        }
+    }
+    return lower - 1;
+}
+```
+
+[SourceText]: https://github.com/Cyrus-0101/syron/blob/2114b16fec73f651aebae9cd4cd8ad820d830774/Syron/CodeAnalysis/Text/SourceText.cs
+[TextLine]: https://github.com/Cyrus-0101/syron/blob/2114b16fec73f651aebae9cd4cd8ad820d830774/Syron/CodeAnalysis/Text/TextLine.cs
+[GetLineIndex]: https://github.com/Cyrus-0101/syron/blob/2114b16fec73f651aebae9cd4cd8ad820d830774/Syron/CodeAnalysis/Text/SourceText.cs#L229-L53

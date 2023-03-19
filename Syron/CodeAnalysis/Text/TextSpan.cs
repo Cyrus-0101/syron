@@ -14,11 +14,14 @@ namespace Syron.CodeAnalysis
             Start = start;
             Length = length;
         }
-
         public int Start { get; }
         public int Length { get; }
         public int End => Start + Length;
 
-        public override string ToString() => $"{Start}..{End}";
+        public static TextSpan FromBounds(int start, int end)
+        {
+            var length = end - start;
+            return new TextSpan(start, length);
+        }
     }
 }
