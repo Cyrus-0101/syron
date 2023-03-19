@@ -423,6 +423,6 @@ public int GetLineIndex(int position)
 }
 ```
 
-[SourceText]: https://github.com/terrajobst/minsk/blob/ea1e6f1285cea9ac833d03742cd0c61a3e7c549f/Minsk/CodeAnalysis/Text/SourceText.cs
-[TextLine]: https://github.com/terrajobst/minsk/blob/ea1e6f1285cea9ac833d03742cd0c61a3e7c549f/Minsk/CodeAnalysis/Text/TextLine.cs
-[GetLineIndex]: https://github.com/terrajobst/minsk/blob/ea1e6f1285cea9ac833d03742cd0c61a3e7c549f/Minsk/CodeAnalysis/Text/SourceText.cs#L22-L46
+[SourceText]: https://github.com/Cyrus-0101/syron/blob/2114b16fec73f651aebae9cd4cd8ad820d830774/Syron/CodeAnalysis/Text/SourceText.cs
+[TextLine]: https://github.com/Cyrus-0101/syron/blob/2114b16fec73f651aebae9cd4cd8ad820d830774/Syron/CodeAnalysis/Text/TextLine.cs
+[GetLineIndex]: https://github.com/Cyrus-0101/syron/blob/2114b16fec73f651aebae9cd4cd8ad820d830774/Syron/CodeAnalysis/Text/SourceText.cs#L229-L53
