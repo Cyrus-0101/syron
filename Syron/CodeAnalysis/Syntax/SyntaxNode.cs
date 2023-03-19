@@ -7,6 +7,17 @@ namespace Syron.CodeAnalysis.Syntax
     {
         public abstract SyntaxKind Kind { get; }
 
+        public virtual TextSpan Span
+        {
+            get
+            {
+                var first = GetChildren().First();
+                var last = GetChildren().Last();
+
+                return TextSpan.FromBounds(first.Span.Start, last.Span.End);
+            }
+        }
+
         public IEnumerable<SyntaxNode> GetChildren()
         {
             var properties = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
