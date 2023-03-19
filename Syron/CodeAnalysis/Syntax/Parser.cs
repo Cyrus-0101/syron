@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 
+using Syron.CodeAnalysis.Text;
+
+
 namespace Syron.CodeAnalysis.Syntax
 {
     internal sealed class Parser
