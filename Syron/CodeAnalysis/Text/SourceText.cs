@@ -1,5 +1,5 @@
+using System;
 using System.Collections.Immutable;
-using Syron.CodeAnalysis.Text;
 
 //   _________
 //  /   _____/__.__._______  ____   ____  
@@ -8,7 +8,8 @@ using Syron.CodeAnalysis.Text;
 // /_______  / ____| |__|   \____/|___|  /
 //         \/\/                        \/ 
 
-namespace Syron.CodeAnalysis
+
+namespace Syron.CodeAnalysis.Text
 {
     public sealed class SourceText
     {
