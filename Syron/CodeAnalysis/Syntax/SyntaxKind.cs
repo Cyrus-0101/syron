@@ -26,6 +26,9 @@ namespace Syron.CodeAnalysis.Syntax
         FalseKeyword,
         TrueKeyword,
 
+        // Nodes
+        CompilationUnit,
+
         // Expressions
         LiteralExpression,
         UnaryExpression,
