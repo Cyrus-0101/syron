@@ -67,5 +67,17 @@ namespace Syron.CodeAnalysis
             var message = $"ERROR: Variable '{name}' doesn't exist.";
             Report(span, message);
         }
+
+        public void ReportVariableAlreadyDeclared(TextSpan span, string name)
+        {
+            var message = $"ERROR: Variable '{name}' is already declared exist.";
+            Report(span, message);
+        }
+
+        public void ReportCannotConvert(TextSpan span, Type fromType, Type toType)
+        {
+            var message = $"ERROR: Cannot convert type '{fromType}' to '{toType}'.";
+            Report(span, message);
+        }
     }
 }
