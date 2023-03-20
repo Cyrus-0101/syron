@@ -20,14 +20,14 @@ namespace Syron.CodeAnalysis.Binding
         {
             var parentScope = CreateParentScope(previous);
             var binder = new Binder(parentScope);
-            var expression = binder.BindStatement(syntax.Statement);
+            var statement = binder.BindStatement(syntax.Statement);
             var variables = binder._scope.GetDeclaredVariables();
             var diagnostics = binder.Diagnostics.ToImmutableArray();
 
             if (previous != null)
                 diagnostics = diagnostics.InsertRange(0, previous.Diagnostics);
 
-            return new BoundGlobalScope(previous, diagnostics, variables, expression);
+            return new BoundGlobalScope(previous, diagnostics, variables, statement);
         }
 
         private static BoundScope CreateParentScope(BoundGlobalScope previous)
@@ -66,9 +66,27 @@ namespace Syron.CodeAnalysis.Binding
                     return BindVariableDeclaration((VariableDeclarationSyntax)syntax);
                 case SyntaxKind.ExpressionStatement:
                     return BindExpressionStatement((ExpressionStatementSyntax)syntax);
+
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
             }
+        }
+
+        private BoundStatement BindVariableDeclaration(VariableDeclarationSyntax syntax)
+        {
+            var name = syntax.Identifier.Text;
+            var isReadOnly = syntax.Keyword.Kind == SyntaxKind.ConstKeyword;
+
+            var initializer = BindExpression(syntax.Initializer);
+
+            var variable = new VariableSymbol(name, isReadOnly, initializer.Type);
+
+            if (!_scope.TryDeclare(variable))
+                _diagnostics.ReportVariableAlreadyDeclared(syntax.Identifier.Span, variable.Name);
+
+            var boundVariableDeclaration = new BoundVariableDeclaration(variable, initializer);
+
+            return boundVariableDeclaration;
         }
 
         private BoundStatement BindBlockStatement(BlockStatementSyntax syntax)
@@ -87,23 +105,10 @@ namespace Syron.CodeAnalysis.Binding
             return new BoundBlockStatement(statements.ToImmutable());
         }
 
-        private BoundStatement BindVariableDeclaration(VariableDeclarationSyntax syntax)
-        {
-            var name = syntax.Identifier.Text;
-            var isReadOnly = syntax.Keyword.Kind == SyntaxKind.LetKeyword;
-            var initializer = BindExpression(syntax.Initializer);
-            var variable = new VariableSymbol(name, isReadOnly, initializer.Type);
-
-            if (!_scope.TryDeclare(variable))
-                _diagnostics.ReportVariableAlreadyDeclared(syntax.Identifier.Span, name);
-
-            return new BoundVariableDeclaration(variable, initializer);
-        }
-
         private BoundStatement BindExpressionStatement(ExpressionStatementSyntax syntax)
         {
-            var expression = BindExpression(syntax.Expression);
-            return new BoundExpressionStatement(expression);
+            var boundExpression = BindExpression(syntax.Expression);
+            return new BoundExpressionStatement(boundExpression);
         }
 
         private BoundExpression BindExpression(ExpressionSyntax syntax)
