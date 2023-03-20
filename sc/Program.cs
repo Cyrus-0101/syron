@@ -70,7 +70,10 @@ namespace Syron
                 if (textBuilder.Length == 0)
                 {
                     if (isBlank)
+                    {
+                        Console.Write("Don't forget to sponsor me on GitHub! :D https://github.com/sponsors/Cyrus-0101");
                         break;
+                    }
 
                     else if (input == "showTree")
                     {

@@ -19,6 +19,8 @@ namespace Syron.CodeAnalysis.Syntax
         BangEqualsToken,
         OpenParenthesisToken,
         CloseParenthesisToken,
+        OpenBraceToken,
+        CloseBraceToken,
         IdentifierToken,
         EqualsToken,
 
@@ -28,6 +30,10 @@ namespace Syron.CodeAnalysis.Syntax
 
         // Nodes
         CompilationUnit,
+
+        // Statements
+        BlockedStatement,
+        ExpressionStatement,
 
         // Expressions
         LiteralExpression,

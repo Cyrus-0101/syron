@@ -12,12 +12,12 @@ namespace Syron.CodeAnalysis.Binding
 {
     internal sealed class BoundGlobalScope
     {
-        public BoundGlobalScope(BoundGlobalScope previous, ImmutableArray<Diagnostic> diagnostics, ImmutableArray<VariableSymbol> variables, BoundExpression expression)
+        public BoundGlobalScope(BoundGlobalScope previous, ImmutableArray<Diagnostic> diagnostics, ImmutableArray<VariableSymbol> variables, BoundStatement statement)
         {
             Previous = previous;
             Diagnostics = diagnostics;
             Variables = variables;
-            Expression = expression;
+            Expression = statement;
         }
 
         public BoundGlobalScope Previous { get; }
@@ -26,6 +26,6 @@ namespace Syron.CodeAnalysis.Binding
 
         public ImmutableArray<VariableSymbol> Variables { get; }
 
-        public BoundExpression Expression { get; }
+        public BoundStatement Expression { get; }
     }
 }
