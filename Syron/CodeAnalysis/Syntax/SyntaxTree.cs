@@ -22,7 +22,6 @@ namespace Syron.CodeAnalysis.Syntax
 
             var diagnostics = parser.Diagnostics.ToImmutableArray();
 
-
             Text = text;
             Diagnostics = diagnostics;
             Root = root;
