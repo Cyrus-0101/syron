@@ -38,20 +38,31 @@ namespace Syron
 /_______  / ____| |__|   \____/|___|  /
         \/\/                        \/ 
             ";
-            // Center the startText in the console
-            Console.WriteLine(startText.PadLeft((Console.WindowWidth / 2) + (startText.Length / 2)));
+
+            Console.ForegroundColor = ConsoleColor.Green;
+
+            Console.WriteLine(startText);
+
             Console.WriteLine("Welcome to Syron programming language!");
             Console.WriteLine("Type ' ' to exit the program.");
             Console.WriteLine("Type 'cls' or 'clear' to clear the screen.");
             Console.WriteLine("Type 'showTree' to toggle parse tree display.");
+            Console.WriteLine("Type 'reset' to reset the program.");
+            // Reset the cursor position to the next line
+            Console.SetCursorPosition(0, Console.CursorTop + 1);
 
+            Compilation previous = null;
 
             while (true)
             {
+                Console.ForegroundColor = ConsoleColor.Green;
+
                 if (textBuilder.Length == 0)
-                    Console.Write("> ");
+                    Console.Write("» ");
                 else
-                    Console.Write("| ");
+                    Console.Write("• ");
+
+                Console.ResetColor();
 
                 var input = Console.ReadLine();
                 var isBlank = string.IsNullOrWhiteSpace(input);
@@ -60,8 +71,10 @@ namespace Syron
                 {
                     if (isBlank)
                     {
+                        Console.Write("Don't forget to sponsor me on GitHub! :D https://github.com/sponsors/Cyrus-0101");
                         break;
                     }
+
                     else if (input == "showTree")
                     {
                         showTree = !showTree;
@@ -71,6 +84,12 @@ namespace Syron
                     else if (input == "cls" || input == "clear")
                     {
                         Console.Clear();
+                        continue;
+                    }
+                    else if (input == "reset")
+                    {
+                        previous = null;
+                        variables.Clear();
                         continue;
                     }
                 }
@@ -83,19 +102,22 @@ namespace Syron
                 if (!isBlank && syntaxTree.Diagnostics.Any())
                     continue;
 
-                var compilation = new Compilation(syntaxTree);
+                var compilation = previous == null ? new Compilation(syntaxTree) : previous.ContinueWith(syntaxTree);
+
                 var result = compilation.Evaluate(variables);
 
                 if (showTree)
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
                     syntaxTree.Root.WriteTo(Console.Out);
-                    Console.ResetColor();
                 }
 
                 if (!result.Diagnostics.Any())
                 {
+                    Console.ForegroundColor = ConsoleColor.Magenta;
                     Console.WriteLine(result.Value);
+                    Console.ResetColor();
+
+                    previous = compilation;
                 }
                 else
                 {

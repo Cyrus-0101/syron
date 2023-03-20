@@ -3,6 +3,7 @@ using Xunit;
 using System.Collections.Generic;
 
 using Syron.CodeAnalysis.Syntax;
+using Syron.CodeAnalysis.Text;
 
 namespace Syron.Tests.CodeAnalysis.Syntax
 {

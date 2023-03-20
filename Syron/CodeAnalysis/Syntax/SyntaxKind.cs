@@ -19,12 +19,25 @@ namespace Syron.CodeAnalysis.Syntax
         BangEqualsToken,
         OpenParenthesisToken,
         CloseParenthesisToken,
+        OpenBraceToken,
+        CloseBraceToken,
         IdentifierToken,
         EqualsToken,
 
         // Keywords
         FalseKeyword,
         TrueKeyword,
+        ConstKeyword,
+        LetKeyword,
+
+        // Nodes
+        CompilationUnit,
+
+        // Statements
+        BlockStatement,
+        ExpressionStatement,
+        VariableDeclaration,
+
 
         // Expressions
         LiteralExpression,
