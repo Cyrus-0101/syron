@@ -11,6 +11,9 @@ namespace Syron.CodeAnalysis.Binding
 
         // Statements
         BlockStatement,
-        ExpressionStatement
+        ExpressionStatement,
+
+        // Declarations#
+        VariableDeclaration
     }
 }

@@ -13,7 +13,7 @@ namespace Syron.CodeAnalysis.Syntax
             CloseBraceToken = closeBraceToken;
         }
 
-        public override SyntaxKind Kind => SyntaxKind.BlockedStatement;
+        public override SyntaxKind Kind => SyntaxKind.BlockStatement;
         public SyntaxToken OpenBraceToken { get; }
         public ImmutableArray<StatementSyntax> Statements { get; }
         public SyntaxToken CloseBraceToken { get; }

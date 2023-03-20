@@ -32,7 +32,8 @@ namespace Syron.Tests.CodeAnalysis
         [InlineData("false", false)]
         [InlineData("!true", false)]
         [InlineData("!false", true)]
-        [InlineData("(a = 10) * a", 100)]
+        [InlineData("{ let a = 0 (a = 10) * a }", 100)]
+        [InlineData("{ const a = 0 (a + 1) * 1 }", 1)]
         public void SyntaxFact_GetText_RoundTrips(string text, object expectedValue)
         {
             var syntaxTree = SyntaxTree.Parse(text);

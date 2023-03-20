@@ -54,6 +54,10 @@ namespace Syron.CodeAnalysis.Syntax
                     return SyntaxKind.TrueKeyword;
                 case "false":
                     return SyntaxKind.FalseKeyword;
+                case "const":
+                    return SyntaxKind.ConstKeyword;
+                case "let":
+                    return SyntaxKind.LetKeyword;
                 default:
                     return SyntaxKind.IdentifierToken;
             }
@@ -117,6 +121,10 @@ namespace Syron.CodeAnalysis.Syntax
                     return "false";
                 case SyntaxKind.TrueKeyword:
                     return "true";
+                case SyntaxKind.ConstKeyword:
+                    return "const";
+                case SyntaxKind.LetKeyword:
+                    return "let";
 
                 default:
                     return null;

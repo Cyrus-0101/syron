@@ -77,10 +77,33 @@ namespace Syron.CodeAnalysis.Syntax
 
         private StatementSyntax ParseStatement()
         {
-            if (Current.Kind == SyntaxKind.OpenBraceToken)
-                return ParseBlockStatement();
+            switch (Current.Kind)
+            {
+                case SyntaxKind.OpenBraceToken:
+                    return ParseBlockStatement();
+                case SyntaxKind.LetKeyword:
+                case SyntaxKind.ConstKeyword:
+                    return ParseVariableDeclaration();
+                default:
+                    return ParseExpressionStatement();
+            }
+        }
 
-            return ParseExpressionStatement();
+        private StatementSyntax ParseVariableDeclaration()
+        {
+            var expectedKeyword = Current.Kind == SyntaxKind.LetKeyword
+                ? SyntaxKind.LetKeyword
+                : SyntaxKind.ConstKeyword;
+
+            var keywordToken = MatchToken(expectedKeyword);
+
+            var identifierToken = MatchToken(SyntaxKind.IdentifierToken);
+
+            var equalsToken = MatchToken(SyntaxKind.EqualsToken);
+
+            var initializer = ParseExpression();
+
+            return new VariableDeclarationSyntax(keywordToken, identifierToken, equalsToken, initializer);
         }
 
         private StatementSyntax ParseBlockStatement()

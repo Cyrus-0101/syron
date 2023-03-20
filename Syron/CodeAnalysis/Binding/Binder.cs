@@ -20,14 +20,14 @@ namespace Syron.CodeAnalysis.Binding
         {
             var parentScope = CreateParentScope(previous);
             var binder = new Binder(parentScope);
-            var statement = binder.BindStatement(syntax.Statement);
+            var expression = binder.BindStatement(syntax.Statement);
             var variables = binder._scope.GetDeclaredVariables();
             var diagnostics = binder.Diagnostics.ToImmutableArray();
 
             if (previous != null)
                 diagnostics = diagnostics.InsertRange(0, previous.Diagnostics);
 
-            return new BoundGlobalScope(previous, diagnostics, variables, statement);
+            return new BoundGlobalScope(previous, diagnostics, variables, expression);
         }
 
         private static BoundScope CreateParentScope(BoundGlobalScope previous)
@@ -56,15 +56,16 @@ namespace Syron.CodeAnalysis.Binding
 
         public DiagnosticBag Diagnostics => _diagnostics;
 
-        public BoundStatement BindStatement(StatementSyntax syntax)
+        private BoundStatement BindStatement(StatementSyntax syntax)
         {
             switch (syntax.Kind)
             {
-                case SyntaxKind.BlockedStatement:
+                case SyntaxKind.BlockStatement:
                     return BindBlockStatement((BlockStatementSyntax)syntax);
+                case SyntaxKind.VariableDeclaration:
+                    return BindVariableDeclaration((VariableDeclarationSyntax)syntax);
                 case SyntaxKind.ExpressionStatement:
                     return BindExpressionStatement((ExpressionStatementSyntax)syntax);
-
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
             }
@@ -72,24 +73,40 @@ namespace Syron.CodeAnalysis.Binding
 
         private BoundStatement BindBlockStatement(BlockStatementSyntax syntax)
         {
-            var builder = ImmutableArray.CreateBuilder<BoundStatement>();
+            var statements = ImmutableArray.CreateBuilder<BoundStatement>();
+            _scope = new BoundScope(_scope);
 
             foreach (var statementSyntax in syntax.Statements)
             {
-                var boundStatement = BindStatement(statementSyntax);
-                builder.Add(boundStatement);
+                var statement = BindStatement(statementSyntax);
+                statements.Add(statement);
             }
 
-            return new BoundBlockStatement(builder.ToImmutable());
+            _scope = _scope.Parent;
+
+            return new BoundBlockStatement(statements.ToImmutable());
+        }
+
+        private BoundStatement BindVariableDeclaration(VariableDeclarationSyntax syntax)
+        {
+            var name = syntax.Identifier.Text;
+            var isReadOnly = syntax.Keyword.Kind == SyntaxKind.LetKeyword;
+            var initializer = BindExpression(syntax.Initializer);
+            var variable = new VariableSymbol(name, isReadOnly, initializer.Type);
+
+            if (!_scope.TryDeclare(variable))
+                _diagnostics.ReportVariableAlreadyDeclared(syntax.Identifier.Span, name);
+
+            return new BoundVariableDeclaration(variable, initializer);
         }
 
         private BoundStatement BindExpressionStatement(ExpressionStatementSyntax syntax)
         {
-            var boundExpression = BindExpression(syntax.Expression);
-            return new BoundExpressionStatement(boundExpression);
+            var expression = BindExpression(syntax.Expression);
+            return new BoundExpressionStatement(expression);
         }
 
-        public BoundExpression BindExpression(ExpressionSyntax syntax)
+        private BoundExpression BindExpression(ExpressionSyntax syntax)
         {
             switch (syntax.Kind)
             {
@@ -141,9 +158,12 @@ namespace Syron.CodeAnalysis.Binding
 
             if (!_scope.TryLookup(name, out var variable))
             {
-                variable = new VariableSymbol(name, boundExpression.Type);
-                _scope.TryDeclare(variable);
+                _diagnostics.ReportUndefinedName(syntax.IdentifierToken.Span, name);
+                return boundExpression;
             }
+
+            if (variable.IsReadOnly)
+                _diagnostics.ReportCannotAssign(syntax.EqualsToken.Span, name);
 
             if (boundExpression.Type != variable.Type)
             {

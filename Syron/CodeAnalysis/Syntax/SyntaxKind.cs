@@ -27,13 +27,17 @@ namespace Syron.CodeAnalysis.Syntax
         // Keywords
         FalseKeyword,
         TrueKeyword,
+        ConstKeyword,
+        LetKeyword,
 
         // Nodes
         CompilationUnit,
 
         // Statements
-        BlockedStatement,
+        BlockStatement,
         ExpressionStatement,
+        VariableDeclaration,
+
 
         // Expressions
         LiteralExpression,

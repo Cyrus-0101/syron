@@ -70,13 +70,19 @@ namespace Syron.CodeAnalysis
 
         public void ReportVariableAlreadyDeclared(TextSpan span, string name)
         {
-            var message = $"ERROR: Variable '{name}' is already declared exist.";
+            var message = $"ERROR: Variable '{name}' is already declared.";
             Report(span, message);
         }
 
         public void ReportCannotConvert(TextSpan span, Type fromType, Type toType)
         {
             var message = $"ERROR: Cannot convert type '{fromType}' to '{toType}'.";
+            Report(span, message);
+        }
+
+        public void ReportCannotAssign(TextSpan span, string name)
+        {
+            var message = $"ERROR: Variable '{name}' is read-only and cannot be assigned again.";
             Report(span, message);
         }
     }
