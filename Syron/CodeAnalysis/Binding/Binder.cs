@@ -6,16 +6,24 @@ namespace Syron.CodeAnalysis.Binding
 {
     internal sealed class Binder
     {
+        // This is a field that will be used to store any diagnostics that occur during the compilation.
         private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
+
+        // This is a field that will be used to store the variables that are declared in the program.
         private readonly Dictionary<VariableSymbol, object> _variables;
 
+        // This is a constructor that will be used to initialize the _variables field.
         public Binder(Dictionary<VariableSymbol, object> variables)
         {
             _variables = variables;
         }
 
+        // This is a property that will be used to return the diagnostics that have been collected during the compilation.
         public DiagnosticBag Diagnostics => _diagnostics;
 
+
+        // Binds the expression and returns the expression with the correct type.
+        // Throws an exception if the type is not recognized.
         public BoundExpression BindExpression(ExpressionSyntax syntax)
         {
             switch (syntax.Kind)
@@ -38,17 +46,25 @@ namespace Syron.CodeAnalysis.Binding
             }
         }
 
+        // Binds the expression and returns the expression with the correct type.
         private BoundExpression BindParenthesizedExpression(ExpressionSyntax expression)
         {
             return BindExpression(expression);
         }
 
+
+        // This function binds a literal expression to its bound representation.
+        // The bound representation is a BoundLiteralExpression object.
         private BoundExpression BindLiteralExpression(LiteralExpressionSyntax syntax)
         {
             var value = syntax.Value ?? 0;
             return new BoundLiteralExpression(value);
         }
 
+
+        // This code finds the variable that corresponds to the name in the NameExpressionSyntax node.
+        // If no such variable exists, it reports an error and returns a BoundLiteralExpression with a value of 0.
+        // Otherwise, it returns a BoundVariableExpression that represents the variable.
         private BoundExpression BindNameExpression(NameExpressionSyntax syntax)
         {
             var name = syntax.IdentifierToken.Text;
@@ -66,6 +82,12 @@ namespace Syron.CodeAnalysis.Binding
 
         private BoundExpression BindAssignmentExpression(AssignmentExpressionSyntax syntax)
         {
+            // This method is responsible for binding the assignment expression and returning a bound expression.
+            // The method will create a new variable symbol for the variable being assigned to.
+            // The method will also check if the variable already exists in the current scope.
+            // If it does, the method will remove it from the dictionary.
+            // The method will then return a new bound assignment expression for the variable and the assigned expression.
+
             var name = syntax.IdentifierToken.Text;
             var boundExpression = BindExpression(syntax.Expression);
 
@@ -82,6 +104,9 @@ namespace Syron.CodeAnalysis.Binding
 
         }
 
+        // Binds a unary expression
+        // syntax: the syntax of the unary expression
+        // returns: a bound node representing the unary expression
         private BoundExpression BindUnaryExpression(UnaryExpressionSyntax syntax)
         {
             var boundOperand = BindExpression(syntax.Operand);
@@ -96,6 +121,8 @@ namespace Syron.CodeAnalysis.Binding
             return new BoundUnaryExpression(boundOperator, boundOperand);
         }
 
+        // Binds a binary expression by first binding the left and right expressions
+        // and then binding the binary operator.
         private BoundExpression BindBinaryExpression(BinaryExpressionSyntax syntax)
         {
             var boundLeft = BindExpression(syntax.Left);
