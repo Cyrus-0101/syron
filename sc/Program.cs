@@ -38,20 +38,28 @@ namespace Syron
 /_______  / ____| |__|   \____/|___|  /
         \/\/                        \/ 
             ";
-            // Center the startText in the console
-            Console.WriteLine(startText.PadLeft((Console.WindowWidth / 2) + (startText.Length / 2)));
+
+            Console.ForegroundColor = ConsoleColor.Green;
+
+            Console.WriteLine(startText);
+
             Console.WriteLine("Welcome to Syron programming language!");
             Console.WriteLine("Type ' ' to exit the program.");
             Console.WriteLine("Type 'cls' or 'clear' to clear the screen.");
             Console.WriteLine("Type 'showTree' to toggle parse tree display.");
-
+            // Reset the cursor position to the next line
+            Console.SetCursorPosition(0, Console.CursorTop + 1);
 
             while (true)
             {
+                Console.ForegroundColor = ConsoleColor.Green;
+
                 if (textBuilder.Length == 0)
-                    Console.Write("> ");
+                    Console.Write("» ");
                 else
-                    Console.Write("| ");
+                    Console.Write("• ");
+
+                Console.ResetColor();
 
                 var input = Console.ReadLine();
                 var isBlank = string.IsNullOrWhiteSpace(input);
@@ -95,7 +103,9 @@ namespace Syron
 
                 if (!result.Diagnostics.Any())
                 {
+                    Console.ForegroundColor = ConsoleColor.Magenta;
                     Console.WriteLine(result.Value);
+                    Console.ResetColor();
                 }
                 else
                 {
