@@ -35,10 +35,10 @@ namespace Syron.CodeAnalysis.Binding
             if (_variables.TryGetValue(name, out variable))
                 return true;
 
-            if (Parent != null)
-                return Parent.TryLookup(name, out variable);
+            if (Parent == null)
+                return false;
 
-            return false;
+            return Parent.TryLookup(name, out variable); ;
         }
 
         // This is a method that will be used to return an ImmutableArray of all the variables declared in the current scope.
