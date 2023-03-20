@@ -47,17 +47,33 @@ namespace Syron.CodeAnalysis.Syntax
 
         private static void PrettyPrint(TextWriter writer, SyntaxNode node, string indent = "", bool isLast = true)
         {
+            var isToConsole = writer == Console.Out;
             var marker = isLast ? "└──" : "├──";
 
             writer.Write(indent);
-            writer.Write(marker);
-            writer.Write(node.Kind);
+
+            if (isToConsole)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                writer.Write(marker);
+                Console.ResetColor();
+            }
+
+            if (isToConsole)
+            {
+                Console.ForegroundColor = node is SyntaxToken ? ConsoleColor.Blue : ConsoleColor.Cyan;
+                writer.Write(node.Kind);
+                Console.ResetColor();
+            }
 
             if (node is SyntaxToken t && t.Value != null)
             {
                 writer.Write(" ");
                 writer.Write(t.Value);
             }
+
+            if (isToConsole)
+                Console.ResetColor();
 
             writer.WriteLine();
 
