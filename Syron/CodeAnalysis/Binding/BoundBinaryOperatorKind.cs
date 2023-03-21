@@ -11,6 +11,10 @@ namespace Syron.CodeAnalysis.Binding
         Equals,
         NotEquals,
         Exponentiation,
-        Assignment
+        Assignment,
+        Less,
+        LessOrEquals,
+        Greater,
+        GreaterOrEquals
     }
 }
