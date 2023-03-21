@@ -81,6 +81,18 @@ namespace Syron.Tests.CodeAnalysis
         }
 
         [Fact]
+        public void Evaluator_NameExpression_Reports_NoErrorForInsertedToken()
+        {
+            var text = @"[]";
+
+            var diagnostics = @"
+                ERROR: Unexpected token <EndOfFileToken>, expected <IdentifierToken>.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
         public void Evaluator_Assigned_Reports_Undefined()
         {
             var text = @"[x] = 10";
