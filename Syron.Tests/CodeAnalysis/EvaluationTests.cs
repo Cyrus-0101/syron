@@ -81,6 +81,22 @@ namespace Syron.Tests.CodeAnalysis
         }
 
         [Fact]
+        public void Evaluator_BlockStatement_NoInfiniteLoop()
+        {
+            var text = @"
+                {
+                [)][]
+            ";
+
+            var diagnostics = @"
+                ERROR: Unexpected token <CloseParenthesisToken>, expected <IdentifierToken>.
+                ERROR: Unexpected token <EndOfFileToken>, expected <CloseBraceToken>.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
         public void Evaluator_NameExpression_Reports_NoErrorForInsertedToken()
         {
             var text = @"[]";
