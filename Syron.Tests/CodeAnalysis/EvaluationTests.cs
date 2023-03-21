@@ -129,7 +129,7 @@ namespace Syron.Tests.CodeAnalysis
         {
             var text = @"
                 {
-                    var x = 0
+                    let x = 0
                     if [10]
                         x = 10
                 }
@@ -145,7 +145,7 @@ namespace Syron.Tests.CodeAnalysis
         {
             var text = @"
                 {
-                    var x = 0
+                    let x = 0
                     while [10]
                         x = 10
                 }
