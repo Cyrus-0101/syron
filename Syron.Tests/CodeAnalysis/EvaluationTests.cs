@@ -135,7 +135,7 @@ namespace Syron.Tests.CodeAnalysis
                 }
             ";
             var diagnostics = @"
-                Cannot convert type 'System.Int32' to 'System.Boolean'.
+                ERROR: Cannot convert type 'System.Int32' to 'System.Boolean'.
             ";
             AssertDiagnostics(text, diagnostics);
         }
@@ -152,7 +152,7 @@ namespace Syron.Tests.CodeAnalysis
             ";
 
             var diagnostics = @"
-                Cannot convert type 'System.Int32' to 'System.Boolean'.
+                ERROR: Cannot convert type 'System.Int32' to 'System.Boolean'.
             ";
 
             AssertDiagnostics(text, diagnostics);
