@@ -34,12 +34,14 @@ namespace Syron.Tests.CodeAnalysis
         [InlineData("false", false)]
         [InlineData("!true", false)]
         [InlineData("!false", true)]
+        [InlineData("{ const x = 10 x }", 10)]
         [InlineData("{ let a = 0 (a = 10) * a }", 100)]
         [InlineData("{ let a = 0 if a == 0 a = 10 a }", 10)]
         [InlineData("{ let a = 0 if a == 4 a = 10 a }", 0)]
         [InlineData("{ let a = 0 if a == 0 a = 10 else a = 5 a }", 10)]
         [InlineData("{ let a = 0 if a == 4 a = 10 else a = 5 a }", 5)]
         [InlineData("{ let i = 10 let result = 0 while i > 0 { result = result + i i = i - 1} result }", 55)]
+        [InlineData("{ let result = 10 for i = 1 to 10 { result = result + i } result }", 65)]
         public void Evaluator_Computes_CorrectValues(string text, object expectedValue)
         {
             AssertValue(text, expectedValue);
@@ -153,6 +155,43 @@ namespace Syron.Tests.CodeAnalysis
 
             var diagnostics = @"
                 ERROR: Cannot convert type 'System.Int32' to 'System.Boolean'.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+
+        [Fact]
+        public void Evaluator_ForStatement_Reports_CannotConvert_UpperBound()
+        {
+            var text = @"
+                {
+                    let result = 0
+                    for i = [false] to 10
+                        result = result + i
+                }
+            ";
+
+            var diagnostics = @"
+                ERROR: Cannot convert type 'System.Boolean' to 'System.Int32'.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
+        public void Evaluator_ForStatement_Reports_CannotConvert_LowerBound()
+        {
+            var text = @"
+                {
+                    let result = 0
+                    for i = 1 to [true]
+                        result = result + i
+                }
+            ";
+
+            var diagnostics = @"
+                ERROR: Cannot convert type 'System.Boolean' to 'System.Int32'.
             ";
 
             AssertDiagnostics(text, diagnostics);
