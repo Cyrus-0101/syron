@@ -23,6 +23,10 @@ namespace Syron.CodeAnalysis.Syntax
         CloseBraceToken,
         IdentifierToken,
         EqualsToken,
+        LessToken,
+        LessOrEqualsToken,
+        GreaterToken,
+        GreaterOrEqualsToken,
 
         // Keywords
         FalseKeyword,
@@ -46,5 +50,6 @@ namespace Syron.CodeAnalysis.Syntax
         ParenthesizedExpression,
         NameExpression,
         AssignmentExpression,
+
     }
 }
