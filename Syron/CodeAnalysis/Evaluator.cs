@@ -135,6 +135,14 @@ namespace Syron.CodeAnalysis
                     return (int)left / (int)right;
                 case BoundBinaryOperatorKind.LogicalAnd:
                     return (bool)left && (bool)right;
+                case BoundBinaryOperatorKind.Less:
+                    return (int)left < (int)right;
+                case BoundBinaryOperatorKind.LessOrEquals:
+                    return (int)left <= (int)right;
+                case BoundBinaryOperatorKind.Greater:
+                    return (int)left > (int)right;
+                case BoundBinaryOperatorKind.GreaterOrEquals:
+                    return (int)left >= (int)right;
                 case BoundBinaryOperatorKind.LogicalOr:
                     return (bool)left || (bool)right;
                 case BoundBinaryOperatorKind.Equals:
