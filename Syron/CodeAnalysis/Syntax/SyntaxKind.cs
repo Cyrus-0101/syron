@@ -36,7 +36,8 @@ namespace Syron.CodeAnalysis.Syntax
         TrueKeyword,
         LetKeyword,
         WhileKeyword,
-
+        ForKeyword,
+        ToKeyword,
 
         // Nodes
         CompilationUnit,
@@ -46,6 +47,7 @@ namespace Syron.CodeAnalysis.Syntax
         BlockStatement,
         VariableDeclaration,
         IfStatement,
+        ForStatement,
         ExpressionStatement,
 
         // Expressions

@@ -83,9 +83,23 @@ namespace Syron.CodeAnalysis.Syntax
                     return ParseIfStatement();
                 case SyntaxKind.WhileKeyword:
                     return ParseWhileStatement();
+                case SyntaxKind.ForKeyword:
+                    return ParseForStatement();
                 default:
                     return ParseExpressionStatement();
             }
+        }
+
+        private StatementSyntax ParseForStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.ForKeyword);
+            var identifier = MatchToken(SyntaxKind.IdentifierToken);
+            var equals = MatchToken(SyntaxKind.EqualsToken);
+            var lowerBound = ParseExpression();
+            var toKeyword = MatchToken(SyntaxKind.ToKeyword);
+            var upperBound = ParseExpression();
+            var body = ParseStatement();
+            return new ForStatementSyntax(keyword, identifier, equals, lowerBound, toKeyword, upperBound, body);
         }
 
         private StatementSyntax ParseWhileStatement()

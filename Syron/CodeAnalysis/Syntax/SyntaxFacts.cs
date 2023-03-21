@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace Syron.CodeAnalysis.Syntax
 {
     public static class SyntaxFacts
@@ -69,6 +66,10 @@ namespace Syron.CodeAnalysis.Syntax
                     return SyntaxKind.LetKeyword;
                 case "while":
                     return SyntaxKind.WhileKeyword;
+                case "for":
+                    return SyntaxKind.ForKeyword;
+                case "to":
+                    return SyntaxKind.ToKeyword;
 
                 default:
                     return SyntaxKind.IdentifierToken;
@@ -151,6 +152,10 @@ namespace Syron.CodeAnalysis.Syntax
                     return "let";
                 case SyntaxKind.WhileKeyword:
                     return "while";
+                case SyntaxKind.ForKeyword:
+                    return "for";
+                case SyntaxKind.ToKeyword:
+                    return "to";
 
                 default:
                     return null;
