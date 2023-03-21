@@ -13,38 +13,50 @@ namespace Syron.CodeAnalysis.Syntax
         HatToken,
         SlashToken,
         BangToken,
+        EqualsToken,
         AmpersandAmpersandToken,
         PipePipeToken,
         EqualsEqualsToken,
         BangEqualsToken,
+        LessToken,
+        LessOrEqualsToken,
+        GreaterToken,
+        GreaterOrEqualsToken,
         OpenParenthesisToken,
         CloseParenthesisToken,
         OpenBraceToken,
         CloseBraceToken,
         IdentifierToken,
-        EqualsToken,
 
         // Keywords
+        ElseKeyword,
         FalseKeyword,
-        TrueKeyword,
+        IfKeyword,
         ConstKeyword,
+        TrueKeyword,
         LetKeyword,
+        WhileKeyword,
+        ForKeyword,
+        ToKeyword,
 
         // Nodes
         CompilationUnit,
+        ElseClause,
 
         // Statements
         BlockStatement,
-        ExpressionStatement,
         VariableDeclaration,
-
+        IfStatement,
+        ForStatement,
+        ExpressionStatement,
 
         // Expressions
         LiteralExpression,
+        NameExpression,
         UnaryExpression,
         BinaryExpression,
         ParenthesizedExpression,
-        NameExpression,
         AssignmentExpression,
+        WhileStatement,
     }
 }

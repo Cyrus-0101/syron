@@ -2,6 +2,14 @@ namespace Syron.CodeAnalysis.Binding
 {
     internal enum BoundNodeKind
     {
+        // Statements
+        BlockStatement,
+        VariableDeclaration,
+        IfStatement,
+        WhileStatement,
+        ForStatement,
+        ExpressionStatement,
+
         // Expressions
         LiteralExpression,
         VariableExpression,
@@ -9,11 +17,5 @@ namespace Syron.CodeAnalysis.Binding
         UnaryExpression,
         BinaryExpression,
 
-        // Statements
-        BlockStatement,
-        ExpressionStatement,
-
-        // Declarations#
-        VariableDeclaration
     }
 }

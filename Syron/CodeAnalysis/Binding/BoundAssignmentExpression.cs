@@ -1,3 +1,5 @@
+using System;
+
 namespace Syron.CodeAnalysis.Binding
 {
     internal sealed class BoundAssignmentExpression : BoundExpression
@@ -9,12 +11,8 @@ namespace Syron.CodeAnalysis.Binding
         }
 
         public override BoundNodeKind Kind => BoundNodeKind.AssignmentExpression;
-
         public override Type Type => Expression.Type;
-
         public VariableSymbol Variable { get; }
         public BoundExpression Expression { get; }
-
-
     }
 }

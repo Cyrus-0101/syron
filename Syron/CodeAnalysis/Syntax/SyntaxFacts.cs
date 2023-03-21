@@ -1,5 +1,3 @@
-using System;
-
 namespace Syron.CodeAnalysis.Syntax
 {
     public static class SyntaxFacts
@@ -33,6 +31,10 @@ namespace Syron.CodeAnalysis.Syntax
 
                 case SyntaxKind.EqualsEqualsToken:
                 case SyntaxKind.BangEqualsToken:
+                case SyntaxKind.LessToken:
+                case SyntaxKind.LessOrEqualsToken:
+                case SyntaxKind.GreaterToken:
+                case SyntaxKind.GreaterOrEqualsToken:
                     return 3;
 
                 case SyntaxKind.AmpersandAmpersandToken:
@@ -50,14 +52,25 @@ namespace Syron.CodeAnalysis.Syntax
         {
             switch (text)
             {
-                case "true":
-                    return SyntaxKind.TrueKeyword;
+                case "else":
+                    return SyntaxKind.ElseKeyword;
                 case "false":
                     return SyntaxKind.FalseKeyword;
+                case "if":
+                    return SyntaxKind.IfKeyword;
                 case "const":
                     return SyntaxKind.ConstKeyword;
+                case "true":
+                    return SyntaxKind.TrueKeyword;
                 case "let":
                     return SyntaxKind.LetKeyword;
+                case "while":
+                    return SyntaxKind.WhileKeyword;
+                case "for":
+                    return SyntaxKind.ForKeyword;
+                case "to":
+                    return SyntaxKind.ToKeyword;
+
                 default:
                     return SyntaxKind.IdentifierToken;
             }
@@ -68,7 +81,7 @@ namespace Syron.CodeAnalysis.Syntax
             var kinds = (SyntaxKind[])Enum.GetValues(typeof(SyntaxKind));
             foreach (var kind in kinds)
             {
-                if (kind.GetUnaryOperatorPrecedence() > 0)
+                if (GetUnaryOperatorPrecedence(kind) > 0)
                     yield return kind;
             }
         }
@@ -78,7 +91,7 @@ namespace Syron.CodeAnalysis.Syntax
             var kinds = (SyntaxKind[])Enum.GetValues(typeof(SyntaxKind));
             foreach (var kind in kinds)
             {
-                if (kind.GetBinaryOperatorPrecedence() > 0)
+                if (GetBinaryOperatorPrecedence(kind) > 0)
                     yield return kind;
             }
         }
@@ -101,6 +114,14 @@ namespace Syron.CodeAnalysis.Syntax
                     return "!";
                 case SyntaxKind.EqualsToken:
                     return "=";
+                case SyntaxKind.LessToken:
+                    return "<";
+                case SyntaxKind.LessOrEqualsToken:
+                    return "<=";
+                case SyntaxKind.GreaterToken:
+                    return ">";
+                case SyntaxKind.GreaterOrEqualsToken:
+                    return ">=";
                 case SyntaxKind.AmpersandAmpersandToken:
                     return "&&";
                 case SyntaxKind.PipePipeToken:
@@ -117,14 +138,24 @@ namespace Syron.CodeAnalysis.Syntax
                     return "{";
                 case SyntaxKind.CloseBraceToken:
                     return "}";
+                case SyntaxKind.ElseKeyword:
+                    return "else";
                 case SyntaxKind.FalseKeyword:
                     return "false";
-                case SyntaxKind.TrueKeyword:
-                    return "true";
+                case SyntaxKind.IfKeyword:
+                    return "if";
                 case SyntaxKind.ConstKeyword:
                     return "const";
+                case SyntaxKind.TrueKeyword:
+                    return "true";
                 case SyntaxKind.LetKeyword:
                     return "let";
+                case SyntaxKind.WhileKeyword:
+                    return "while";
+                case SyntaxKind.ForKeyword:
+                    return "for";
+                case SyntaxKind.ToKeyword:
+                    return "to";
 
                 default:
                     return null;

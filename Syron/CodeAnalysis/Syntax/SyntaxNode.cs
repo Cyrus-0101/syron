@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using Syron.CodeAnalysis.Text;
 
 namespace Syron.CodeAnalysis.Syntax
 {
@@ -12,10 +15,9 @@ namespace Syron.CodeAnalysis.Syntax
         {
             get
             {
-                var first = GetChildren().First();
-                var last = GetChildren().Last();
-
-                return TextSpan.FromBounds(first.Span.Start, last.Span.End);
+                var first = GetChildren().First().Span;
+                var last = GetChildren().Last().Span;
+                return TextSpan.FromBounds(first.Start, last.End);
             }
         }
 
@@ -28,14 +30,19 @@ namespace Syron.CodeAnalysis.Syntax
                 if (typeof(SyntaxNode).IsAssignableFrom(property.PropertyType))
                 {
                     var child = (SyntaxNode)property.GetValue(this);
-                    yield return child;
+
+                    if (child != null)
+                        yield return child;
                 }
                 else if (typeof(IEnumerable<SyntaxNode>).IsAssignableFrom(property.PropertyType))
                 {
                     var children = (IEnumerable<SyntaxNode>)property.GetValue(this);
 
                     foreach (var child in children)
-                        yield return child;
+                    {
+                        if (child != null)
+                            yield return child;
+                    }
                 }
             }
         }
@@ -50,13 +57,11 @@ namespace Syron.CodeAnalysis.Syntax
             var isToConsole = writer == Console.Out;
             var marker = isLast ? "└──" : "├──";
 
-            writer.Write(indent);
-
             if (isToConsole)
                 Console.ForegroundColor = ConsoleColor.DarkGray;
 
+            writer.Write(indent);
             writer.Write(marker);
-
 
             if (isToConsole)
                 Console.ForegroundColor = node is SyntaxToken ? ConsoleColor.Blue : ConsoleColor.Cyan;
@@ -74,7 +79,7 @@ namespace Syron.CodeAnalysis.Syntax
 
             writer.WriteLine();
 
-            indent += isLast ? "   " : "│   ";
+            indent += isLast ? "   " : "│  ";
 
             var lastChild = node.GetChildren().LastOrDefault();
 

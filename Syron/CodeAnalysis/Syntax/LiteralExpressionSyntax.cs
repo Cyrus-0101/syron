@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Syron.CodeAnalysis.Syntax
 {
     public sealed class LiteralExpressionSyntax : ExpressionSyntax
@@ -18,6 +16,5 @@ namespace Syron.CodeAnalysis.Syntax
         public override SyntaxKind Kind => SyntaxKind.LiteralExpression;
         public SyntaxToken LiteralToken { get; }
         public object Value { get; }
-
     }
 }

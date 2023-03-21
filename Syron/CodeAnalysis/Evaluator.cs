@@ -1,5 +1,4 @@
-using System;
-using Syron.CodeAnalysis.Binding;
+﻿using Syron.CodeAnalysis.Binding;
 
 //   _________
 //  /   _____/__.__._______  ____   ____  
@@ -8,6 +7,7 @@ using Syron.CodeAnalysis.Binding;
 // /_______  / ____| |__|   \____/|___|  /
 //         \/\/                        \/ 
 
+
 namespace Syron.CodeAnalysis
 {
     internal sealed class Evaluator
@@ -15,7 +15,7 @@ namespace Syron.CodeAnalysis
         private readonly BoundStatement _root;
         private readonly Dictionary<VariableSymbol, object> _variables;
 
-        private object _lastValue = null;
+        private object _lastValue;
 
         public Evaluator(BoundStatement root, Dictionary<VariableSymbol, object> variables)
         {
@@ -39,11 +39,32 @@ namespace Syron.CodeAnalysis
                 case BoundNodeKind.VariableDeclaration:
                     EvaluateVariableDeclaration((BoundVariableDeclaration)node);
                     break;
+                case BoundNodeKind.IfStatement:
+                    EvaluateIfStatement((BoundIfStatement)node);
+                    break;
+                case BoundNodeKind.WhileStatement:
+                    EvaluateWhileStatement((BoundWhileStatement)node);
+                    break;
+                case BoundNodeKind.ForStatement:
+                    EvaluateForStatement((BoundForStatement)node);
+                    break;
                 case BoundNodeKind.ExpressionStatement:
                     EvaluateExpressionStatement((BoundExpressionStatement)node);
                     break;
                 default:
                     throw new Exception($"Unexpected node {node.Kind}");
+            }
+        }
+
+        private void EvaluateForStatement(BoundForStatement node)
+        {
+            var lowerBound = (int)EvaluateExpression(node.LowerBound);
+            var upperBound = (int)EvaluateExpression(node.UpperBound);
+
+            for (var i = lowerBound; i <= upperBound; i++)
+            {
+                _variables[node.Variable] = i;
+                EvaluateStatement(node.Body);
             }
         }
 
@@ -60,6 +81,21 @@ namespace Syron.CodeAnalysis
                 EvaluateStatement(statement);
         }
 
+        private void EvaluateIfStatement(BoundIfStatement node)
+        {
+            var condition = (bool)EvaluateExpression(node.Condition);
+            if (condition)
+                EvaluateStatement(node.ThenStatement);
+            else if (node.ElseStatement != null)
+                EvaluateStatement(node.ElseStatement);
+        }
+
+        private void EvaluateWhileStatement(BoundWhileStatement node)
+        {
+            while ((bool)EvaluateExpression(node.Condition))
+                EvaluateStatement(node.Body);
+        }
+
         private void EvaluateExpressionStatement(BoundExpressionStatement node)
         {
             _lastValue = EvaluateExpression(node.Expression);
@@ -72,7 +108,7 @@ namespace Syron.CodeAnalysis
                 case BoundNodeKind.LiteralExpression:
                     return EvaluateLiteralExpression((BoundLiteralExpression)node);
                 case BoundNodeKind.VariableExpression:
-                    return this.EvaluateVariableExpression((BoundVariableExpression)node);
+                    return EvaluateVariableExpression((BoundVariableExpression)node);
                 case BoundNodeKind.AssignmentExpression:
                     return EvaluateAssignmentExpression((BoundAssignmentExpression)node);
                 case BoundNodeKind.UnaryExpression:
@@ -141,6 +177,14 @@ namespace Syron.CodeAnalysis
                     return Equals(left, right);
                 case BoundBinaryOperatorKind.NotEquals:
                     return !Equals(left, right);
+                case BoundBinaryOperatorKind.Less:
+                    return (int)left < (int)right;
+                case BoundBinaryOperatorKind.LessOrEquals:
+                    return (int)left <= (int)right;
+                case BoundBinaryOperatorKind.Greater:
+                    return (int)left > (int)right;
+                case BoundBinaryOperatorKind.GreaterOrEquals:
+                    return (int)left >= (int)right;
                 case BoundBinaryOperatorKind.Exponentiation:
                     return (int)Math.Pow((int)left, (int)right);
                 default:

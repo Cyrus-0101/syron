@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Syron.CodeAnalysis.Text;
 
 namespace Syron.CodeAnalysis.Syntax
@@ -88,7 +86,6 @@ namespace Syron.CodeAnalysis.Syntax
                     {
                         _kind = SyntaxKind.AmpersandAmpersandToken;
                         _position += 2;
-                        break;
                     }
                     break;
                 case '|':
@@ -96,7 +93,6 @@ namespace Syron.CodeAnalysis.Syntax
                     {
                         _kind = SyntaxKind.PipePipeToken;
                         _position += 2;
-                        break;
                     }
                     break;
                 case '=':
@@ -107,8 +103,8 @@ namespace Syron.CodeAnalysis.Syntax
                     }
                     else
                     {
-                        _position++;
                         _kind = SyntaxKind.EqualsEqualsToken;
+                        _position++;
                     }
                     break;
                 case '!':
@@ -123,6 +119,30 @@ namespace Syron.CodeAnalysis.Syntax
                         _position++;
                     }
                     break;
+                case '<':
+                    _position++;
+                    if (Current != '=')
+                    {
+                        _kind = SyntaxKind.LessToken;
+                    }
+                    else
+                    {
+                        _kind = SyntaxKind.LessOrEqualsToken;
+                        _position++;
+                    }
+                    break;
+                case '>':
+                    _position++;
+                    if (Current != '=')
+                    {
+                        _kind = SyntaxKind.GreaterToken;
+                    }
+                    else
+                    {
+                        _kind = SyntaxKind.GreaterOrEqualsToken;
+                        _position++;
+                    }
+                    break;
                 case '0':
                 case '1':
                 case '2':
@@ -133,7 +153,7 @@ namespace Syron.CodeAnalysis.Syntax
                 case '7':
                 case '8':
                 case '9':
-                    ReadNumberToken();
+                    ReadNumber();
                     break;
                 case ' ':
                 case '\t':
@@ -166,6 +186,7 @@ namespace Syron.CodeAnalysis.Syntax
 
             return new SyntaxToken(_kind, _start, text, _value);
         }
+
         private void ReadWhiteSpace()
         {
             while (char.IsWhiteSpace(Current))
@@ -174,7 +195,7 @@ namespace Syron.CodeAnalysis.Syntax
             _kind = SyntaxKind.WhitespaceToken;
         }
 
-        private void ReadNumberToken()
+        private void ReadNumber()
         {
             while (char.IsDigit(Current))
                 _position++;

@@ -6,30 +6,28 @@ namespace Syron.CodeAnalysis.Binding
     internal sealed class BoundBinaryOperator
     {
         private BoundBinaryOperator(SyntaxKind syntaxKind, BoundBinaryOperatorKind kind, Type type)
-         : this(syntaxKind, kind, type, type, type)
+            : this(syntaxKind, kind, type, type, type)
         {
-
         }
 
         private BoundBinaryOperator(SyntaxKind syntaxKind, BoundBinaryOperatorKind kind, Type operandType, Type resultType)
-         : this(syntaxKind, kind, operandType, operandType, resultType)
+            : this(syntaxKind, kind, operandType, operandType, resultType)
         {
-
         }
 
-        private BoundBinaryOperator(SyntaxKind syntaxKind, BoundBinaryOperatorKind kind, Type leftType, Type rightTye, Type resultType)
+        private BoundBinaryOperator(SyntaxKind syntaxKind, BoundBinaryOperatorKind kind, Type leftType, Type rightType, Type resultType)
         {
             SyntaxKind = syntaxKind;
             Kind = kind;
             LeftType = leftType;
-            RightTye = rightTye;
+            RightType = rightType;
             Type = resultType;
         }
 
         public SyntaxKind SyntaxKind { get; }
         public BoundBinaryOperatorKind Kind { get; }
         public Type LeftType { get; }
-        public Type RightTye { get; }
+        public Type RightType { get; }
         public Type Type { get; }
 
         private static BoundBinaryOperator[] _operators =
@@ -37,11 +35,16 @@ namespace Syron.CodeAnalysis.Binding
             new BoundBinaryOperator(SyntaxKind.PlusToken, BoundBinaryOperatorKind.Addition, typeof(int)),
             new BoundBinaryOperator(SyntaxKind.MinusToken, BoundBinaryOperatorKind.Subtraction, typeof(int)),
             new BoundBinaryOperator(SyntaxKind.StarToken, BoundBinaryOperatorKind.Multiplication, typeof(int)),
+            new BoundBinaryOperator(SyntaxKind.HatToken, BoundBinaryOperatorKind.Exponentiation, typeof(int)),
             new BoundBinaryOperator(SyntaxKind.SlashToken, BoundBinaryOperatorKind.Division, typeof(int)),
+
             new BoundBinaryOperator(SyntaxKind.EqualsEqualsToken, BoundBinaryOperatorKind.Equals, typeof(int), typeof(bool)),
             new BoundBinaryOperator(SyntaxKind.BangEqualsToken, BoundBinaryOperatorKind.NotEquals, typeof(int), typeof(bool)),
-            new BoundBinaryOperator(SyntaxKind.HatToken, BoundBinaryOperatorKind.Exponentiation, typeof(int)),
-            new BoundBinaryOperator(SyntaxKind.EqualsToken, BoundBinaryOperatorKind.Assignment, typeof(int), typeof(int)),
+            new BoundBinaryOperator(SyntaxKind.LessToken, BoundBinaryOperatorKind.Less, typeof(int), typeof(bool)),
+            new BoundBinaryOperator(SyntaxKind.LessOrEqualsToken, BoundBinaryOperatorKind.LessOrEquals, typeof(int), typeof(bool)),
+            new BoundBinaryOperator(SyntaxKind.GreaterToken, BoundBinaryOperatorKind.Greater, typeof(int), typeof(bool)),
+            new BoundBinaryOperator(SyntaxKind.GreaterOrEqualsToken, BoundBinaryOperatorKind.GreaterOrEquals, typeof(int), typeof(bool)),
+
             new BoundBinaryOperator(SyntaxKind.AmpersandAmpersandToken, BoundBinaryOperatorKind.LogicalAnd, typeof(bool)),
             new BoundBinaryOperator(SyntaxKind.PipePipeToken, BoundBinaryOperatorKind.LogicalOr, typeof(bool)),
             new BoundBinaryOperator(SyntaxKind.EqualsEqualsToken, BoundBinaryOperatorKind.Equals, typeof(bool)),
@@ -52,7 +55,7 @@ namespace Syron.CodeAnalysis.Binding
         {
             foreach (var op in _operators)
             {
-                if (op.SyntaxKind == syntaxKind && op.LeftType == leftType && op.RightTye == rightType)
+                if (op.SyntaxKind == syntaxKind && op.LeftType == leftType && op.RightType == rightType)
                     return op;
             }
 

@@ -17,15 +17,12 @@ namespace Syron.CodeAnalysis.Binding
             Previous = previous;
             Diagnostics = diagnostics;
             Variables = variables;
-            Expression = statement;
+            Statement = statement;
         }
 
         public BoundGlobalScope Previous { get; }
-
         public ImmutableArray<Diagnostic> Diagnostics { get; }
-
         public ImmutableArray<VariableSymbol> Variables { get; }
-
-        public BoundStatement Expression { get; }
+        public BoundStatement Statement { get; }
     }
 }
