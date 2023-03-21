@@ -39,6 +39,7 @@ namespace Syron.Tests.CodeAnalysis
         [InlineData("{ let a = 0 if a == 4 a = 10 a }", 0)]
         [InlineData("{ let a = 0 if a == 0 a = 10 else a = 5 a }", 10)]
         [InlineData("{ let a = 0 if a == 4 a = 10 else a = 5 a }", 5)]
+        [InlineData("{ let i = 10 let result = 0 while i > 0 { result = result + i i = i - 1} result }", 55)]
         public void Evaluator_Computes_CorrectValues(string text, object expectedValue)
         {
             AssertValue(text, expectedValue);
@@ -122,6 +123,41 @@ namespace Syron.Tests.CodeAnalysis
 
             AssertDiagnostics(text, diagnostics);
         }
+
+        [Fact]
+        public void Evaluator_IfStatement_Reports_CannotConvert()
+        {
+            var text = @"
+                {
+                    var x = 0
+                    if [10]
+                        x = 10
+                }
+            ";
+            var diagnostics = @"
+                Cannot convert type 'System.Int32' to 'System.Boolean'.
+            ";
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
+        public void Evaluator_WhileStatement_Reports_CannotConvert()
+        {
+            var text = @"
+                {
+                    var x = 0
+                    while [10]
+                        x = 10
+                }
+            ";
+
+            var diagnostics = @"
+                Cannot convert type 'System.Int32' to 'System.Boolean'.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
 
         [Fact]
         public void Evaluator_Unary_Reports_Undefined()

@@ -67,6 +67,8 @@ namespace Syron.CodeAnalysis.Syntax
                     return SyntaxKind.TrueKeyword;
                 case "let":
                     return SyntaxKind.LetKeyword;
+                case "while":
+                    return SyntaxKind.WhileKeyword;
 
                 default:
                     return SyntaxKind.IdentifierToken;
@@ -147,6 +149,8 @@ namespace Syron.CodeAnalysis.Syntax
                     return "true";
                 case SyntaxKind.LetKeyword:
                     return "let";
+                case SyntaxKind.WhileKeyword:
+                    return "while";
 
                 default:
                     return null;

@@ -6,6 +6,7 @@ namespace Syron.CodeAnalysis.Binding
         BlockStatement,
         VariableDeclaration,
         IfStatement,
+        WhileStatement,
         ExpressionStatement,
 
         // Expressions

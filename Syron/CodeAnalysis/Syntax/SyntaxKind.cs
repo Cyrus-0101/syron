@@ -35,6 +35,8 @@ namespace Syron.CodeAnalysis.Syntax
         ConstKeyword,
         TrueKeyword,
         LetKeyword,
+        WhileKeyword,
+
 
         // Nodes
         CompilationUnit,
@@ -53,5 +55,6 @@ namespace Syron.CodeAnalysis.Syntax
         BinaryExpression,
         ParenthesizedExpression,
         AssignmentExpression,
+        WhileStatement,
     }
 }
