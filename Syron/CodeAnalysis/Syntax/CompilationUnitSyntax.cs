@@ -9,7 +9,7 @@ namespace Syron.CodeAnalysis.Syntax
         }
 
         public override SyntaxKind Kind => SyntaxKind.CompilationUnit;
-        public SyntaxToken EndOfFileToken { get; }
         public StatementSyntax Statement { get; }
+        public SyntaxToken EndOfFileToken { get; }
     }
 }

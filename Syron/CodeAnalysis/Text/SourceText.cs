@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Immutable;
 
 //   _________
@@ -21,36 +20,9 @@ namespace Syron.CodeAnalysis.Text
             Lines = ParseLines(this, text);
         }
 
-        public ImmutableArray<TextLine> Lines { get; }
-
-        public char this[int index] => _text[index];
-
-        public int Length => _text.Length;
-
-        public int GetLineIndex(int position)
+        public static SourceText From(string text)
         {
-            var lower = 0;
-            var upper = Lines.Length - 1;
-
-            while (lower <= upper)
-            {
-                var index = lower + (upper - lower) / 2;
-                var start = Lines[index].Start;
-
-                if (position == start)
-                    return index;
-
-                if (start > position)
-                {
-                    upper = index - 1;
-                }
-                else
-                {
-                    lower = index + 1;
-                }
-            }
-
-            return lower - 1;
+            return new SourceText(text);
         }
 
         private static ImmutableArray<TextLine> ParseLines(SourceText sourceText, string text)
@@ -105,9 +77,36 @@ namespace Syron.CodeAnalysis.Text
             return 0;
         }
 
-        public static SourceText From(string text)
+        public ImmutableArray<TextLine> Lines { get; }
+
+        public char this[int index] => _text[index];
+
+        public int Length => _text.Length;
+
+        public int GetLineIndex(int position)
         {
-            return new SourceText(text);
+            var lower = 0;
+            var upper = Lines.Length - 1;
+
+            while (lower <= upper)
+            {
+                var index = lower + (upper - lower) / 2;
+                var start = Lines[index].Start;
+
+                if (position == start)
+                    return index;
+
+                if (start > position)
+                {
+                    upper = index - 1;
+                }
+                else
+                {
+                    lower = index + 1;
+                }
+            }
+
+            return lower - 1;
         }
 
         public override string ToString() => _text;

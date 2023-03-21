@@ -1,8 +1,6 @@
-using System.Collections.Generic;
 using System.Collections.Immutable;
 
 using Syron.CodeAnalysis.Text;
-
 
 namespace Syron.CodeAnalysis.Syntax
 {
@@ -11,7 +9,6 @@ namespace Syron.CodeAnalysis.Syntax
         private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
         private readonly SourceText _text;
         private readonly ImmutableArray<SyntaxToken> _tokens;
-
         private int _position;
 
         public Parser(SourceText text)
@@ -29,7 +26,6 @@ namespace Syron.CodeAnalysis.Syntax
                 {
                     tokens.Add(token);
                 }
-
             } while (token.Kind != SyntaxKind.EndOfFileToken);
 
             _text = text;
@@ -71,7 +67,6 @@ namespace Syron.CodeAnalysis.Syntax
         {
             var statement = ParseStatement();
             var endOfFileToken = MatchToken(SyntaxKind.EndOfFileToken);
-
             return new CompilationUnitSyntax(statement, endOfFileToken);
         }
 
@@ -81,39 +76,24 @@ namespace Syron.CodeAnalysis.Syntax
             {
                 case SyntaxKind.OpenBraceToken:
                     return ParseBlockStatement();
-                case SyntaxKind.LetKeyword:
                 case SyntaxKind.ConstKeyword:
+                case SyntaxKind.LetKeyword:
                     return ParseVariableDeclaration();
+                case SyntaxKind.IfKeyword:
+                    return ParseIfStatement();
                 default:
                     return ParseExpressionStatement();
             }
         }
 
-        private StatementSyntax ParseVariableDeclaration()
-        {
-            var expectedKeyword = Current.Kind == SyntaxKind.LetKeyword
-                ? SyntaxKind.LetKeyword
-                : SyntaxKind.ConstKeyword;
-
-            var keywordToken = MatchToken(expectedKeyword);
-
-            var identifierToken = MatchToken(SyntaxKind.IdentifierToken);
-
-            var equalsToken = MatchToken(SyntaxKind.EqualsToken);
-
-            var initializer = ParseExpression();
-
-            return new VariableDeclarationSyntax(keywordToken, identifierToken, equalsToken, initializer);
-        }
-
-        private StatementSyntax ParseBlockStatement()
+        private BlockStatementSyntax ParseBlockStatement()
         {
             var statements = ImmutableArray.CreateBuilder<StatementSyntax>();
 
             var openBraceToken = MatchToken(SyntaxKind.OpenBraceToken);
 
-            while (Current.Kind != SyntaxKind.CloseBraceToken &&
-                   Current.Kind != SyntaxKind.EndOfFileToken)
+            while (Current.Kind != SyntaxKind.EndOfFileToken &&
+                   Current.Kind != SyntaxKind.CloseBraceToken)
             {
                 var statement = ParseStatement();
                 statements.Add(statement);
@@ -122,13 +102,40 @@ namespace Syron.CodeAnalysis.Syntax
             var closeBraceToken = MatchToken(SyntaxKind.CloseBraceToken);
 
             return new BlockStatementSyntax(openBraceToken, statements.ToImmutable(), closeBraceToken);
+        }
 
+        private StatementSyntax ParseVariableDeclaration()
+        {
+            var expected = Current.Kind == SyntaxKind.LetKeyword ? SyntaxKind.LetKeyword : SyntaxKind.ConstKeyword;
+            var keyword = MatchToken(expected);
+            var identifier = MatchToken(SyntaxKind.IdentifierToken);
+            var equals = MatchToken(SyntaxKind.EqualsToken);
+            var initializer = ParseExpression();
+            return new VariableDeclarationSyntax(keyword, identifier, equals, initializer);
+        }
+
+        private StatementSyntax ParseIfStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.IfKeyword);
+            var condition = ParseExpression();
+            var statement = ParseStatement();
+            var elseClause = ParseElseClause();
+            return new IfStatementSyntax(keyword, condition, statement, elseClause);
+        }
+
+        private ElseClauseSyntax ParseElseClause()
+        {
+            if (Current.Kind != SyntaxKind.ElseKeyword)
+                return null;
+
+            var keyword = NextToken();
+            var statement = ParseStatement();
+            return new ElseClauseSyntax(keyword, statement);
         }
 
         private ExpressionStatementSyntax ParseExpressionStatement()
         {
             var expression = ParseExpression();
-
             return new ExpressionStatementSyntax(expression);
         }
 
@@ -155,7 +162,6 @@ namespace Syron.CodeAnalysis.Syntax
         {
             ExpressionSyntax left;
             var unaryOperatorPrecedence = Current.Kind.GetUnaryOperatorPrecedence();
-
             if (unaryOperatorPrecedence != 0 && unaryOperatorPrecedence >= parentPrecedence)
             {
                 var operatorToken = NextToken();
@@ -170,7 +176,6 @@ namespace Syron.CodeAnalysis.Syntax
             while (true)
             {
                 var precedence = Current.Kind.GetBinaryOperatorPrecedence();
-
                 if (precedence == 0 || precedence <= parentPrecedence)
                     break;
 

@@ -1,7 +1,6 @@
 ﻿using System.Text;
 
 using Syron.CodeAnalysis;
-using Syron.CodeAnalysis.Binding;
 using Syron.CodeAnalysis.Syntax;
 using Syron.CodeAnalysis.Text;
 
@@ -26,9 +25,9 @@ namespace Syron
         private static void Main()
         {
             var showTree = false;
-
             var variables = new Dictionary<VariableSymbol, object>();
             var textBuilder = new StringBuilder();
+            Compilation previous = null;
 
             const string startText = @"
   _________
@@ -50,9 +49,6 @@ namespace Syron
             Console.WriteLine("Type 'reset' to reset the program.");
             // Reset the cursor position to the next line
             Console.SetCursorPosition(0, Console.CursorTop + 1);
-
-            Compilation previous = null;
-
             while (true)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
@@ -60,7 +56,7 @@ namespace Syron
                 if (textBuilder.Length == 0)
                     Console.Write("» ");
                 else
-                    Console.Write("• ");
+                    Console.Write("· ");
 
                 Console.ResetColor();
 
@@ -74,7 +70,6 @@ namespace Syron
                         Console.Write("Don't forget to sponsor me on GitHub! :D https://github.com/sponsors/Cyrus-0101");
                         break;
                     }
-
                     else if (input == "showTree")
                     {
                         showTree = !showTree;
@@ -102,7 +97,9 @@ namespace Syron
                 if (!isBlank && syntaxTree.Diagnostics.Any())
                     continue;
 
-                var compilation = previous == null ? new Compilation(syntaxTree) : previous.ContinueWith(syntaxTree);
+                var compilation = previous == null
+                                    ? new Compilation(syntaxTree)
+                                    : previous.ContinueWith(syntaxTree);
 
                 var result = compilation.Evaluate(variables);
 
@@ -116,7 +113,6 @@ namespace Syron
                     Console.ForegroundColor = ConsoleColor.Magenta;
                     Console.WriteLine(result.Value);
                     Console.ResetColor();
-
                     previous = compilation;
                 }
                 else
@@ -131,7 +127,7 @@ namespace Syron
                         Console.WriteLine();
 
                         Console.ForegroundColor = ConsoleColor.DarkRed;
-                        Console.Write($"(Line Number: {lineNumber}, Position: {character}): ");
+                        Console.Write($"({lineNumber}, {character}): ");
                         Console.WriteLine(diagnostic);
                         Console.ResetColor();
 

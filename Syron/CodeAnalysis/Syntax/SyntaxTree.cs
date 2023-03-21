@@ -1,7 +1,4 @@
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-
 using Syron.CodeAnalysis.Text;
 
 //   _________
@@ -11,6 +8,7 @@ using Syron.CodeAnalysis.Text;
 // /_______  / ____| |__|   \____/|___|  /
 //         \/\/                        \/ 
 
+
 namespace Syron.CodeAnalysis.Syntax
 {
     public sealed class SyntaxTree
@@ -19,9 +17,7 @@ namespace Syron.CodeAnalysis.Syntax
         {
             var parser = new Parser(text);
             var root = parser.ParseCompilationUnit();
-
             var diagnostics = parser.Diagnostics.ToImmutableArray();
-
 
             Text = text;
             Diagnostics = diagnostics;

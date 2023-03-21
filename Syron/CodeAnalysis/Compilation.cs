@@ -1,10 +1,7 @@
-using System;
-using System.Linq;
 using System.Collections.Immutable;
 
 using Syron.CodeAnalysis.Binding;
 using Syron.CodeAnalysis.Syntax;
-using System.Threading;
 
 //   _________
 //  /   _____/__.__._______  ____   ____  
@@ -51,17 +48,15 @@ namespace Syron.CodeAnalysis
         public Compilation ContinueWith(SyntaxTree syntaxTree)
         {
             return new Compilation(this, syntaxTree);
-
         }
 
         public EvaluationResult Evaluate(Dictionary<VariableSymbol, object> variables)
         {
             var diagnostics = SyntaxTree.Diagnostics.Concat(GlobalScope.Diagnostics).ToImmutableArray();
-
             if (diagnostics.Any())
                 return new EvaluationResult(diagnostics, null);
 
-            var evaluator = new Evaluator(GlobalScope.Expression, variables);
+            var evaluator = new Evaluator(GlobalScope.Statement, variables);
             var value = evaluator.Evaluate();
             return new EvaluationResult(ImmutableArray<Diagnostic>.Empty, value);
         }

@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
+using Syron.CodeAnalysis.Text;
 
 //   _________
 //  /   _____/__.__._______  ____   ____  
@@ -26,6 +25,5 @@ namespace Syron.CodeAnalysis.Syntax
         public string Text { get; }
         public object Value { get; }
         public override TextSpan Span => new TextSpan(Position, Text?.Length ?? 0);
-
     }
 }
