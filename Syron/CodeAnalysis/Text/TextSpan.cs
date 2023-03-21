@@ -5,7 +5,8 @@
 // /_______  / ____| |__|   \____/|___|  /
 //         \/\/                        \/ 
 
-namespace Syron.CodeAnalysis
+
+namespace Syron.CodeAnalysis.Text
 {
     public struct TextSpan
     {
@@ -14,6 +15,7 @@ namespace Syron.CodeAnalysis
             Start = start;
             Length = length;
         }
+
         public int Start { get; }
         public int Length { get; }
         public int End => Start + Length;
@@ -23,5 +25,7 @@ namespace Syron.CodeAnalysis
             var length = end - start;
             return new TextSpan(start, length);
         }
+
+        public override string ToString() => $"{Start}..{End}";
     }
 }
