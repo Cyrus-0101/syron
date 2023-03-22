@@ -25,6 +25,7 @@ namespace Syron
         private static void Main()
         {
             var showTree = false;
+            var showProgram = false;
             var variables = new Dictionary<VariableSymbol, object>();
             var textBuilder = new StringBuilder();
             Compilation previous = null;
@@ -45,6 +46,7 @@ namespace Syron
             Console.WriteLine("Welcome to Syron programming language!");
             Console.WriteLine("Type ' ' to exit the program.");
             Console.WriteLine("Type 'cls' or 'clear' to clear the screen.");
+            Console.WriteLine("Type 'showProgram' to toggle bound tree display.");
             Console.WriteLine("Type 'showTree' to toggle parse tree display.");
             Console.WriteLine("Type 'reset' to reset the program.");
             // Reset the cursor position to the next line
@@ -76,6 +78,12 @@ namespace Syron
                         Console.WriteLine(showTree ? "Showing parse trees." : "Not showing parse trees");
                         continue;
                     }
+                    else if (input == "showProgram")
+                    {
+                        showProgram = !showProgram;
+                        Console.WriteLine(showProgram ? "Showing bound tree." : "Not showing bound tree.");
+                        continue;
+                    }
                     else if (input == "cls" || input == "clear")
                     {
                         Console.Clear();
@@ -104,9 +112,10 @@ namespace Syron
                 var result = compilation.Evaluate(variables);
 
                 if (showTree)
-                {
                     syntaxTree.Root.WriteTo(Console.Out);
-                }
+
+                if (showProgram)
+                    compilation.EmitTree(Console.Out);
 
                 if (!result.Diagnostics.Any())
                 {
