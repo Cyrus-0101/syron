@@ -62,7 +62,7 @@ namespace Syron.CodeAnalysis.Binding
         private static void PrettyPrint(TextWriter writer, BoundNode node, string indent = "", bool isLast = true)
         {
             var isToConsole = writer == Console.Out;
-            var marker = isLast ? "└── " : "├── ";
+            var marker = isLast ? "└──" : "├──";
 
             if (isToConsole)
                 Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -113,7 +113,7 @@ namespace Syron.CodeAnalysis.Binding
 
             writer.WriteLine();
 
-            indent += isLast ? "   " : "│   ";
+            indent += isLast ? "   " : "│  ";
 
             var lastChild = node.GetChildren().LastOrDefault();
 

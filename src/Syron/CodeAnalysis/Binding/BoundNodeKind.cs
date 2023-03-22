@@ -8,6 +8,9 @@ namespace Syron.CodeAnalysis.Binding
         IfStatement,
         WhileStatement,
         ForStatement,
+        LabelStatement,
+        GotoStatement,
+        ConditionalGotoStatement,
         ExpressionStatement,
 
         // Expressions
@@ -16,6 +19,5 @@ namespace Syron.CodeAnalysis.Binding
         AssignmentExpression,
         UnaryExpression,
         BinaryExpression,
-
     }
 }

@@ -9,7 +9,7 @@ using Syron.CodeAnalysis.Syntax;
 //  \_____  <   |  |\_  __ \/  _ \ /    \ 
 //  /        \___  | |  | \(  <_> )   |  \
 // /_______  / ____| |__|   \____/|___|  /
-//         \/\/                        \/ 
+//         \/\/               
 
 namespace Syron.CodeAnalysis
 {
@@ -20,7 +20,6 @@ namespace Syron.CodeAnalysis
         public Compilation(SyntaxTree syntaxTree)
             : this(null, syntaxTree)
         {
-            SyntaxTree = syntaxTree;
         }
 
         private Compilation(Compilation previous, SyntaxTree syntaxTree)
@@ -70,10 +69,9 @@ namespace Syron.CodeAnalysis
             statement.WriteTo(writer);
         }
 
-        private BoundStatement GetStatement()
+        private BoundBlockStatement GetStatement()
         {
             var result = GlobalScope.Statement;
-
             return Lowerer.Lower(result);
         }
     }
