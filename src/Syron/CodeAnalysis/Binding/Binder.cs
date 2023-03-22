@@ -6,6 +6,7 @@ using Syron.CodeAnalysis.Syntax;
 
 namespace Syron.CodeAnalysis.Binding
 {
+
     internal sealed class Binder
     {
         private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
