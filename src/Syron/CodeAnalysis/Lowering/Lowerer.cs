@@ -16,5 +16,8 @@ namespace Syron.CodeAnalysis.Lowering
             return lowerer.RewriteStatement(node);
         }
 
+        protected override BoundStatement RewriteForStatement(BoundForStatement node)
+        { }
+
     }
 }
