@@ -1,5 +1,6 @@
+using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
-
 using Syron.CodeAnalysis.Text;
 
 namespace Syron.CodeAnalysis.Syntax
@@ -38,7 +39,6 @@ namespace Syron.CodeAnalysis.Syntax
         private SyntaxToken Peek(int offset)
         {
             var index = _position + offset;
-
             if (index >= _tokens.Length)
                 return _tokens[_tokens.Length - 1];
 
@@ -90,26 +90,6 @@ namespace Syron.CodeAnalysis.Syntax
             }
         }
 
-        private StatementSyntax ParseForStatement()
-        {
-            var keyword = MatchToken(SyntaxKind.ForKeyword);
-            var identifier = MatchToken(SyntaxKind.IdentifierToken);
-            var equals = MatchToken(SyntaxKind.EqualsToken);
-            var lowerBound = ParseExpression();
-            var toKeyword = MatchToken(SyntaxKind.ToKeyword);
-            var upperBound = ParseExpression();
-            var body = ParseStatement();
-            return new ForStatementSyntax(keyword, identifier, equals, lowerBound, toKeyword, upperBound, body);
-        }
-
-        private StatementSyntax ParseWhileStatement()
-        {
-            var keyword = MatchToken(SyntaxKind.WhileKeyword);
-            var condition = ParseExpression();
-            var statement = ParseStatement();
-            return new WhileStatementSyntax(keyword, condition, statement);
-        }
-
         private BlockStatementSyntax ParseBlockStatement()
         {
             var statements = ImmutableArray.CreateBuilder<StatementSyntax>();
@@ -119,16 +99,20 @@ namespace Syron.CodeAnalysis.Syntax
             while (Current.Kind != SyntaxKind.EndOfFileToken &&
                    Current.Kind != SyntaxKind.CloseBraceToken)
             {
-
                 var startToken = Current;
 
                 var statement = ParseStatement();
                 statements.Add(statement);
 
+                // If ParseStatement() did not consume any tokens,
+                // we need to skip the current token and continue
+                // in order to avoid an infinite loop.
+                //
+                // We don't need to report an error, because we'll
+                // already tried to parse an expression statement
+                // and reported one.
                 if (Current == startToken)
-                {
                     NextToken();
-                }
             }
 
             var closeBraceToken = MatchToken(SyntaxKind.CloseBraceToken);
@@ -163,6 +147,26 @@ namespace Syron.CodeAnalysis.Syntax
             var keyword = NextToken();
             var statement = ParseStatement();
             return new ElseClauseSyntax(keyword, statement);
+        }
+
+        private StatementSyntax ParseWhileStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.WhileKeyword);
+            var condition = ParseExpression();
+            var body = ParseStatement();
+            return new WhileStatementSyntax(keyword, condition, body);
+        }
+
+        private StatementSyntax ParseForStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.ForKeyword);
+            var identifier = MatchToken(SyntaxKind.IdentifierToken);
+            var equalsToken = MatchToken(SyntaxKind.EqualsToken);
+            var lowerBound = ParseExpression();
+            var toKeyword = MatchToken(SyntaxKind.ToKeyword);
+            var upperBound = ParseExpression();
+            var body = ParseStatement();
+            return new ForStatementSyntax(keyword, identifier, equalsToken, lowerBound, toKeyword, upperBound, body);
         }
 
         private ExpressionStatementSyntax ParseExpressionStatement()

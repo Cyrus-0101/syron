@@ -7,6 +7,7 @@ namespace Syron.CodeAnalysis.Syntax
             switch (kind)
             {
                 case SyntaxKind.PlusToken:
+                case SyntaxKind.TildeToken:
                 case SyntaxKind.MinusToken:
                 case SyntaxKind.BangToken:
                     return 6;
@@ -22,7 +23,6 @@ namespace Syron.CodeAnalysis.Syntax
             {
                 case SyntaxKind.StarToken:
                 case SyntaxKind.SlashToken:
-                case SyntaxKind.HatToken:
                     return 5;
 
                 case SyntaxKind.PlusToken:
@@ -37,10 +37,13 @@ namespace Syron.CodeAnalysis.Syntax
                 case SyntaxKind.GreaterOrEqualsToken:
                     return 3;
 
+                case SyntaxKind.AmpersandToken:
                 case SyntaxKind.AmpersandAmpersandToken:
                     return 2;
 
+                case SyntaxKind.PipeToken:
                 case SyntaxKind.PipePipeToken:
+                case SyntaxKind.HatToken:
                     return 1;
 
                 default:
@@ -112,6 +115,8 @@ namespace Syron.CodeAnalysis.Syntax
                     return "^";
                 case SyntaxKind.BangToken:
                     return "!";
+                case SyntaxKind.TildeToken:
+                    return "~";
                 case SyntaxKind.EqualsToken:
                     return "=";
                 case SyntaxKind.LessToken:
@@ -124,6 +129,10 @@ namespace Syron.CodeAnalysis.Syntax
                     return ">=";
                 case SyntaxKind.AmpersandAmpersandToken:
                     return "&&";
+                case SyntaxKind.AmpersandToken:
+                    return "&";
+                case SyntaxKind.PipeToken:
+                    return "|";
                 case SyntaxKind.PipePipeToken:
                     return "||";
                 case SyntaxKind.EqualsEqualsToken:

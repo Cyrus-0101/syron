@@ -16,6 +16,9 @@ namespace Syron.CodeAnalysis.Syntax
         EqualsToken,
         AmpersandAmpersandToken,
         PipePipeToken,
+        PipeToken,
+        AmpersandToken,
+        TildeToken,
         EqualsEqualsToken,
         BangEqualsToken,
         LessToken,
@@ -58,5 +61,6 @@ namespace Syron.CodeAnalysis.Syntax
         ParenthesizedExpression,
         AssignmentExpression,
         WhileStatement,
+
     }
 }

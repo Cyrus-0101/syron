@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 
 using Syron.CodeAnalysis.Binding;
+using Syron.CodeAnalysis.Lowering;
 using Syron.CodeAnalysis.Syntax;
 
 //   _________
@@ -8,7 +9,7 @@ using Syron.CodeAnalysis.Syntax;
 //  \_____  <   |  |\_  __ \/  _ \ /    \ 
 //  /        \___  | |  | \(  <_> )   |  \
 // /_______  / ____| |__|   \____/|___|  /
-//         \/\/                        \/ 
+//         \/\/               
 
 namespace Syron.CodeAnalysis
 {
@@ -19,7 +20,6 @@ namespace Syron.CodeAnalysis
         public Compilation(SyntaxTree syntaxTree)
             : this(null, syntaxTree)
         {
-            SyntaxTree = syntaxTree;
         }
 
         private Compilation(Compilation previous, SyntaxTree syntaxTree)
@@ -53,12 +53,26 @@ namespace Syron.CodeAnalysis
         public EvaluationResult Evaluate(Dictionary<VariableSymbol, object> variables)
         {
             var diagnostics = SyntaxTree.Diagnostics.Concat(GlobalScope.Diagnostics).ToImmutableArray();
+
             if (diagnostics.Any())
                 return new EvaluationResult(diagnostics, null);
 
-            var evaluator = new Evaluator(GlobalScope.Statement, variables);
+            var statement = GetStatement();
+            var evaluator = new Evaluator(statement, variables);
             var value = evaluator.Evaluate();
             return new EvaluationResult(ImmutableArray<Diagnostic>.Empty, value);
+        }
+
+        public void EmitTree(TextWriter writer)
+        {
+            var statement = GetStatement();
+            statement.WriteTo(writer);
+        }
+
+        private BoundBlockStatement GetStatement()
+        {
+            var result = GlobalScope.Statement;
+            return Lowerer.Lower(result);
         }
     }
 }

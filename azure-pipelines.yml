@@ -11,10 +11,11 @@ pool:
 
 variables:
   buildConfiguration: "Release"
-  tests: "./Syron.Tests/Syron.Tests.csproj"
+  sln: "./src/syron.sln"
+  tests: "./src/Syron.Tests/Syron.Tests.csproj"
 
 steps:
-  - script: dotnet build --configuration $(buildConfiguration)
+  - script: dotnet build --configuration $(buildConfiguration) $(sln)
     displayName: "dotnet build $(buildConfiguration)"
   - script: dotnet test $(tests) --logger "xunit;LogFileName=TestResults.xml" --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
     displayName: "dotnet test"

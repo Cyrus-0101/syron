@@ -57,10 +57,6 @@ namespace Syron.CodeAnalysis.Syntax
                     _kind = SyntaxKind.StarToken;
                     _position++;
                     break;
-                case '^':
-                    _kind = SyntaxKind.HatToken;
-                    _position++;
-                    break;
                 case '/':
                     _kind = SyntaxKind.SlashToken;
                     _position++;
@@ -81,18 +77,36 @@ namespace Syron.CodeAnalysis.Syntax
                     _kind = SyntaxKind.CloseBraceToken;
                     _position++;
                     break;
+                case '~':
+                    _kind = SyntaxKind.TildeToken;
+                    _position++;
+                    break;
+                case '^':
+                    _kind = SyntaxKind.HatToken;
+                    _position++;
+                    break;
                 case '&':
-                    if (Lookahead == '&')
+                    _position++;
+                    if (Current != '&')
+                    {
+                        _kind = SyntaxKind.AmpersandToken;
+                    }
+                    else
                     {
                         _kind = SyntaxKind.AmpersandAmpersandToken;
-                        _position += 2;
+                        _position++;
                     }
                     break;
                 case '|':
-                    if (Lookahead == '|')
+                    _position++;
+                    if (Current != '|')
+                    {
+                        _kind = SyntaxKind.PipeToken;
+                    }
+                    else
                     {
                         _kind = SyntaxKind.PipePipeToken;
-                        _position += 2;
+                        _position++;
                     }
                     break;
                 case '=':
