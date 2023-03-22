@@ -3,4 +3,4 @@
 
 dotnet build
 
-dotnet test ./Syron.Tests/Syron.Tests.csproj
+dotnet test ./src/Syron.Tests/Syron.Tests.csproj
