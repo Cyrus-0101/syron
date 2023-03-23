@@ -63,8 +63,9 @@ namespace Syron.CodeAnalysis.Lowering
                 // gotoFalse <condition> end
                 // <then>  
                 // end:
+
                 var endLabel = GenerateLabel();
-                var gotoFalse = new BoundConditionalGotoStatement(endLabel, node.Condition, true);
+                var gotoFalse = new BoundConditionalGotoStatement(endLabel, node.Condition, false);
                 var endLabelStatement = new BoundLabelStatement(endLabel);
                 var result = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(gotoFalse, node.ThenStatement, endLabelStatement));
                 return RewriteStatement(result);
@@ -88,7 +89,7 @@ namespace Syron.CodeAnalysis.Lowering
                 var elseLabel = GenerateLabel();
                 var endLabel = GenerateLabel();
 
-                var gotoFalse = new BoundConditionalGotoStatement(elseLabel, node.Condition, true);
+                var gotoFalse = new BoundConditionalGotoStatement(elseLabel, node.Condition, false);
                 var gotoEndStatement = new BoundGotoStatement(endLabel);
                 var elseLabelStatement = new BoundLabelStatement(elseLabel);
                 var endLabelStatement = new BoundLabelStatement(endLabel);
@@ -126,7 +127,7 @@ namespace Syron.CodeAnalysis.Lowering
             var gotoCheck = new BoundGotoStatement(checkLabel);
             var continueLabelStatement = new BoundLabelStatement(continueLabel);
             var checkLabelStatement = new BoundLabelStatement(checkLabel);
-            var gotoTrue = new BoundConditionalGotoStatement(continueLabel, node.Condition, false);
+            var gotoTrue = new BoundConditionalGotoStatement(continueLabel, node.Condition);
             var endLabelStatement = new BoundLabelStatement(endLabel);
 
             var result = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(
