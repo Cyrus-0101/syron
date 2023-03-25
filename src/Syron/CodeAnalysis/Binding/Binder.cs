@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Syron.CodeAnalysis.Symbols;
 using Syron.CodeAnalysis.Syntax;
 
 namespace Syron.CodeAnalysis.Binding
