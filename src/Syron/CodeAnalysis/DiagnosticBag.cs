@@ -31,6 +31,7 @@ namespace Syron.CodeAnalysis
             _diagnostics.Add(diagnostic);
         }
 
+        // Lexer errors.
         public void ReportInvalidNumber(TextSpan span, string text, Type type)
         {
             var message = $"ERROR: The number {text} isn't valid {type}.";
@@ -44,6 +45,13 @@ namespace Syron.CodeAnalysis
             Report(span, message);
         }
 
+        public void ReportUnterminatedString(TextSpan textSpan)
+        {
+            var message = $"ERROR: Unterminated string literal.";
+            Report(textSpan, message);
+        }
+
+        // Parser errors.
         public void ReportUnexpectedToken(TextSpan span, SyntaxKind actualKind, SyntaxKind expectedKind)
         {
             var message = $"ERROR: Unexpected token <{actualKind}>, expected <{expectedKind}>.";
