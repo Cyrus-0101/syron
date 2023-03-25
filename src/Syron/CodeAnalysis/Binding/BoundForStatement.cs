@@ -1,3 +1,5 @@
+using Syron.CodeAnalysis.Symbols;
+
 namespace Syron.CodeAnalysis.Binding
 {
     internal sealed class BoundForStatement : BoundStatement

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Syron.CodeAnalysis;
+using Syron.CodeAnalysis.Symbols;
 using Syron.CodeAnalysis.Syntax;
 using Xunit;
 

@@ -1,4 +1,5 @@
 using System;
+using Syron.CodeAnalysis.Symbols;
 
 namespace Syron.CodeAnalysis.Binding
 {

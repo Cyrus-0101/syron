@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Syron.CodeAnalysis.Binding;
+using Syron.CodeAnalysis.Symbols;
 
 namespace Syron.CodeAnalysis
 {

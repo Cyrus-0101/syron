@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 
 using Syron.CodeAnalysis.Binding;
 using Syron.CodeAnalysis.Lowering;
+using Syron.CodeAnalysis.Symbols;
 using Syron.CodeAnalysis.Syntax;
 
 //   _________

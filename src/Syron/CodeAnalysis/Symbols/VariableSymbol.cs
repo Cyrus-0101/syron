@@ -7,7 +7,7 @@ using System;
 // /_______  / ____| |__|   \____/|___|  /
 //         \/\/                        \/ 
 
-namespace Syron.CodeAnalysis
+namespace Syron.CodeAnalysis.Symbols
 {
     public sealed class VariableSymbol
     {

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using Syron.CodeAnalysis.Symbols;
 
 namespace Syron.CodeAnalysis.Binding
 {
