@@ -82,7 +82,7 @@ In the first iteration, we've written our recursive descent
 parser in such a way that it parses additive and multiplicative expressions
 correctly. We did this by parsing `+` and `-` in one method (`ParseTerm`) and
 the `*` and `/` operators in another method `ParseFactor`. However, this doesn't
-scale very well if you have a dozen operators. In this episode, we've replaced
+scale very well if you have a dozen operators. In this iteration, we've replaced
 this with [unified method][precedence-parsing].
 
 [precedence-parsing]: https://github.com/Cyrus-0101/syron/blob/3eba244062e27d472750535b2847679ac19bcf36/sc/CodeAnalysis/Syntax/Parser.cs#L69-L96
@@ -560,7 +560,7 @@ features. What I found works well for me is that I try to make writing tests
 very easy and cheap. Usually that requires some sort of test infrastructure
 which can also be fun to build.
 
-Long story short, in this episode we're developing a way to express test cases
+Long story short, in this iteration we're developing a way to express test cases
 for source that we expect to have diagnostics. We generally want to validate
 three things:
 
@@ -895,3 +895,38 @@ protected override BoundStatement RewriteIfStatement(BoundIfStatement node)
 [BoundLabelStatement]: https://github.com/Cyrus-0101/syron/blob/9a25b22edbded4df2b81ebbb5654e69c816b75e2/src/Syron/CodeAnalysis/Binding/BoundLabelStatement.cs
 [LabelSymbol]: https://github.com/Cyrus-0101/syron/blob/9a25b22edbded4df2b81ebbb5654e69c816b75e2/src/Syron/CodeAnalysis/LabelSymbol.cs
 [if-lowering]: https://github.com/Cyrus-0101/syron/blob/9a25b22edbded4df2b81ebbb5654e69c816b75e2/src/Syron/CodeAnalysis/Lowering/Lowerer.cs#L56-L71
+
+
+# Ninth Iteration: 25/03/2023
+
+[Pull Request](https://github.com/Cyrus-0101/syron/pull/12)
+
+## Completed items
+
+This iteration doesn't have much to do with compiler building. We just made the
+REPL a bit easier to use. This includes the ability to edit multiple lines, have
+history, and syntax highlighting.
+
+## Interesting aspects
+
+### Two classes
+
+The REPL is split into two classes:
+
+* [Repl] is a generic REPL editor and deals with the interception of keys and
+  rendering.
+* [MinskRepl] contains the Minsk specific portion, specifically evaluating the
+  expressions, keeping track of previous compilations, and using the parser to
+  decide whether a submission is complete.
+
+I haven't done this to reuse the REPL, but to make it easier to maintain. It's
+not great if the language specific aspects of the REPL are mixed with the
+tedious components of key processing and output rendering.
+
+## Document/View
+
+The REPL uses a simple document/view architecture to update the output of the
+screen whenever the document changes.
+
+[Repl]: https://github.com/terrajobst/minsk/blob/69123841304be0b9be0c5dc451c20fa07742f567/src/mc/Repl.cs
+[MinskRepl]: https://github.com/terrajobst/minsk/blob/69123841304be0b9be0c5dc451c20fa07742f567/src/mc/MinskRepl.cs
