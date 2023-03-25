@@ -29,6 +29,7 @@ namespace Syron.CodeAnalysis.Syntax
         CloseParenthesisToken,
         OpenBraceToken,
         CloseBraceToken,
+        StringToken,
         IdentifierToken,
 
         // Keywords
@@ -61,6 +62,5 @@ namespace Syron.CodeAnalysis.Syntax
         ParenthesizedExpression,
         AssignmentExpression,
         WhileStatement,
-
     }
 }
