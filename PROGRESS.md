@@ -915,7 +915,7 @@ The REPL is split into two classes:
 
 * [Repl] is a generic REPL editor and deals with the interception of keys and
   rendering.
-* [MinskRepl] contains the Minsk specific portion, specifically evaluating the
+* [SyronRepl] contains the Syron specific portion, specifically evaluating the
   expressions, keeping track of previous compilations, and using the parser to
   decide whether a submission is complete.
 
@@ -929,7 +929,7 @@ The REPL uses a simple document/view architecture to update the output of the
 screen whenever the document changes.
 
 [Repl]: https://github.com/Cyrus-0101/syron/tree/72c5e5b8eb7eacd7bd5ba91a72c4ff5c39ecff7f/src/sc/Repl.cs
-[MinskRepl]: https://github.com/Cyrus-0101/syron/tree/72c5e5b8eb7eacd7bd5ba91a72c4ff5c39ecff7f/src/scMinskRepl.cs
+[SyronRepl]: https://github.com/Cyrus-0101/syron/tree/72c5e5b8eb7eacd7bd5ba91a72c4ff5c39ecff7f/src/sc/SyronRepl.cs
 
 # Tenth Iteration: 26/03/2023
 
