@@ -1,4 +1,5 @@
 using System;
+using Syron.CodeAnalysis.Symbols;
 
 namespace Syron.CodeAnalysis.Binding
 {
@@ -10,7 +11,7 @@ namespace Syron.CodeAnalysis.Binding
         }
 
         public override BoundNodeKind Kind => BoundNodeKind.VariableExpression;
-        public override Type Type => Variable.Type;
+        public override TypeSymbol Type => Variable.Type;
         public VariableSymbol Variable { get; }
     }
 }

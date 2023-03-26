@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Syron.CodeAnalysis;
+using Syron.CodeAnalysis.Symbols;
 using Syron.CodeAnalysis.Syntax;
 using Syron.CodeAnalysis.Text;
 
@@ -33,11 +34,17 @@ namespace Syron
             {
                 var isKeyword = token.Kind.ToString().EndsWith("Keyword");
                 var isNumber = token.Kind == SyntaxKind.NumberToken;
+                var isIdentifier = token.Kind == SyntaxKind.IdentifierToken;
 
                 if (isKeyword)
                     Console.ForegroundColor = ConsoleColor.Blue;
-                else if (!isNumber)
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                else if (isNumber)
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                else if (isIdentifier)
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                else
+                    Console.ForegroundColor = ConsoleColor.Gray;
+
 
                 Console.Write(token.Text);
 
@@ -83,22 +90,21 @@ namespace Syron
             if (string.IsNullOrEmpty(text))
                 return true;
 
+            var lastTwoLinesAreBlank = text.Split(Environment.NewLine)
+                                           .Reverse()
+                                           .TakeWhile(s => string.IsNullOrEmpty(s))
+                                           .Take(2)
+                                           .Count() == 2;
+            if (lastTwoLinesAreBlank)
+                return true;
+
             var syntaxTree = SyntaxTree.Parse(text);
 
             // Use Statement because we need to exclude the EndOfFileToken.
-            if (GetLastToken(syntaxTree.Root.Statement).IsMissing)
+            if (syntaxTree.Root.Statement.GetLastToken().IsMissing)
                 return false;
 
             return true;
-        }
-
-        private static SyntaxToken GetLastToken(SyntaxNode node)
-        {
-            if (node is SyntaxToken token)
-                return token;
-
-            // A syntax node should always contain at least 1 token.
-            return GetLastToken(node.GetChildren().Last());
         }
 
         protected override void EvaluateSubmission(string text)

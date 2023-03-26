@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Syron.CodeAnalysis;
+using Syron.CodeAnalysis.Symbols;
 using Syron.CodeAnalysis.Syntax;
 using Xunit;
 
@@ -177,7 +178,7 @@ namespace Syron.Tests.CodeAnalysis
             ";
 
             var diagnostics = @"
-                ERROR: Cannot convert type 'System.Boolean' to 'System.Int32'.
+                ERROR: Cannot convert type 'bool' to 'int'.
             ";
 
             AssertDiagnostics(text, diagnostics);
@@ -194,7 +195,7 @@ namespace Syron.Tests.CodeAnalysis
                 }
             ";
             var diagnostics = @"
-                ERROR: Cannot convert type 'System.Int32' to 'System.Boolean'.
+                ERROR: Cannot convert type 'int' to 'bool'.
             ";
             AssertDiagnostics(text, diagnostics);
         }
@@ -211,7 +212,7 @@ namespace Syron.Tests.CodeAnalysis
             ";
 
             var diagnostics = @"
-                ERROR: Cannot convert type 'System.Int32' to 'System.Boolean'.
+                ERROR: Cannot convert type 'int' to 'bool'.
             ";
 
             AssertDiagnostics(text, diagnostics);
@@ -230,7 +231,7 @@ namespace Syron.Tests.CodeAnalysis
             ";
 
             var diagnostics = @"
-                ERROR: Cannot convert type 'System.Boolean' to 'System.Int32'.
+                ERROR: Cannot convert type 'bool' to 'int'.
             ";
 
             AssertDiagnostics(text, diagnostics);
@@ -248,7 +249,7 @@ namespace Syron.Tests.CodeAnalysis
             ";
 
             var diagnostics = @"
-                ERROR: Cannot convert type 'System.Boolean' to 'System.Int32'.
+                ERROR: Cannot convert type 'bool' to 'int'.
             ";
 
             AssertDiagnostics(text, diagnostics);
@@ -261,7 +262,7 @@ namespace Syron.Tests.CodeAnalysis
             var text = @"[+]true";
 
             var diagnostics = @"
-                ERROR: Unary operator '+' is not defined for type System.Boolean.
+                ERROR: Unary operator '+' is not defined for type bool.
             ";
 
             AssertDiagnostics(text, diagnostics);
@@ -273,7 +274,7 @@ namespace Syron.Tests.CodeAnalysis
             var text = @"10 [*] false";
 
             var diagnostics = @"
-                ERROR: Binary operator '*' is not defined for types System.Int32 and System.Boolean.
+                ERROR: Binary operator '*' is not defined for types int and bool.
             ";
 
             AssertDiagnostics(text, diagnostics);

@@ -4,14 +4,32 @@ using System.Linq;
 using Xunit;
 
 using Syron.CodeAnalysis.Syntax;
+using Syron.CodeAnalysis.Text;
 
 namespace Syron.Tests.CodeAnalysis.Syntax
 {
     public class LexerTests
     {
+        [Fact]
+        public void Lexer_Lexes_UnterminatedString()
+        {
+
+            const string text = "\"hello world";
+
+            var tokens = SyntaxTree.ParseTokens(text, out var diagnostics);
+            var token = Assert.Single(tokens);
+
+            Assert.Equal(SyntaxKind.StringToken, token.Kind);
+            Assert.Equal(text, token.Text);
+
+            var diagnostic = Assert.Single(diagnostics);
+            Assert.Equal(new TextSpan(0, 1), diagnostic.Span);
+            Assert.Equal("ERROR: Unterminated string literal.", diagnostic.Message);
+        }
+
 
         [Fact]
-        public void Lexer_Tests_AllTokens()
+        public void Lexer_Tests_CoversAllTokens()
         {
             var tokenKinds = Enum.GetValues(typeof(SyntaxKind))
                                  .Cast<SyntaxKind>()
@@ -104,6 +122,8 @@ namespace Syron.Tests.CodeAnalysis.Syntax
                 (SyntaxKind.NumberToken, "123"),
                 (SyntaxKind.IdentifierToken, "a"),
                 (SyntaxKind.IdentifierToken, "abc"),
+                (SyntaxKind.StringToken, "\"Test\""),
+                (SyntaxKind.StringToken, "\"Te\"\"st\""),
             };
 
             return fixedTokens.Concat(dynamicTokens);
@@ -139,6 +159,9 @@ namespace Syron.Tests.CodeAnalysis.Syntax
                 return true;
 
             if (t1Kind == SyntaxKind.NumberToken && t2Kind == SyntaxKind.NumberToken)
+                return true;
+
+            if (t1Kind == SyntaxKind.StringToken && t2Kind == SyntaxKind.StringToken)
                 return true;
 
             if (t1Kind == SyntaxKind.BangToken && t2Kind == SyntaxKind.EqualsToken)
@@ -195,9 +218,7 @@ namespace Syron.Tests.CodeAnalysis.Syntax
             }
         }
 
-        private static IEnumerable<(SyntaxKind t1Kind, string t1Text,
-                                    SyntaxKind separatorKind, string separatorText,
-                                    SyntaxKind t2Kind, string t2Text)> GetTokenPairsWithSeparator()
+        private static IEnumerable<(SyntaxKind t1Kind, string t1Text, SyntaxKind separatorKind, string separatorText, SyntaxKind t2Kind, string t2Text)> GetTokenPairsWithSeparator()
         {
             foreach (var t1 in GetTokens())
             {
