@@ -9,9 +9,10 @@ namespace Syron.CodeAnalysis.Binding
         {
             Value = value;
 
-            if (value == null)
-                Type = TypeSymbol.Null;
-            else if (value is bool)
+            // if (value == null)
+            //     Type = TypeSymbol.Null;
+            // else 
+            if (value is bool)
                 Type = TypeSymbol.Bool;
             else if (value is int)
                 Type = TypeSymbol.Int;

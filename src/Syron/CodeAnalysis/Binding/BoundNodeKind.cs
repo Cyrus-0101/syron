@@ -19,5 +19,6 @@ namespace Syron.CodeAnalysis.Binding
         AssignmentExpression,
         UnaryExpression,
         BinaryExpression,
+        ErrorExpression,
     }
 }
