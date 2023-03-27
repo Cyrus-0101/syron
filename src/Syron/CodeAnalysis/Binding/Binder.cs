@@ -289,6 +289,9 @@ namespace Syron.CodeAnalysis.Binding
 
         private BoundExpression BindCallExpression(CallExpressionSyntax syntax)
         {
+            if (syntax.Arguments.Count == 1 && LookUpType(syntax.Identifier.Text) is TypeSymbol type)
+                return BindConversion(syntax.Arguments[0], type);
+
             var boundArguments = ImmutableArray.CreateBuilder<BoundExpression>();
 
             foreach (var argument in syntax.Arguments)
@@ -334,6 +337,35 @@ namespace Syron.CodeAnalysis.Binding
                 _diagnostics.ReportVariableAlreadyDeclared(identifier.Span, name);
 
             return variable;
+        }
+
+        private TypeSymbol LookUpType(string name)
+        {
+            switch (name)
+            {
+                case "int":
+                    return TypeSymbol.Int;
+                case "bool":
+                    return TypeSymbol.Bool;
+                case "string":
+                    return TypeSymbol.String;
+                default:
+                    return null;
+            }
+        }
+
+        private BoundExpression BindConversion(ExpressionSyntax expressionSyntax, TypeSymbol type)
+        {
+            var expression = BindExpression(expressionSyntax);
+            var conversion = Conversion.Classify(expression.Type, type);
+
+            if (!conversion.Exists)
+            {
+                _diagnostics.ReportCannotConvert(expressionSyntax.Span, expression.Type, type);
+                return expression;
+            }
+
+            return new BoundConversionExpression(type, expression);
         }
     }
 }

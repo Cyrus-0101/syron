@@ -21,5 +21,6 @@ namespace Syron.CodeAnalysis.Binding
         UnaryExpression,
         BinaryExpression,
         ErrorExpression,
+        ConversionExpression,
     }
 }
