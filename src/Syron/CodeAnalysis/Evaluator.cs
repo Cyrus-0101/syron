@@ -197,7 +197,7 @@ namespace Syron.CodeAnalysis
             {
                 return Console.ReadLine();
             }
-            else if (node.Function == BuiltInFunctions.Print)
+            else if (node.Function == BuiltInFunctions.Write)
             {
                 var message = (string)EvaluateExpression(node.Arguments[0]);
                 Console.WriteLine(message);

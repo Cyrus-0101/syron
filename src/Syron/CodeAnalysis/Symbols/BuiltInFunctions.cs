@@ -12,7 +12,7 @@ namespace Syron.CodeAnalysis.Symbols
 {
     internal static class BuiltInFunctions
     {
-        public static readonly FunctionSymbol Print = new FunctionSymbol("write", ImmutableArray.Create(new ParameterSymbol("text", TypeSymbol.String)), TypeSymbol.Void);
+        public static readonly FunctionSymbol Write = new FunctionSymbol("write", ImmutableArray.Create(new ParameterSymbol("text", TypeSymbol.String)), TypeSymbol.Void);
         public static readonly FunctionSymbol Input = new FunctionSymbol("input", ImmutableArray<ParameterSymbol>.Empty, TypeSymbol.String);
 
         internal static IEnumerable<FunctionSymbol> GetAll() => typeof(BuiltInFunctions)
