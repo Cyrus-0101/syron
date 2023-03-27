@@ -14,6 +14,7 @@ namespace Syron.CodeAnalysis.Binding
         ExpressionStatement,
 
         // Expressions
+        CallExpression,
         LiteralExpression,
         VariableExpression,
         AssignmentExpression,
