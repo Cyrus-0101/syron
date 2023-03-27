@@ -93,5 +93,29 @@ namespace Syron.CodeAnalysis
             var message = $"ERROR: Variable '{name}' is read-only and cannot be assigned again.";
             Report(span, message);
         }
+
+        public void ReportUndefinedFunction(TextSpan span, string name)
+        {
+            var message = $"ERROR: Function '{name}' doesn't exist.";
+            Report(span, message);
+        }
+
+        public void ReportParameterCountMismatch(TextSpan span, string name, int expectedCount, int count)
+        {
+            var message = $"ERROR: Function '{name}' requires {expectedCount} parameters but was given {count}.";
+            Report(span, message);
+        }
+
+        public void ReportParameterTypeMismatch(TextSpan span, string name, string parameterName, TypeSymbol expectedType, TypeSymbol actualType)
+        {
+            var message = $"ERROR: Function '{name}' requires parameter '{parameterName}' to be of type {expectedType} but was given {actualType}.";
+            Report(span, message);
+        }
+
+        public void ReportExpressionMustHaveValue(TextSpan span)
+        {
+            var message = $"ERROR: Expression must have a value.";
+            Report(span, message);
+        }
     }
 }

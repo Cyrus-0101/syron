@@ -7,12 +7,12 @@
 
 namespace Syron.CodeAnalysis.Symbols
 {
-    public enum SymbolKind
+    public class ParameterSymbol : VariableSymbol
     {
-        Function,
-        Variable,
-        Type,
-        Parameter
-    }
+        public ParameterSymbol(string name, TypeSymbol type) : base(name, isReadOnly: true, type)
+        {
+        }
 
+        public override SymbolKind Kind => SymbolKind.Parameter;
+    }
 }

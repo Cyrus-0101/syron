@@ -79,6 +79,10 @@ namespace Syron.CodeAnalysis.Syntax
                     _kind = SyntaxKind.CloseBraceToken;
                     _position++;
                     break;
+                case ',':
+                    _kind = SyntaxKind.CommaToken;
+                    _position++;
+                    break;
                 case '~':
                     _kind = SyntaxKind.TildeToken;
                     _position++;

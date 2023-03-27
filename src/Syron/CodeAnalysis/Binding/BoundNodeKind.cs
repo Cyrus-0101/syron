@@ -14,11 +14,13 @@ namespace Syron.CodeAnalysis.Binding
         ExpressionStatement,
 
         // Expressions
+        CallExpression,
         LiteralExpression,
         VariableExpression,
         AssignmentExpression,
         UnaryExpression,
         BinaryExpression,
         ErrorExpression,
+        ConversionExpression,
     }
 }

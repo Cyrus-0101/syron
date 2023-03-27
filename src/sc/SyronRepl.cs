@@ -34,6 +34,7 @@ namespace Syron
             {
                 var isKeyword = token.Kind.ToString().EndsWith("Keyword");
                 var isNumber = token.Kind == SyntaxKind.NumberToken;
+                var isString = token.Kind == SyntaxKind.StringToken;
                 var isIdentifier = token.Kind == SyntaxKind.IdentifierToken;
 
                 if (isKeyword)
@@ -42,6 +43,8 @@ namespace Syron
                     Console.ForegroundColor = ConsoleColor.Cyan;
                 else if (isIdentifier)
                     Console.ForegroundColor = ConsoleColor.DarkYellow;
+                else if (isString)
+                    Console.ForegroundColor = ConsoleColor.Magenta;
                 else
                     Console.ForegroundColor = ConsoleColor.Gray;
 
@@ -125,9 +128,12 @@ namespace Syron
 
             if (!result.Diagnostics.Any())
             {
-                Console.ForegroundColor = ConsoleColor.Magenta;
-                Console.WriteLine(result.Value);
-                Console.ResetColor();
+                if (result.Value != null)
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine(result.Value);
+                    Console.ResetColor();
+                }
                 _previous = compilation;
             }
             else
