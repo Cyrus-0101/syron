@@ -41,19 +41,29 @@ namespace Syron.CodeAnalysis.Binding
                 previous = previous.Previous;
             }
 
-            BoundScope parent = null;
+            var parent = CreateRootScope();
 
             while (stack.Count > 0)
             {
                 previous = stack.Pop();
                 var scope = new BoundScope(parent);
                 foreach (var v in previous.Variables)
-                    scope.TryDeclare(v);
+                    scope.TryDeclareVariable(v);
 
                 parent = scope;
             }
 
             return parent;
+        }
+
+        private static BoundScope CreateRootScope()
+        {
+            var result = new BoundScope(null);
+
+            foreach (var f in BuiltInFunctions.GetAll())
+                result.TryDeclareFunction(f);
+
+            return result;
         }
 
         public DiagnosticBag Diagnostics => _diagnostics;
@@ -127,7 +137,6 @@ namespace Syron.CodeAnalysis.Binding
             _scope = new BoundScope(_scope);
 
             var variable = BindVariable(syntax.Identifier, isReadOnly: true, TypeSymbol.Int);
-
             var body = BindStatement(syntax.Body);
 
             _scope = _scope.Parent;
@@ -144,6 +153,7 @@ namespace Syron.CodeAnalysis.Binding
         private BoundExpression BindExpression(ExpressionSyntax syntax, TypeSymbol targetType)
         {
             var result = BindExpression(syntax);
+
             if (targetType != TypeSymbol.Error && result.Type != TypeSymbol.Error && result.Type != targetType)
                 _diagnostics.ReportCannotConvert(syntax.Span, result.Type, targetType);
 
@@ -159,6 +169,7 @@ namespace Syron.CodeAnalysis.Binding
                 _diagnostics.ReportExpressionMustHaveValue(syntax.Span);
                 return new BoundErrorExpression();
             }
+
             return result;
         }
 
@@ -207,11 +218,10 @@ namespace Syron.CodeAnalysis.Binding
                 return new BoundErrorExpression();
             }
 
-            if (!_scope.TryLookup(name, out var variable))
+            if (!_scope.TryLookupVariable(name, out var variable))
             {
                 _diagnostics.ReportUndefinedName(syntax.IdentifierToken.Span, name);
-                return new BoundLiteralExpression(0);
-
+                return new BoundErrorExpression();
             }
 
             return new BoundVariableExpression(variable);
@@ -222,7 +232,7 @@ namespace Syron.CodeAnalysis.Binding
             var name = syntax.IdentifierToken.Text;
             var boundExpression = BindExpression(syntax.Expression);
 
-            if (!_scope.TryLookup(name, out var variable))
+            if (!_scope.TryLookupVariable(name, out var variable))
             {
                 _diagnostics.ReportUndefinedName(syntax.IdentifierToken.Span, name);
                 return boundExpression;
@@ -287,23 +297,17 @@ namespace Syron.CodeAnalysis.Binding
                 boundArguments.Add(boundArgument);
             }
 
-            var functions = BuiltInFunctions.GetAll();
-
-            var function = functions.SingleOrDefault(f => f.Name == syntax.Identifier.Text);
-
-            if (function == null)
+            if (!_scope.TryLookupFunction(syntax.Identifier.Text, out var function))
             {
                 _diagnostics.ReportUndefinedFunction(syntax.Identifier.Span, syntax.Identifier.Text);
                 return new BoundErrorExpression();
             }
 
-            if (function.Parameter.Length != syntax.Arguments.Count)
+            if (syntax.Arguments.Count != function.Parameter.Length)
             {
                 _diagnostics.ReportParameterCountMismatch(syntax.Span, function.Name, function.Parameter.Length, syntax.Arguments.Count);
                 return new BoundErrorExpression();
             }
-
-            var hasErrors = false;
 
             for (var i = 0; i < syntax.Arguments.Count; i++)
             {
@@ -326,11 +330,10 @@ namespace Syron.CodeAnalysis.Binding
             var declare = !identifier.IsMissing;
             var variable = new VariableSymbol(name, isReadOnly, type);
 
-            if (declare && !_scope.TryDeclare(variable))
+            if (declare && !_scope.TryDeclareVariable(variable))
                 _diagnostics.ReportVariableAlreadyDeclared(identifier.Span, name);
 
             return variable;
         }
-
     }
 }
