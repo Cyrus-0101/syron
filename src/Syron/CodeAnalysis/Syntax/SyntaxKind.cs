@@ -49,6 +49,7 @@ namespace Syron.CodeAnalysis.Syntax
         // Nodes
         CompilationUnit,
         ElseClause,
+        TypeClause,
 
         // Statements
         BlockStatement,

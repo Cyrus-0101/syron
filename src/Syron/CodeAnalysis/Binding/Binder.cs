@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+
 using Syron.CodeAnalysis.Symbols;
 using Syron.CodeAnalysis.Syntax;
 using Syron.CodeAnalysis.Text;
@@ -92,13 +93,6 @@ namespace Syron.CodeAnalysis.Binding
             }
         }
 
-        private BoundStatement BindDoWhileStatement(DoWhileStatementSyntax syntax)
-        {
-            var body = BindStatement(syntax.Body);
-            var condition = BindExpression(syntax.Condition, TypeSymbol.Bool);
-            return new BoundDoWhileStatement(body, condition);
-        }
-
         private BoundStatement BindBlockStatement(BlockStatementSyntax syntax)
         {
             var statements = ImmutableArray.CreateBuilder<BoundStatement>();
@@ -118,10 +112,25 @@ namespace Syron.CodeAnalysis.Binding
         private BoundStatement BindVariableDeclaration(VariableDeclarationSyntax syntax)
         {
             var isReadOnly = syntax.Keyword.Kind == SyntaxKind.ConstKeyword;
+            var type = BindTypeClause(syntax.TypeClause);
             var initializer = BindExpression(syntax.Initializer);
-            var variable = BindVariable(syntax.Identifier, isReadOnly, initializer.Type);
+            var variableType = type ?? initializer.Type;
+            var variable = BindVariable(syntax.Identifier, isReadOnly, variableType);
+            var convertedInitializer = BindConversion(syntax.Initializer.Span, initializer, variableType);
 
-            return new BoundVariableDeclaration(variable, initializer);
+            return new BoundVariableDeclaration(variable, convertedInitializer);
+        }
+
+        private TypeSymbol BindTypeClause(TypeClauseSyntax syntax)
+        {
+            if (syntax == null)
+                return null;
+
+            var type = LookupType(syntax.Identifier.Text);
+            if (type == null)
+                _diagnostics.ReportUndefinedType(syntax.Identifier.Span, syntax.Identifier.Text);
+
+            return type;
         }
 
         private BoundStatement BindIfStatement(IfStatementSyntax syntax)
@@ -137,6 +146,13 @@ namespace Syron.CodeAnalysis.Binding
             var condition = BindExpression(syntax.Condition, TypeSymbol.Bool);
             var body = BindStatement(syntax.Body);
             return new BoundWhileStatement(condition, body);
+        }
+
+        private BoundStatement BindDoWhileStatement(DoWhileStatementSyntax syntax)
+        {
+            var body = BindStatement(syntax.Body);
+            var condition = BindExpression(syntax.Condition, TypeSymbol.Bool);
+            return new BoundDoWhileStatement(body, condition);
         }
 
         private BoundStatement BindForStatement(ForStatementSyntax syntax)
@@ -162,13 +178,12 @@ namespace Syron.CodeAnalysis.Binding
 
         private BoundExpression BindExpression(ExpressionSyntax syntax, TypeSymbol targetType)
         {
-            return BindConversion(targetType, syntax);
+            return BindConversion(syntax, targetType);
         }
 
         private BoundExpression BindExpression(ExpressionSyntax syntax, bool canBeVoid = false)
         {
             var result = BindExpressionInternal(syntax);
-
             if (!canBeVoid && result.Type == TypeSymbol.Void)
             {
                 _diagnostics.ReportExpressionMustHaveValue(syntax.Span);
@@ -196,7 +211,6 @@ namespace Syron.CodeAnalysis.Binding
                     return BindBinaryExpression((BinaryExpressionSyntax)syntax);
                 case SyntaxKind.CallExpression:
                     return BindCallExpression((CallExpressionSyntax)syntax);
-
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
             }
@@ -290,8 +304,8 @@ namespace Syron.CodeAnalysis.Binding
 
         private BoundExpression BindCallExpression(CallExpressionSyntax syntax)
         {
-            if (syntax.Arguments.Count == 1 && LookUpType(syntax.Identifier.Text) is TypeSymbol type)
-                return BindConversion(type, syntax.Arguments[0]);
+            if (syntax.Arguments.Count == 1 && LookupType(syntax.Identifier.Text) is TypeSymbol type)
+                return BindConversion(syntax.Arguments[0], type, allowExplicit: true);
 
             var boundArguments = ImmutableArray.CreateBuilder<BoundExpression>();
 
@@ -303,7 +317,7 @@ namespace Syron.CodeAnalysis.Binding
 
             if (!_scope.TryLookupFunction(syntax.Identifier.Text, out var function))
             {
-                _diagnostics.ReportReservedKeyword(syntax.Identifier.Span, syntax.Identifier.Text);
+                _diagnostics.ReportUndefinedFunction(syntax.Identifier.Span, syntax.Identifier.Text);
                 return new BoundErrorExpression();
             }
 
@@ -328,6 +342,35 @@ namespace Syron.CodeAnalysis.Binding
             return new BoundCallExpression(function, boundArguments.ToImmutable());
         }
 
+        private BoundExpression BindConversion(ExpressionSyntax syntax, TypeSymbol type, bool allowExplicit = false)
+        {
+            var expression = BindExpression(syntax);
+            return BindConversion(syntax.Span, expression, type, allowExplicit);
+        }
+
+        private BoundExpression BindConversion(TextSpan diagnosticSpan, BoundExpression expression, TypeSymbol type, bool allowExplicit = false)
+        {
+            var conversion = Conversion.Classify(expression.Type, type);
+
+            if (!conversion.Exists)
+            {
+                if (expression.Type != TypeSymbol.Error && type != TypeSymbol.Error)
+                    _diagnostics.ReportCannotConvert(diagnosticSpan, expression.Type, type);
+
+                return new BoundErrorExpression();
+            }
+
+            if (!allowExplicit && conversion.IsExplicit)
+            {
+                _diagnostics.ReportCannotConvertImplicitly(diagnosticSpan, expression.Type, type);
+            }
+
+            if (conversion.IsIdentity)
+                return expression;
+
+            return new BoundConversionExpression(type, expression);
+        }
+
         private VariableSymbol BindVariable(SyntaxToken identifier, bool isReadOnly, TypeSymbol type)
         {
             var name = identifier.Text ?? "?";
@@ -335,48 +378,24 @@ namespace Syron.CodeAnalysis.Binding
             var variable = new VariableSymbol(name, isReadOnly, type);
 
             if (declare && !_scope.TryDeclareVariable(variable))
-                _diagnostics.ReportVariableAlreadyDeclared(identifier.Span, name);
+                _diagnostics.ReportSymbolAlreadyDeclared(identifier.Span, name);
 
             return variable;
         }
 
-        private TypeSymbol LookUpType(string name)
+        private TypeSymbol LookupType(string name)
         {
             switch (name)
             {
-                case "int":
-                    return TypeSymbol.Int;
                 case "bool":
                     return TypeSymbol.Bool;
+                case "int":
+                    return TypeSymbol.Int;
                 case "string":
                     return TypeSymbol.String;
                 default:
                     return null;
             }
-        }
-
-        private BoundExpression BindConversion(TypeSymbol type, ExpressionSyntax syntax)
-        {
-            var expression = BindExpression(syntax);
-            return BindConversion(syntax.Span, expression, type);
-        }
-
-        private BoundExpression BindConversion(TextSpan diagnosticSpan, BoundExpression expression, TypeSymbol type)
-        {
-            var conversion = Conversion.Classify(expression.Type, type);
-
-            if (!conversion.Exists)
-            {
-                if (expression.Type == TypeSymbol.Error || type == TypeSymbol.Error)
-                    _diagnostics.ReportCannotConvert(diagnosticSpan, expression.Type, type);
-
-                return new BoundErrorExpression();
-            }
-
-            if (conversion.IsIdentity)
-                return expression;
-
-            return new BoundConversionExpression(type, expression);
         }
     }
 }

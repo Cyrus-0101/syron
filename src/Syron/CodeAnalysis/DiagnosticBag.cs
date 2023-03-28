@@ -76,6 +76,24 @@ namespace Syron.CodeAnalysis
             Report(span, message);
         }
 
+        public void ReportUndefinedType(TextSpan location, string name)
+        {
+            var message = $"ERROR: Type '{name}' doesn't exist.";
+            Report(location, message);
+        }
+
+        public void ReportCannotConvertImplicitly(TextSpan diagnosticSpan, TypeSymbol type1, TypeSymbol type2)
+        {
+            var message = $"ERROR: Cannot convert type '{type1}' to '{type2}'. An explicit conversion exists (are you missing a cast?)";
+            Report(diagnosticSpan, message);
+        }
+
+        public void ReportSymbolAlreadyDeclared(TextSpan span, string name)
+        {
+            var message = $"ERROR: '{name}' is already declared.";
+            Report(span, message);
+        }
+
         public void ReportVariableAlreadyDeclared(TextSpan span, string name)
         {
             var message = $"ERROR: Variable '{name}' is already declared.";
