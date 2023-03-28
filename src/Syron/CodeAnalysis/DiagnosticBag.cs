@@ -90,7 +90,7 @@ namespace Syron.CodeAnalysis
 
         public void ReportSymbolAlreadyDeclared(TextSpan span, string name)
         {
-            var message = $"ERROR: '{name}' is already declared.";
+            var message = $"ERROR: Variable '{name}' is already declared.";
             Report(span, message);
         }
 
