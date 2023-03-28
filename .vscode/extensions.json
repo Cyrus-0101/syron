@@ -1,4 +1,3 @@
 {
-    "recommendations": ["ms-dotnettools.csharp"]
+  "recommendations": ["ms-dotnettools.csharp", "uctakeoff.vscode-counter"]
 }
-
