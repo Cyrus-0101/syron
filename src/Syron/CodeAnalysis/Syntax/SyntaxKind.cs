@@ -29,6 +29,7 @@ namespace Syron.CodeAnalysis.Syntax
         CloseParenthesisToken,
         OpenBraceToken,
         CloseBraceToken,
+        ColonToken,
         CommaToken,
         StringToken,
         IdentifierToken,

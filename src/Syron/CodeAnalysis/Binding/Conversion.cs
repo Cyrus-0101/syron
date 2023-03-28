@@ -23,7 +23,6 @@ namespace Syron.CodeAnalysis.Binding
 
         public static Conversion Classify(TypeSymbol from, TypeSymbol to)
         {
-            // Identity
             if (from == to)
                 return Conversion.Identity;
 
