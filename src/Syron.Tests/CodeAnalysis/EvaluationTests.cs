@@ -275,6 +275,23 @@ namespace Syron.Tests.CodeAnalysis
             AssertDiagnostics(text, diagnostics);
         }
 
+        [Fact]
+        public void Evaluator_Variables_Can_Shadow_Functions()
+        {
+            var text = @"
+                {
+                    let write = 42
+                    [write](""test"")
+                }
+            ";
+
+            var diagnostics = @"
+                ERROR: 'write' is a reserved keyword and cannot be used as an identifier.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
 
         [Fact]
         public void Evaluator_Unary_Reports_Undefined()

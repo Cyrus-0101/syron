@@ -311,7 +311,7 @@ namespace Syron.CodeAnalysis.Binding
 
             if (!_scope.TryLookupFunction(syntax.Identifier.Text, out var function))
             {
-                _diagnostics.ReportUndefinedFunction(syntax.Identifier.Span, syntax.Identifier.Text);
+                _diagnostics.ReportReservedKeyword(syntax.Identifier.Span, syntax.Identifier.Text);
                 return new BoundErrorExpression();
             }
 

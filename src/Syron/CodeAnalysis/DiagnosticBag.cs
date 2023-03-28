@@ -100,6 +100,12 @@ namespace Syron.CodeAnalysis
             Report(span, message);
         }
 
+        public void ReportReservedKeyword(TextSpan span, string name)
+        {
+            var message = $"ERROR: '{name}' is a reserved keyword and cannot be used as an identifier.";
+            Report(span, message);
+        }
+
         public void ReportParameterCountMismatch(TextSpan span, string name, int expectedCount, int count)
         {
             var message = $"ERROR: Function '{name}' requires {expectedCount} parameters but was given {count}.";
