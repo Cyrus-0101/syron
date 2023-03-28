@@ -41,6 +41,7 @@ namespace Syron.CodeAnalysis.Syntax
         TrueKeyword,
         LetKeyword,
         WhileKeyword,
+        DoKeyword,
         ForKeyword,
         ToKeyword,
 
@@ -52,6 +53,8 @@ namespace Syron.CodeAnalysis.Syntax
         BlockStatement,
         VariableDeclaration,
         IfStatement,
+        WhileStatement,
+        DoWhileStatement,
         ForStatement,
         ExpressionStatement,
 
@@ -62,7 +65,6 @@ namespace Syron.CodeAnalysis.Syntax
         BinaryExpression,
         ParenthesizedExpression,
         AssignmentExpression,
-        WhileStatement,
         CallExpression,
     }
 }

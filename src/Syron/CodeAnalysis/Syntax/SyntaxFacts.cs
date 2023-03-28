@@ -69,6 +69,8 @@ namespace Syron.CodeAnalysis.Syntax
                     return SyntaxKind.LetKeyword;
                 case "while":
                     return SyntaxKind.WhileKeyword;
+                case "do":
+                    return SyntaxKind.DoKeyword;
                 case "for":
                     return SyntaxKind.ForKeyword;
                 case "to":
@@ -163,6 +165,8 @@ namespace Syron.CodeAnalysis.Syntax
                     return "let";
                 case SyntaxKind.WhileKeyword:
                     return "while";
+                case SyntaxKind.DoKeyword:
+                    return "do";
                 case SyntaxKind.ForKeyword:
                     return "for";
                 case SyntaxKind.ToKeyword:

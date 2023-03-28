@@ -72,6 +72,7 @@ namespace Syron.Tests.CodeAnalysis
         [InlineData("{ let i = 10 let result = 0 while i > 0 { result = result + i i = i - 1} result }", 55)]
         [InlineData("{ let result = 0 for i = 1 to 10 { result = result + i } result }", 55)]
         [InlineData("{ let a = 10 for i = 1 to (a = a - 1) { } a }", 9)]
+        [InlineData("{ let a = 0 do a = a + 1 while a < 10 a}", 10)]
         public void Evaluator_Computes_CorrectValues(string text, object expectedValue)
         {
             AssertValue(text, expectedValue);
@@ -145,6 +146,25 @@ namespace Syron.Tests.CodeAnalysis
 
             var diagnostics = @"
                 ERROR: Variable 'x' doesn't exist.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
+        public void Evaluator_DoWhileStatement_Reports_Undefined()
+        {
+            var text = @"
+                {
+                    let x = 0
+                    do 
+                        x = 10 
+                    while [10]
+                }
+            ";
+
+            var diagnostics = @"
+                ERROR: Cannot convert type 'int' to 'bool'.
             ";
 
             AssertDiagnostics(text, diagnostics);
