@@ -65,9 +65,87 @@ namespace Syron.CodeAnalysis.Syntax
 
         public CompilationUnitSyntax ParseCompilationUnit()
         {
-            var statement = ParseStatement();
+            var members = ParseMembers();
             var endOfFileToken = MatchToken(SyntaxKind.EndOfFileToken);
-            return new CompilationUnitSyntax(statement, endOfFileToken);
+            return new CompilationUnitSyntax(members, endOfFileToken);
+        }
+
+        private ImmutableArray<MemberSyntax> ParseMembers()
+        {
+            var members = ImmutableArray.CreateBuilder<MemberSyntax>();
+
+            while (Current.Kind != SyntaxKind.EndOfFileToken)
+            {
+                var startToken = Current;
+
+                var member = ParseMember();
+                members.Add(member);
+
+                // If ParseMember() did not consume any tokens,
+                // we need to skip the current token and continue
+                // in order to avoid an infinite loop.
+                //
+                // We don't need to report an error, because we'll
+                // already tried to parse an expression statement
+                // and reported one.
+                if (Current == startToken)
+                    NextToken();
+            }
+
+            return members.ToImmutable();
+        }
+
+        private MemberSyntax ParseMember()
+        {
+            if (Current.Kind == SyntaxKind.FunctionKeyword)
+                return ParseFunctionDeclaration();
+
+            return ParseGlobalStatement();
+        }
+
+        private MemberSyntax ParseFunctionDeclaration()
+        {
+            var functionKeyword = MatchToken(SyntaxKind.FunctionKeyword);
+            var identifier = MatchToken(SyntaxKind.IdentifierToken);
+            var openParenthesisToken = MatchToken(SyntaxKind.OpenParenthesisToken);
+            var parameters = ParseParameterList();
+            var closeParenthesisToken = MatchToken(SyntaxKind.CloseParenthesisToken);
+            var type = ParseOptionalTypeClause();
+            var body = ParseBlockStatement();
+            return new FunctionDeclarationSyntax(functionKeyword, identifier, openParenthesisToken, parameters, closeParenthesisToken, type, body);
+        }
+
+        private SeparatedSyntaxList<ParameterSyntax> ParseParameterList()
+        {
+            var nodesAndSeparators = ImmutableArray.CreateBuilder<SyntaxNode>();
+
+            while (Current.Kind != SyntaxKind.CloseParenthesisToken &&
+                   Current.Kind != SyntaxKind.EndOfFileToken)
+            {
+                var parameter = ParseParameter();
+                nodesAndSeparators.Add(parameter);
+
+                if (Current.Kind != SyntaxKind.CloseParenthesisToken)
+                {
+                    var comma = MatchToken(SyntaxKind.CommaToken);
+                    nodesAndSeparators.Add(comma);
+                }
+            }
+
+            return new SeparatedSyntaxList<ParameterSyntax>(nodesAndSeparators.ToImmutable());
+        }
+
+        private ParameterSyntax ParseParameter()
+        {
+            var identifier = MatchToken(SyntaxKind.IdentifierToken);
+            var type = ParseTypeClause();
+            return new ParameterSyntax(identifier, type);
+        }
+
+        private MemberSyntax ParseGlobalStatement()
+        {
+            var statement = ParseStatement();
+            return new GlobalStatementSyntax(statement);
         }
 
         private StatementSyntax ParseStatement()
@@ -90,15 +168,6 @@ namespace Syron.CodeAnalysis.Syntax
                 default:
                     return ParseExpressionStatement();
             }
-        }
-
-        private StatementSyntax ParseDoWhileStatement()
-        {
-            var doKeyword = MatchToken(SyntaxKind.DoKeyword);
-            var body = ParseStatement();
-            var whileKeyword = MatchToken(SyntaxKind.WhileKeyword);
-            var condition = ParseExpression();
-            return new DoWhileStatementSyntax(doKeyword, body, whileKeyword, condition);
         }
 
         private BlockStatementSyntax ParseBlockStatement()
@@ -133,12 +202,28 @@ namespace Syron.CodeAnalysis.Syntax
 
         private StatementSyntax ParseVariableDeclaration()
         {
-            var expected = Current.Kind == SyntaxKind.LetKeyword ? SyntaxKind.LetKeyword : SyntaxKind.ConstKeyword;
+            var expected = Current.Kind == SyntaxKind.ConstKeyword ? SyntaxKind.ConstKeyword : SyntaxKind.LetKeyword;
             var keyword = MatchToken(expected);
             var identifier = MatchToken(SyntaxKind.IdentifierToken);
+            var typeClause = ParseOptionalTypeClause();
             var equals = MatchToken(SyntaxKind.EqualsToken);
             var initializer = ParseExpression();
-            return new VariableDeclarationSyntax(keyword, identifier, equals, initializer);
+            return new VariableDeclarationSyntax(keyword, identifier, typeClause, equals, initializer);
+        }
+
+        private TypeClauseSyntax ParseOptionalTypeClause()
+        {
+            if (Current.Kind != SyntaxKind.ColonToken)
+                return null;
+
+            return ParseTypeClause();
+        }
+
+        private TypeClauseSyntax ParseTypeClause()
+        {
+            var colonToken = MatchToken(SyntaxKind.ColonToken);
+            var identifier = MatchToken(SyntaxKind.IdentifierToken);
+            return new TypeClauseSyntax(colonToken, identifier);
         }
 
         private StatementSyntax ParseIfStatement()
@@ -166,6 +251,15 @@ namespace Syron.CodeAnalysis.Syntax
             var condition = ParseExpression();
             var body = ParseStatement();
             return new WhileStatementSyntax(keyword, condition, body);
+        }
+
+        private StatementSyntax ParseDoWhileStatement()
+        {
+            var doKeyword = MatchToken(SyntaxKind.DoKeyword);
+            var body = ParseStatement();
+            var whileKeyword = MatchToken(SyntaxKind.WhileKeyword);
+            var condition = ParseExpression();
+            return new DoWhileStatementSyntax(doKeyword, body, whileKeyword, condition);
         }
 
         private StatementSyntax ParseForStatement()
@@ -286,11 +380,8 @@ namespace Syron.CodeAnalysis.Syntax
 
         private ExpressionSyntax ParseNameOrCallExpression()
         {
-            if (Peek(0).Kind == SyntaxKind.IdentifierToken &&
-                Peek(1).Kind == SyntaxKind.OpenParenthesisToken)
-            {
+            if (Peek(0).Kind == SyntaxKind.IdentifierToken && Peek(1).Kind == SyntaxKind.OpenParenthesisToken)
                 return ParseCallExpression();
-            }
 
             return ParseNameExpression();
         }
@@ -301,7 +392,6 @@ namespace Syron.CodeAnalysis.Syntax
             var openParenthesisToken = MatchToken(SyntaxKind.OpenParenthesisToken);
             var arguments = ParseArguments();
             var closeParenthesisToken = MatchToken(SyntaxKind.CloseParenthesisToken);
-
             return new CallExpressionSyntax(identifier, openParenthesisToken, arguments, closeParenthesisToken);
         }
 
@@ -309,7 +399,8 @@ namespace Syron.CodeAnalysis.Syntax
         {
             var nodesAndSeparators = ImmutableArray.CreateBuilder<SyntaxNode>();
 
-            while (Current.Kind != SyntaxKind.CloseParenthesisToken && Current.Kind != SyntaxKind.EndOfFileToken)
+            while (Current.Kind != SyntaxKind.CloseParenthesisToken &&
+                   Current.Kind != SyntaxKind.EndOfFileToken)
             {
                 var expression = ParseExpression();
                 nodesAndSeparators.Add(expression);

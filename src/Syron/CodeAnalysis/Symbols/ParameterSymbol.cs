@@ -7,7 +7,7 @@
 
 namespace Syron.CodeAnalysis.Symbols
 {
-    public class ParameterSymbol : VariableSymbol
+    public class ParameterSymbol : LocalVariableSymbol
     {
         public ParameterSymbol(string name, TypeSymbol type) : base(name, isReadOnly: true, type)
         {

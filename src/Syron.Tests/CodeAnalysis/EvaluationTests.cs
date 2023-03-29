@@ -93,19 +93,7 @@ namespace Syron.Tests.CodeAnalysis
             ";
 
             var diagnostics = @"
-               ERROR: Variable 'x' is already declared.
-            ";
-
-            AssertDiagnostics(text, diagnostics);
-        }
-
-        [Fact]
-        public void Evaluator_Name_Reports_Undefined()
-        {
-            var text = @"[x] * 10";
-
-            var diagnostics = @"
-                ERROR: Variable 'x' doesn't exist.
+                ERROR: Variable 'x' is already declared.
             ";
 
             AssertDiagnostics(text, diagnostics);
@@ -128,83 +116,6 @@ namespace Syron.Tests.CodeAnalysis
         }
 
         [Fact]
-        public void Evaluator_NameExpression_Reports_NoErrorForInsertedToken()
-        {
-            var text = @"[]";
-
-            var diagnostics = @"
-                ERROR: Unexpected token <EndOfFileToken>, expected <IdentifierToken>.
-            ";
-
-            AssertDiagnostics(text, diagnostics);
-        }
-
-        [Fact]
-        public void Evaluator_Assigned_Reports_Undefined()
-        {
-            var text = @"[x] = 10";
-
-            var diagnostics = @"
-                ERROR: Variable 'x' doesn't exist.
-            ";
-
-            AssertDiagnostics(text, diagnostics);
-        }
-
-        [Fact]
-        public void Evaluator_DoWhileStatement_Reports_Undefined()
-        {
-            var text = @"
-                {
-                    let x = 0
-                    do 
-                        x = 10 
-                    while [10]
-                }
-            ";
-
-            var diagnostics = @"
-                ERROR: Cannot convert type 'int' to 'bool'.
-            ";
-
-            AssertDiagnostics(text, diagnostics);
-        }
-
-        [Fact]
-        public void Evaluator_Assigned_Reports_CannotAssign()
-        {
-            var text = @"
-                {
-                    const x = 10
-                    x [=] 0
-                }
-            ";
-
-            var diagnostics = @"
-                ERROR: Variable 'x' is read-only and cannot be assigned again.
-            ";
-
-            AssertDiagnostics(text, diagnostics);
-        }
-
-        [Fact]
-        public void Evaluator_Assigned_Reports_CannotConvert()
-        {
-            var text = @"
-                {
-                    let x = 10
-                    x = [true]
-                }
-            ";
-
-            var diagnostics = @"
-                ERROR: Cannot convert type 'bool' to 'int'.
-            ";
-
-            AssertDiagnostics(text, diagnostics);
-        }
-
-        [Fact]
         public void Evaluator_IfStatement_Reports_CannotConvert()
         {
             var text = @"
@@ -214,9 +125,11 @@ namespace Syron.Tests.CodeAnalysis
                         x = 10
                 }
             ";
+
             var diagnostics = @"
                 ERROR: Cannot convert type 'int' to 'bool'.
             ";
+
             AssertDiagnostics(text, diagnostics);
         }
 
@@ -238,6 +151,24 @@ namespace Syron.Tests.CodeAnalysis
             AssertDiagnostics(text, diagnostics);
         }
 
+        [Fact]
+        public void Evaluator_DoWhileStatement_Reports_CannotConvert()
+        {
+            var text = @"
+                {
+                    let x = 0
+                    do
+                        x = 10
+                    while [10]
+                }
+            ";
+
+            var diagnostics = @"
+                ERROR: Cannot convert type 'int' to 'bool'.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
 
         [Fact]
         public void Evaluator_ForStatement_Reports_CannotConvert_UpperBound()
@@ -258,13 +189,89 @@ namespace Syron.Tests.CodeAnalysis
         }
 
         [Fact]
-        public void Evaluator_ForStatement_Reports_CannotConvert_LowerBound()
+        public void Evaluator_NameExpression_Reports_Undefined()
+        {
+            var text = @"[x] * 10";
+
+            var diagnostics = @"
+                ERROR: Variable 'x' doesn't exist.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
+        public void Evaluator_NameExpression_Reports_NoErrorForInsertedToken()
+        {
+            var text = @"1 + []";
+
+            var diagnostics = @"
+                ERROR: Unexpected token <EndOfFileToken>, expected <IdentifierToken>.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
+        public void Evaluator_UnaryExpression_Reports_Undefined()
+        {
+            var text = @"[+]true";
+
+            var diagnostics = @"
+                ERROR: Unary operator '+' is not defined for type 'bool'.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
+        public void Evaluator_BinaryExpression_Reports_Undefined()
+        {
+            var text = @"10 [*] false";
+
+            var diagnostics = @"
+                ERROR: Binary operator '*' is not defined for types 'int' and 'bool'.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
+        public void Evaluator_AssignmentExpression_Reports_Undefined()
+        {
+            var text = @"[x] = 10";
+
+            var diagnostics = @"
+                ERROR: Variable 'x' doesn't exist.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
+        public void Evaluator_AssignmentExpression_Reports_CannotAssign()
         {
             var text = @"
                 {
-                    let result = 0
-                    for i = 1 to [true]
-                        result = result + i
+                    const x = 10
+                    x [=] 0
+                }
+            ";
+
+            var diagnostics = @"
+                ERROR: Variable 'x' is read-only and cannot be assigned again.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
+        public void Evaluator_AssignmentExpression_Reports_CannotConvert()
+        {
+            var text = @"
+                {
+                    let x = 10
+                    x = [true]
                 }
             ";
 
@@ -286,32 +293,7 @@ namespace Syron.Tests.CodeAnalysis
             ";
 
             var diagnostics = @"
-                ERROR: 'write' is a reserved keyword and cannot be used as an identifier.
-            ";
-
-            AssertDiagnostics(text, diagnostics);
-        }
-
-
-        [Fact]
-        public void Evaluator_Unary_Reports_Undefined()
-        {
-            var text = @"[+]true";
-
-            var diagnostics = @"
-                ERROR: Unary operator '+' is not defined for type bool.
-            ";
-
-            AssertDiagnostics(text, diagnostics);
-        }
-
-        [Fact]
-        public void Evaluator_Binary_Reports_Undefined()
-        {
-            var text = @"10 [*] false";
-
-            var diagnostics = @"
-                ERROR: Binary operator '*' is not defined for types int and bool.
+                ERROR: Function 'write' doesn't exist.
             ";
 
             AssertDiagnostics(text, diagnostics);

@@ -75,6 +75,8 @@ namespace Syron.CodeAnalysis.Syntax
                     return SyntaxKind.ForKeyword;
                 case "to":
                     return SyntaxKind.ToKeyword;
+                case "function":
+                    return SyntaxKind.FunctionKeyword;
 
                 default:
                     return SyntaxKind.IdentifierToken;
@@ -149,6 +151,8 @@ namespace Syron.CodeAnalysis.Syntax
                     return "{";
                 case SyntaxKind.CloseBraceToken:
                     return "}";
+                case SyntaxKind.ColonToken:
+                    return ":";
                 case SyntaxKind.CommaToken:
                     return ",";
                 case SyntaxKind.ElseKeyword:
@@ -171,6 +175,8 @@ namespace Syron.CodeAnalysis.Syntax
                     return "for";
                 case SyntaxKind.ToKeyword:
                     return "to";
+                case SyntaxKind.FunctionKeyword:
+                    return "function";
 
                 default:
                     return null;

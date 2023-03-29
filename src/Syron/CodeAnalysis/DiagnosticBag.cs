@@ -60,19 +60,37 @@ namespace Syron.CodeAnalysis
 
         public void ReportUndefinedUnaryOperator(TextSpan span, string operatorText, TypeSymbol operandType)
         {
-            var message = $"ERROR: Unary operator '{operatorText}' is not defined for type {operandType}.";
+            var message = $"ERROR: Unary operator '{operatorText}' is not defined for type '{operandType}'.";
             Report(span, message);
         }
 
         public void ReportUndefinedBinaryOperator(TextSpan span, string operatorText, TypeSymbol leftType, TypeSymbol rightType)
         {
-            var message = $"ERROR: Binary operator '{operatorText}' is not defined for types {leftType} and {rightType}.";
+            var message = $"ERROR: Binary operator '{operatorText}' is not defined for types '{leftType}' and '{rightType}'.";
             Report(span, message);
         }
 
         public void ReportUndefinedName(TextSpan span, string name)
         {
             var message = $"ERROR: Variable '{name}' doesn't exist.";
+            Report(span, message);
+        }
+
+        public void ReportUndefinedType(TextSpan location, string name)
+        {
+            var message = $"ERROR: Type '{name}' doesn't exist.";
+            Report(location, message);
+        }
+
+        public void ReportCannotConvertImplicitly(TextSpan diagnosticSpan, TypeSymbol type1, TypeSymbol type2)
+        {
+            var message = $"ERROR: Cannot convert type '{type1}' to '{type2}'. An explicit conversion exists (are you missing a cast?)";
+            Report(diagnosticSpan, message);
+        }
+
+        public void ReportSymbolAlreadyDeclared(TextSpan span, string name)
+        {
+            var message = $"ERROR: Variable '{name}' is already declared.";
             Report(span, message);
         }
 
@@ -121,6 +139,18 @@ namespace Syron.CodeAnalysis
         public void ReportExpressionMustHaveValue(TextSpan span)
         {
             var message = $"ERROR: Expression must have a value.";
+            Report(span, message);
+        }
+
+        public void ReportParameterAlreadyDeclared(TextSpan span, string parameterName)
+        {
+            var message = $"ERROR: A parameter with the name '{parameterName}' already exists.";
+            Report(span, message);
+        }
+
+        public void RNM_ReportFunctionsAreUnsupported(TextSpan span)
+        {
+            var message = $"ERROR: Functions are unsupported.";
             Report(span, message);
         }
     }
