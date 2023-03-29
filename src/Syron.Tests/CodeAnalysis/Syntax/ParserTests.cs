@@ -124,9 +124,11 @@ namespace Syron.Tests.CodeAnalysis.Syntax
 
             var root = syntaxTree.Root;
 
-            var statement = root.Statement;
+            var member = Assert.Single(root.Members);
 
-            return Assert.IsType<ExpressionStatementSyntax>(statement).Expression;
+            var globalStatement = Assert.IsType<GlobalStatementSyntax>(member);
+
+            return Assert.IsType<ExpressionStatementSyntax>(globalStatement.Statement).Expression;
         }
 
         public static IEnumerable<object[]> GetBinaryOperatorPairsData()

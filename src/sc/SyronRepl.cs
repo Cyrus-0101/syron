@@ -103,8 +103,8 @@ namespace Syron
 
             var syntaxTree = SyntaxTree.Parse(text);
 
-            // Use Statement because we need to exclude the EndOfFileToken.
-            if (syntaxTree.Root.Statement.GetLastToken().IsMissing)
+            // Use Members because we need to exclude the EndOfFileToken.
+            if (syntaxTree.Root.Members.Last().GetLastToken().IsMissing)
                 return false;
 
             return true;

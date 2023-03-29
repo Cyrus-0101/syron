@@ -41,6 +41,7 @@ namespace Syron.CodeAnalysis.Syntax
         ConstKeyword,
         TrueKeyword,
         LetKeyword,
+        FunctionKeyword,
         WhileKeyword,
         DoKeyword,
         ForKeyword,
@@ -48,6 +49,9 @@ namespace Syron.CodeAnalysis.Syntax
 
         // Nodes
         CompilationUnit,
+        FunctionDeclaration,
+        GlobalStatement,
+        Parameter,
         ElseClause,
         TypeClause,
 

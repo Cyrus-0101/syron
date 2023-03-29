@@ -11,8 +11,10 @@ namespace Syron.CodeAnalysis.Symbols
     {
         Function,
         Variable,
+        GlobalVariable,
+        LocalVariable,
+        Parameter,
         Type,
-        Parameter
     }
 
 }

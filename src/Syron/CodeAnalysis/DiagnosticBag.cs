@@ -60,13 +60,13 @@ namespace Syron.CodeAnalysis
 
         public void ReportUndefinedUnaryOperator(TextSpan span, string operatorText, TypeSymbol operandType)
         {
-            var message = $"ERROR: Unary operator '{operatorText}' is not defined for type {operandType}.";
+            var message = $"ERROR: Unary operator '{operatorText}' is not defined for type '{operandType}'.";
             Report(span, message);
         }
 
         public void ReportUndefinedBinaryOperator(TextSpan span, string operatorText, TypeSymbol leftType, TypeSymbol rightType)
         {
-            var message = $"ERROR: Binary operator '{operatorText}' is not defined for types {leftType} and {rightType}.";
+            var message = $"ERROR: Binary operator '{operatorText}' is not defined for types '{leftType}' and '{rightType}'.";
             Report(span, message);
         }
 
@@ -139,6 +139,18 @@ namespace Syron.CodeAnalysis
         public void ReportExpressionMustHaveValue(TextSpan span)
         {
             var message = $"ERROR: Expression must have a value.";
+            Report(span, message);
+        }
+
+        public void ReportParameterAlreadyDeclared(TextSpan span, string parameterName)
+        {
+            var message = $"ERROR: A parameter with the name '{parameterName}' already exists.";
+            Report(span, message);
+        }
+
+        public void RNM_ReportFunctionsAreUnsupported(TextSpan span)
+        {
+            var message = $"ERROR: Functions are unsupported.";
             Report(span, message);
         }
     }

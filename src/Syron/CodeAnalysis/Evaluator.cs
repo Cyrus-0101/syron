@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using Syron.CodeAnalysis.Binding;
 using Syron.CodeAnalysis.Symbols;
 
@@ -7,33 +8,42 @@ namespace Syron.CodeAnalysis
 {
     internal sealed class Evaluator
     {
+        private readonly ImmutableDictionary<FunctionSymbol, BoundBlockStatement> _functionBodies;
         private readonly BoundBlockStatement _root;
-        private readonly Dictionary<VariableSymbol, object> _variables;
+        private readonly Dictionary<VariableSymbol, object> _globals;
+        private readonly Stack<Dictionary<VariableSymbol, object>> _locals = new Stack<Dictionary<VariableSymbol, object>>();
         private Random _random;
 
         private object _lastValue;
 
-        public Evaluator(BoundBlockStatement root, Dictionary<VariableSymbol, object> variables)
+        public Evaluator(ImmutableDictionary<FunctionSymbol, BoundBlockStatement> functionBodies, BoundBlockStatement root, Dictionary<VariableSymbol, object> variables)
         {
+            _functionBodies = functionBodies;
             _root = root;
-            _variables = variables;
+            _globals = variables;
+            _locals.Push(new Dictionary<VariableSymbol, object>());
         }
 
         public object Evaluate()
         {
+            return EvaluateStatement(_root);
+        }
+
+        private object EvaluateStatement(BoundBlockStatement body)
+        {
             var labelToIndex = new Dictionary<BoundLabel, int>();
 
-            for (var i = 0; i < _root.Statements.Length; i++)
+            for (var i = 0; i < body.Statements.Length; i++)
             {
-                if (_root.Statements[i] is BoundLabelStatement l)
+                if (body.Statements[i] is BoundLabelStatement l)
                     labelToIndex.Add(l.Label, i + 1);
             }
 
             var index = 0;
 
-            while (index < _root.Statements.Length)
+            while (index < body.Statements.Length)
             {
-                var s = _root.Statements[index];
+                var s = body.Statements[index];
 
                 switch (s.Kind)
                 {
@@ -72,8 +82,8 @@ namespace Syron.CodeAnalysis
         private void EvaluateVariableDeclaration(BoundVariableDeclaration node)
         {
             var value = EvaluateExpression(node.Initializer);
-            _variables[node.Variable] = value;
             _lastValue = value;
+            Assign(node.Variable, value);
         }
 
         private void EvaluateExpressionStatement(BoundExpressionStatement node)
@@ -111,13 +121,21 @@ namespace Syron.CodeAnalysis
 
         private object EvaluateVariableExpression(BoundVariableExpression v)
         {
-            return _variables[v.Variable];
+            if (v.Variable.Kind == SymbolKind.GlobalVariable)
+            {
+                return _globals[v.Variable];
+            }
+            else
+            {
+                var locals = _locals.Peek();
+                return locals[v.Variable];
+            }
         }
 
         private object EvaluateAssignmentExpression(BoundAssignmentExpression a)
         {
             var value = EvaluateExpression(a.Expression);
-            _variables[a.Variable] = value;
+            Assign(a.Variable, value);
             return value;
         }
 
@@ -148,7 +166,7 @@ namespace Syron.CodeAnalysis
             switch (b.Op.Kind)
             {
                 case BoundBinaryOperatorKind.Addition:
-                    if (b.Type == (TypeSymbol.Int))
+                    if (b.Type == TypeSymbol.Int)
                         return (int)left + (int)right;
                     else
                         return (string)left + (string)right;
@@ -159,17 +177,17 @@ namespace Syron.CodeAnalysis
                 case BoundBinaryOperatorKind.Division:
                     return (int)left / (int)right;
                 case BoundBinaryOperatorKind.BitwiseAnd:
-                    if (b.Type == (TypeSymbol.Int))
+                    if (b.Type == TypeSymbol.Int)
                         return (int)left & (int)right;
                     else
                         return (bool)left & (bool)right;
                 case BoundBinaryOperatorKind.BitwiseOr:
-                    if (b.Type == (TypeSymbol.Int))
+                    if (b.Type == TypeSymbol.Int)
                         return (int)left | (int)right;
                     else
                         return (bool)left | (bool)right;
                 case BoundBinaryOperatorKind.BitwiseXor:
-                    if (b.Type == (TypeSymbol.Int))
+                    if (b.Type == TypeSymbol.Int)
                         return (int)left ^ (int)right;
                     else
                         return (bool)left ^ (bool)right;
@@ -208,9 +226,7 @@ namespace Syron.CodeAnalysis
             }
             else if (node.Function == BuiltInFunctions.Random)
             {
-
                 var max = (int)EvaluateExpression(node.Arguments[0]);
-
                 if (_random == null)
                     _random = new Random();
 
@@ -218,14 +234,28 @@ namespace Syron.CodeAnalysis
             }
             else
             {
-                throw new Exception($"Unexpected function {node.Function}");
+                var locals = new Dictionary<VariableSymbol, object>();
+                for (int i = 0; i < node.Arguments.Length; i++)
+                {
+                    var parameter = node.Function.Parameters[i];
+                    var value = EvaluateExpression(node.Arguments[i]);
+                    locals.Add(parameter, value);
+                }
+
+                _locals.Push(locals);
+
+                var statement = _functionBodies[node.Function];
+                var result = EvaluateStatement(statement);
+
+                _locals.Pop();
+
+                return result;
             }
         }
 
         private object EvaluateConversionExpression(BoundConversionExpression node)
         {
             var value = EvaluateExpression(node.Expression);
-
             if (node.Type == TypeSymbol.Bool)
                 return Convert.ToBoolean(value);
             else if (node.Type == TypeSymbol.Int)
@@ -234,6 +264,19 @@ namespace Syron.CodeAnalysis
                 return Convert.ToString(value);
             else
                 throw new Exception($"Unexpected type {node.Type}");
+        }
+
+        private void Assign(VariableSymbol variable, object value)
+        {
+            if (variable.Kind == SymbolKind.GlobalVariable)
+            {
+                _globals[variable] = value;
+            }
+            else
+            {
+                var locals = _locals.Peek();
+                locals[variable] = value;
+            }
         }
     }
 }
