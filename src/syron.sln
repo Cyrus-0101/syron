@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sc", "sc\sc.csproj", "{212BA31C-D52C-429B-8BC5-A962D0D985DB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "si", "si\si.csproj", "{212BA31C-D52C-429B-8BC5-A962D0D985DB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Syron.Tests", "Syron.Tests\Syron.Tests.csproj", "{1314ACB9-0EAF-4514-9E4C-B714B111A0A1}"
 EndProject
