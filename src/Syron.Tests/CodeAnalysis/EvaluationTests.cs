@@ -205,6 +205,22 @@ namespace Syron.Tests.CodeAnalysis
         }
 
         [Fact]
+        public void Evaluator_ForStatement_Reports_CannotConvert_LowerBound()
+        {
+            var text = @"
+                {
+                    let result = 0
+                    for i = [false] to 10
+                        result = result + i
+                }
+            ";
+            var diagnostics = @"
+                ERROR: Cannot convert type 'bool' to 'int'.
+            ";
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
         public void Evaluator_ForStatement_Reports_CannotConvert_UpperBound()
         {
             var text = @"
