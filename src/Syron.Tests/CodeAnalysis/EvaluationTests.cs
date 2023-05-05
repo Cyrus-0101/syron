@@ -116,6 +116,40 @@ namespace Syron.Tests.CodeAnalysis
         }
 
         [Fact]
+        public void Evaluator_InvokeFunctionArguments_NoInfiniteLoop()
+        {
+            var text = @"
+                write(""Hi""[[=]][)]
+            ";
+            var diagnostics = @"
+                ERROR: Unexpected token <EqualsToken>, expected <CloseParenthesisToken>.
+                ERROR: Unexpected token <EqualsToken>, expected <IdentifierToken>.
+                ERROR: Unexpected token <CloseParenthesisToken>, expected <IdentifierToken>.
+            ";
+            AssertDiagnostics(text, diagnostics);
+        }
+        [Fact]
+        public void Evaluator_FunctionParameters_NoInfiniteLoop()
+        {
+            var text = @"
+                function hi(name: string[[[=]]][)]
+                {
+                    write(""Hi "" + name + ""!"" )
+                }[]
+            ";
+
+            var diagnostics = @"
+                ERROR: Unexpected token <EqualsToken>, expected <CloseParenthesisToken>.
+                ERROR: Unexpected token <EqualsToken>, expected <OpenBraceToken>.
+                ERROR: Unexpected token <EqualsToken>, expected <IdentifierToken>.
+                ERROR: Unexpected token <CloseParenthesisToken>, expected <IdentifierToken>.
+                ERROR: Unexpected token <EndOfFileToken>, expected <CloseBraceToken>.
+            ";
+            AssertDiagnostics(text, diagnostics);
+        }
+
+
+        [Fact]
         public void Evaluator_IfStatement_Reports_CannotConvert()
         {
             var text = @"
