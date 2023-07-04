@@ -122,11 +122,7 @@ namespace Syron.CodeAnalysis.Syntax
             var nodesAndSeparators = ImmutableArray.CreateBuilder<SyntaxNode>();
 
             var parseNextParameter = true;
-            while (parseNextParameter &&
-                   Current.Kind != SyntaxKind.CloseParenthesisToken &&
-                   Current.Kind != SyntaxKind.EndOfFileToken
-
-                   )
+            while (parseNextParameter && Current.Kind != SyntaxKind.EndOfFileToken)
             {
                 var parameter = ParseParameter();
                 nodesAndSeparators.Add(parameter);
