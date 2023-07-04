@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using Syron.CodeAnalysis;
+using Syron.CodeAnalysis.Syntax;
 using Syron.CodeAnalysis.Text;
 
 namespace Syron.CodeAnalysis.Syntax
@@ -122,7 +124,9 @@ namespace Syron.CodeAnalysis.Syntax
             var parseNextParameter = true;
             while (parseNextParameter &&
                    Current.Kind != SyntaxKind.CloseParenthesisToken &&
-                   Current.Kind != SyntaxKind.EndOfFileToken)
+                   Current.Kind != SyntaxKind.EndOfFileToken
+
+                   )
             {
                 var parameter = ParseParameter();
                 nodesAndSeparators.Add(parameter);
