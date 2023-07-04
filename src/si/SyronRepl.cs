@@ -48,7 +48,6 @@ namespace Syron
                 else
                     Console.ForegroundColor = ConsoleColor.Gray;
 
-
                 Console.Write(token.Text);
 
                 Console.ResetColor();
