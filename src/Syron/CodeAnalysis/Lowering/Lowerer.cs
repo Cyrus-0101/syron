@@ -109,7 +109,7 @@ namespace Syron.CodeAnalysis.Lowering
         protected override BoundStatement RewriteWhileStatement(BoundWhileStatement node)
         {
             // while <condition>
-            //      <bode>
+            //      <body>
             //
             // ----->
             //
@@ -118,18 +118,16 @@ namespace Syron.CodeAnalysis.Lowering
             // <body>
             // check:
             // gotoTrue <condition> continue
-            // end:
+            // break:
             //
 
-            var continueLabel = GenerateLabel();
             var checkLabel = GenerateLabel();
-            var endLabel = GenerateLabel();
 
             var gotoCheck = new BoundGotoStatement(checkLabel);
-            var continueLabelStatement = new BoundLabelStatement(continueLabel);
+            var continueLabelStatement = new BoundLabelStatement(node.ContinueLabel);
             var checkLabelStatement = new BoundLabelStatement(checkLabel);
-            var gotoTrue = new BoundConditionalGotoStatement(continueLabel, node.Condition);
-            var endLabelStatement = new BoundLabelStatement(endLabel);
+            var gotoTrue = new BoundConditionalGotoStatement(node.ContinueLabel, node.Condition);
+            var breakLabelStatement = new BoundLabelStatement(node.BreakLabel);
 
             var result = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(
                 gotoCheck,
@@ -137,7 +135,7 @@ namespace Syron.CodeAnalysis.Lowering
                 node.Body,
                 checkLabelStatement,
                 gotoTrue,
-                endLabelStatement
+                breakLabelStatement
             ));
 
             return RewriteStatement(result);
@@ -156,25 +154,17 @@ namespace Syron.CodeAnalysis.Lowering
             // goto check
             // check:
             // gotoTrue <condition> continue
-            // end:
+            // break:
 
-            var continueLabel = GenerateLabel();
-            var checkLabel = GenerateLabel();
-            var endLabel = GenerateLabel();
-
-            var continueLabelStatement = new BoundLabelStatement(continueLabel);
-            var gotoCheck = new BoundGotoStatement(checkLabel);
-            var checkLabelStatement = new BoundLabelStatement(checkLabel);
-            var gotoTrue = new BoundConditionalGotoStatement(continueLabel, node.Condition);
-            var endLabelStatement = new BoundLabelStatement(endLabel);
+            var continueLabelStatement = new BoundLabelStatement(node.ContinueLabel);
+            var gotoTrue = new BoundConditionalGotoStatement(node.ContinueLabel, node.Condition);
+            var breakLabelStatement = new BoundLabelStatement(node.BreakLabel);
 
             var result = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(
-                continueLabelStatement,
-                node.Body,
-                gotoCheck,
-                checkLabelStatement,
-                gotoTrue,
-                endLabelStatement
+              continueLabelStatement,
+              node.Body,
+              gotoTrue,
+              breakLabelStatement
             ));
 
             return RewriteStatement(result);
@@ -193,6 +183,7 @@ namespace Syron.CodeAnalysis.Lowering
             //      while (<var> <= upperBound)
             //      {
             //          <body>
+            //          continue:
             //          <var> = <var> + 1
             //      }   
             // }
@@ -206,6 +197,9 @@ namespace Syron.CodeAnalysis.Lowering
                 BoundBinaryOperator.Bind(SyntaxKind.LessOrEqualsToken, TypeSymbol.Int, TypeSymbol.Int),
                 new BoundVariableExpression(upperBoundSymbol)
             );
+
+            var continueLabelStatement = new BoundLabelStatement(node.ContinueLabel);
+
             var increment = new BoundExpressionStatement(
                 new BoundAssignmentExpression(
                     node.Variable,
@@ -216,9 +210,25 @@ namespace Syron.CodeAnalysis.Lowering
                     )
                 )
             );
-            var whileBody = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(node.Body, increment));
-            var whileStatement = new BoundWhileStatement(condition, whileBody);
-            var result = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(variableDeclaration, upperBoundDeclaration, whileStatement));
+
+            var whileBody = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(
+                node.Body,
+                continueLabelStatement,
+                increment
+            ));
+
+            var whileStatement = new BoundWhileStatement(
+                condition,
+                whileBody,
+                node.BreakLabel,
+                GenerateLabel()
+            );
+
+            var result = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(
+                variableDeclaration,
+                upperBoundDeclaration,
+                whileStatement
+            ));
 
             return RewriteStatement(result);
         }
