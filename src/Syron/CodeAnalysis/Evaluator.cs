@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using Syron.CodeAnalysis.Binding;
 using Syron.CodeAnalysis.Symbols;
 
@@ -8,25 +9,23 @@ namespace Syron.CodeAnalysis
 {
     internal sealed class Evaluator
     {
-        private readonly ImmutableDictionary<FunctionSymbol, BoundBlockStatement> _functionBodies;
-        private readonly BoundBlockStatement _root;
+        private readonly BoundProgram _program;
         private readonly Dictionary<VariableSymbol, object> _globals;
         private readonly Stack<Dictionary<VariableSymbol, object>> _locals = new Stack<Dictionary<VariableSymbol, object>>();
         private Random _random;
 
         private object _lastValue;
 
-        public Evaluator(ImmutableDictionary<FunctionSymbol, BoundBlockStatement> functionBodies, BoundBlockStatement root, Dictionary<VariableSymbol, object> variables)
+        public Evaluator(BoundProgram program, Dictionary<VariableSymbol, object> variables)
         {
-            _functionBodies = functionBodies;
-            _root = root;
+            _program = program;
             _globals = variables;
             _locals.Push(new Dictionary<VariableSymbol, object>());
         }
 
         public object Evaluate()
         {
-            return EvaluateStatement(_root);
+            return EvaluateStatement(_program.Statement);
         }
 
         private object EvaluateStatement(BoundBlockStatement body)
@@ -244,7 +243,7 @@ namespace Syron.CodeAnalysis
 
                 _locals.Push(locals);
 
-                var statement = _functionBodies[node.Function];
+                var statement = _program.Functions[node.Function];
                 var result = EvaluateStatement(statement);
 
                 _locals.Pop();
@@ -259,7 +258,7 @@ namespace Syron.CodeAnalysis
             if (node.Type == TypeSymbol.Bool)
                 return Convert.ToBoolean(value);
             else if (node.Type == TypeSymbol.Int)
-                return Convert.ToInt32(value);
+                return Convert.ToInt64(value);
             else if (node.Type == TypeSymbol.String)
                 return Convert.ToString(value);
             else

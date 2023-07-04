@@ -1,3 +1,5 @@
+using System.IO;
+
 //   _________
 //  /   _____/__.__._______  ____   ____  
 //  \_____  <   |  |\_  __ \/  _ \ /    \ 
@@ -16,7 +18,19 @@ namespace Syron.CodeAnalysis.Symbols
 
         public abstract SymbolKind Kind { get; }
         public string Name { get; }
-        public override string ToString() => Name;
-    }
 
+        public void WriteTo(TextWriter writer)
+        {
+            SymbolPrinter.WriteTo(this, writer);
+        }
+
+        public override string ToString()
+        {
+            using (var writer = new StringWriter())
+            {
+                WriteTo(writer);
+                return writer.ToString();
+            }
+        }
+    }
 }
