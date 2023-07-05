@@ -45,7 +45,7 @@ namespace Syron
             {
                 _lineRenderer = lineRenderer;
                 _submissionDocument = submissionDocument;
-                _submissionDocument.CollectionChanged += SubmissionDocumentChanged;
+                _submissionDocument.CollectionChanged += SubmissionDocumentChanged!;
                 _cursorTop = Console.CursorTop;
                 Render();
             }
@@ -212,7 +212,9 @@ namespace Syron
 
         private void HandleEscape(ObservableCollection<string> document, SubmissionView view)
         {
-            document[view.CurrentLine] = string.Empty;
+            document.Clear();
+            document.Add(string.Empty);
+            view.CurrentLine = 0;
             view.CurrentCharacter = 0;
         }
 
@@ -272,6 +274,7 @@ namespace Syron
         private void HandleBackspace(ObservableCollection<string> document, SubmissionView view)
         {
             var start = view.CurrentCharacter;
+
             if (start == 0)
             {
                 if (view.CurrentLine == 0)

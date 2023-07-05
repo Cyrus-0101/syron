@@ -12,7 +12,7 @@ namespace Syron.CodeAnalysis.Symbols
 {
     public sealed class FunctionSymbol : Symbol
     {
-        public FunctionSymbol(string name, ImmutableArray<ParameterSymbol> parameters, TypeSymbol type, FunctionDeclarationSyntax declaration = null) : base(name)
+        public FunctionSymbol(string name, ImmutableArray<ParameterSymbol> parameters, TypeSymbol type, FunctionDeclarationSyntax declaration = null!) : base(name)
         {
             Parameters = parameters;
             Type = type;

@@ -148,6 +148,12 @@ namespace Syron.CodeAnalysis
             Report(span, message);
         }
 
+        public void ReportInvalidBreakOrContinue(TextSpan span, string text)
+        {
+            var message = $"ERROR: The keyword '{text}' can only be used inside of loops.";
+            Report(span, message);
+        }
+
         public void RNM_ReportFunctionsAreUnsupported(TextSpan span)
         {
             var message = $"ERROR: Functions are unsupported.";

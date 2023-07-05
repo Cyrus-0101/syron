@@ -72,5 +72,9 @@ namespace Syron.CodeAnalysis.Syntax
         ParenthesizedExpression,
         AssignmentExpression,
         CallExpression,
+        BreakKeyword,
+        ContinueKeyword,
+        ContinueStatement,
+        BreakStatement,
     }
 }

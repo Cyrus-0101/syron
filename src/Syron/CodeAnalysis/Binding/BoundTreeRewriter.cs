@@ -42,12 +42,12 @@ namespace Syron.CodeAnalysis.Binding
             if (body == node.Body && condition == node.Condition)
                 return node;
 
-            return new BoundDoWhileStatement(body, condition);
+            return new BoundDoWhileStatement(body, condition, node.BodyLabel, node.BreakLabel, node.ContinueLabel);
         }
 
         protected virtual BoundStatement RewriteBlockStatement(BoundBlockStatement node)
         {
-            ImmutableArray<BoundStatement>.Builder builder = null;
+            ImmutableArray<BoundStatement>.Builder builder = null!;
 
             for (var i = 0; i < node.Statements.Length; i++)
             {
@@ -91,7 +91,7 @@ namespace Syron.CodeAnalysis.Binding
             if (condition == node.Condition && thenStatement == node.ThenStatement && elseStatement == node.ElseStatement)
                 return node;
 
-            return new BoundIfStatement(condition, thenStatement, elseStatement);
+            return new BoundIfStatement(condition, thenStatement, elseStatement!);
         }
 
         protected virtual BoundStatement RewriteWhileStatement(BoundWhileStatement node)
@@ -101,7 +101,7 @@ namespace Syron.CodeAnalysis.Binding
             if (condition == node.Condition && body == node.Body)
                 return node;
 
-            return new BoundWhileStatement(condition, body);
+            return new BoundWhileStatement(condition, body, node.BodyLabel, node.BreakLabel, node.ContinueLabel);
         }
 
         protected virtual BoundStatement RewriteForStatement(BoundForStatement node)
@@ -112,7 +112,7 @@ namespace Syron.CodeAnalysis.Binding
             if (lowerBound == node.LowerBound && upperBound == node.UpperBound && body == node.Body)
                 return node;
 
-            return new BoundForStatement(node.Variable, lowerBound, upperBound, body);
+            return new BoundForStatement(node.Variable, node.BodyLabel, lowerBound, upperBound, body, node.BreakLabel, node.ContinueLabel);
         }
 
         protected virtual BoundStatement RewriteLabelStatement(BoundLabelStatement node)
@@ -213,7 +213,7 @@ namespace Syron.CodeAnalysis.Binding
 
         protected virtual BoundExpression RewriteCallExpression(BoundCallExpression node)
         {
-            ImmutableArray<BoundExpression>.Builder builder = null;
+            ImmutableArray<BoundExpression>.Builder builder = null!;
 
             for (var i = 0; i < node.Arguments.Length; i++)
             {

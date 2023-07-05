@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using Syron.CodeAnalysis;
+using Syron.CodeAnalysis.Syntax;
 using Syron.CodeAnalysis.Text;
 
 namespace Syron.CodeAnalysis.Syntax
@@ -60,7 +62,7 @@ namespace Syron.CodeAnalysis.Syntax
                 return NextToken();
 
             _diagnostics.ReportUnexpectedToken(Current.Span, Current.Kind, kind);
-            return new SyntaxToken(kind, Current.Position, null, null);
+            return new SyntaxToken(kind, Current.Position, null!, null!);
         }
 
         public CompilationUnitSyntax ParseCompilationUnit()
@@ -120,9 +122,7 @@ namespace Syron.CodeAnalysis.Syntax
             var nodesAndSeparators = ImmutableArray.CreateBuilder<SyntaxNode>();
 
             var parseNextParameter = true;
-            while (parseNextParameter &&
-                   Current.Kind != SyntaxKind.CloseParenthesisToken &&
-                   Current.Kind != SyntaxKind.EndOfFileToken)
+            while (parseNextParameter && Current.Kind != SyntaxKind.EndOfFileToken)
             {
                 var parameter = ParseParameter();
                 nodesAndSeparators.Add(parameter);
@@ -171,9 +171,25 @@ namespace Syron.CodeAnalysis.Syntax
                     return ParseDoWhileStatement();
                 case SyntaxKind.ForKeyword:
                     return ParseForStatement();
+                case SyntaxKind.BreakKeyword:
+                    return ParseBreakStatement();
+                case SyntaxKind.ContinueKeyword:
+                    return ParseContinueStatement();
                 default:
                     return ParseExpressionStatement();
             }
+        }
+
+        private StatementSyntax ParseBreakStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.BreakKeyword);
+            return new BreakStatementSyntax(keyword);
+        }
+
+        private StatementSyntax ParseContinueStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.ContinueKeyword);
+            return new ContinueStatementSyntax(keyword);
         }
 
         private BlockStatementSyntax ParseBlockStatement()
@@ -220,7 +236,7 @@ namespace Syron.CodeAnalysis.Syntax
         private TypeClauseSyntax ParseOptionalTypeClause()
         {
             if (Current.Kind != SyntaxKind.ColonToken)
-                return null;
+                return null!;
 
             return ParseTypeClause();
         }
@@ -244,7 +260,7 @@ namespace Syron.CodeAnalysis.Syntax
         private ElseClauseSyntax ParseElseClause()
         {
             if (Current.Kind != SyntaxKind.ElseKeyword)
-                return null;
+                return null!;
 
             var keyword = NextToken();
             var statement = ParseStatement();
