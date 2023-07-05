@@ -45,7 +45,7 @@ namespace Syron
             {
                 _lineRenderer = lineRenderer;
                 _submissionDocument = submissionDocument;
-                _submissionDocument.CollectionChanged += SubmissionDocumentChanged;
+                _submissionDocument.CollectionChanged += SubmissionDocumentChanged!;
                 _cursorTop = Console.CursorTop;
                 Render();
             }
@@ -215,6 +215,7 @@ namespace Syron
             document.Clear();
             document.Add(string.Empty);
             view.CurrentLine = 0;
+            view.CurrentCharacter = 0;
         }
 
         private void HandleEnter(ObservableCollection<string> document, SubmissionView view)
