@@ -7,7 +7,7 @@ namespace Syron.CodeAnalysis.Binding
 {
     internal sealed class BoundScope
     {
-        private Dictionary<string, Symbol> _symbols = null!;
+        private Dictionary<string, Symbol> _symbols = new Dictionary<string, Symbol>();
 
         public BoundScope(BoundScope parent)
         {

@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using Syron.CodeAnalysis;
-using Syron.CodeAnalysis.Syntax;
+
 using Syron.CodeAnalysis.Text;
 
 namespace Syron.CodeAnalysis.Syntax
@@ -122,7 +119,9 @@ namespace Syron.CodeAnalysis.Syntax
             var nodesAndSeparators = ImmutableArray.CreateBuilder<SyntaxNode>();
 
             var parseNextParameter = true;
-            while (parseNextParameter && Current.Kind != SyntaxKind.EndOfFileToken)
+            while (parseNextParameter &&
+                   Current.Kind != SyntaxKind.CloseParenthesisToken &&
+                   Current.Kind != SyntaxKind.EndOfFileToken)
             {
                 var parameter = ParseParameter();
                 nodesAndSeparators.Add(parameter);
@@ -175,21 +174,11 @@ namespace Syron.CodeAnalysis.Syntax
                     return ParseBreakStatement();
                 case SyntaxKind.ContinueKeyword:
                     return ParseContinueStatement();
+                case SyntaxKind.ReturnKeyword:
+                    return ParseReturnStatement();
                 default:
                     return ParseExpressionStatement();
             }
-        }
-
-        private StatementSyntax ParseBreakStatement()
-        {
-            var keyword = MatchToken(SyntaxKind.BreakKeyword);
-            return new BreakStatementSyntax(keyword);
-        }
-
-        private StatementSyntax ParseContinueStatement()
-        {
-            var keyword = MatchToken(SyntaxKind.ContinueKeyword);
-            return new ContinueStatementSyntax(keyword);
         }
 
         private BlockStatementSyntax ParseBlockStatement()
@@ -294,6 +283,29 @@ namespace Syron.CodeAnalysis.Syntax
             var upperBound = ParseExpression();
             var body = ParseStatement();
             return new ForStatementSyntax(keyword, identifier, equalsToken, lowerBound, toKeyword, upperBound, body);
+        }
+
+        private StatementSyntax ParseBreakStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.BreakKeyword);
+            return new BreakStatementSyntax(keyword);
+        }
+
+        private StatementSyntax ParseContinueStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.ContinueKeyword);
+            return new ContinueStatementSyntax(keyword);
+        }
+
+        private StatementSyntax ParseReturnStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.ReturnKeyword);
+            var keywordLine = _text.GetLineIndex(keyword.Span.Start);
+            var currentLine = _text.GetLineIndex(Current.Span.Start);
+            var isEof = Current.Kind == SyntaxKind.EndOfFileToken;
+            var sameLine = !isEof && keywordLine == currentLine;
+            var expression = sameLine ? ParseExpression() : null;
+            return new ReturnStatementSyntax(keyword, expression!);
         }
 
         private ExpressionStatementSyntax ParseExpressionStatement()

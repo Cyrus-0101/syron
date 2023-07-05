@@ -106,9 +106,6 @@ namespace Syron.CodeAnalysis.Binding
 
             var type = BindTypeClause(syntax.Type) ?? TypeSymbol.Void;
 
-            if (type != TypeSymbol.Void)
-                _diagnostics.RNM_ReportFunctionsAreUnsupported(syntax.Type.Span);
-
             var function = new FunctionSymbol(syntax.Identifier.Text, parameters.ToImmutable(), type, syntax);
             if (!_scope.TryDeclareFunction(function))
                 _diagnostics.ReportSymbolAlreadyDeclared(syntax.Identifier.Span, function.Name);
@@ -181,6 +178,8 @@ namespace Syron.CodeAnalysis.Binding
                     return BindContinueStatement((ContinueStatementSyntax)syntax);
                 case SyntaxKind.ExpressionStatement:
                     return BindExpressionStatement((ExpressionStatementSyntax)syntax);
+                case SyntaxKind.ReturnStatement:
+                    return BindReturnStatement((ReturnStatementSyntax)syntax);
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
             }
@@ -299,6 +298,39 @@ namespace Syron.CodeAnalysis.Binding
 
             var continueLabel = _loopStack.Peek().ContinueLabel;
             return new BoundGotoStatement(continueLabel);
+        }
+
+        private BoundStatement BindReturnStatement(ReturnStatementSyntax syntax)
+        {
+            // Does the function have a return type?
+            // Does the return type match?
+            var expression = syntax.Expression == null ? null : BindExpression(syntax.Expression);
+            if (_function == null)
+            {
+                if (expression != null)
+                    _diagnostics.ReportInvalidReturn(syntax.ReturnKeyword.Span);
+            }
+            else
+            {
+                if (_function.Type == TypeSymbol.Void)
+                {
+                    if (expression != null)
+                        _diagnostics.ReportInvalidReturnExpression(syntax.Expression!.Span, _function.Name);
+                }
+                else
+                {
+                    if (expression == null)
+                    {
+                        _diagnostics.ReportMissingReturnExpression(syntax.ReturnKeyword.Span, _function.Type);
+                    }
+                    else
+                    {
+                        expression = BindConversion(syntax.Expression!.Span, expression, _function.Type);
+                    }
+                }
+            }
+
+            return new BoundReturnStatement(expression!);
         }
 
         private BoundStatement BindExpressionStatement(ExpressionStatementSyntax syntax)

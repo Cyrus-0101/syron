@@ -67,6 +67,8 @@ namespace Syron.CodeAnalysis.Syntax
                     return SyntaxKind.IfKeyword;
                 case "const":
                     return SyntaxKind.ConstKeyword;
+                case "return":
+                    return SyntaxKind.ReturnKeyword;
                 case "true":
                     return SyntaxKind.TrueKeyword;
                 case "let":
@@ -171,6 +173,8 @@ namespace Syron.CodeAnalysis.Syntax
                     return "if";
                 case SyntaxKind.ConstKeyword:
                     return "const";
+                case SyntaxKind.ReturnKeyword:
+                    return "return";
                 case SyntaxKind.TrueKeyword:
                     return "true";
                 case SyntaxKind.LetKeyword:

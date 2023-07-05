@@ -39,6 +39,7 @@ namespace Syron.CodeAnalysis.Syntax
         FalseKeyword,
         IfKeyword,
         ConstKeyword,
+        ReturnKeyword,
         TrueKeyword,
         LetKeyword,
         FunctionKeyword,
@@ -46,6 +47,8 @@ namespace Syron.CodeAnalysis.Syntax
         DoKeyword,
         ForKeyword,
         ToKeyword,
+        BreakKeyword,
+        ContinueKeyword,
 
         // Nodes
         CompilationUnit,
@@ -63,6 +66,10 @@ namespace Syron.CodeAnalysis.Syntax
         DoWhileStatement,
         ForStatement,
         ExpressionStatement,
+        BreakStatement,
+        ContinueStatement,
+        ReturnStatement,
+
 
         // Expressions
         LiteralExpression,
@@ -71,10 +78,6 @@ namespace Syron.CodeAnalysis.Syntax
         BinaryExpression,
         ParenthesizedExpression,
         AssignmentExpression,
-        CallExpression,
-        BreakKeyword,
-        ContinueKeyword,
-        ContinueStatement,
-        BreakStatement,
+        CallExpression
     }
 }

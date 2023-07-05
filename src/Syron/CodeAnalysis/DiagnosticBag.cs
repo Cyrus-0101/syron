@@ -154,9 +154,21 @@ namespace Syron.CodeAnalysis
             Report(span, message);
         }
 
-        public void RNM_ReportFunctionsAreUnsupported(TextSpan span)
+        public void ReportInvalidReturn(TextSpan span)
         {
-            var message = $"ERROR: Functions are unsupported.";
+            var message = $"ERROR: The keyword 'return' can only be used inside of functions.";
+            Report(span, message);
+        }
+
+        public void ReportInvalidReturnExpression(TextSpan span, string functionName)
+        {
+            var message = $"ERROR: Since the function '{functionName}' doesn't return a value the 'return' keyword cannot be followed by an expression.";
+            Report(span, message);
+        }
+
+        public void ReportMissingReturnExpression(TextSpan span, TypeSymbol returnType)
+        {
+            var message = $"ERROR: An expression of type '{returnType}' is expected.";
             Report(span, message);
         }
     }
