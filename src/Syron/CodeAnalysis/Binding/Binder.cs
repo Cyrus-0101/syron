@@ -237,15 +237,15 @@ namespace Syron.CodeAnalysis.Binding
         private BoundStatement BindWhileStatement(WhileStatementSyntax syntax)
         {
             var condition = BindExpression(syntax.Condition, TypeSymbol.Bool);
-            var body = BindLoopBody(syntax.Body, out var breakLabel, out var continueLabel);
-            return new BoundWhileStatement(condition, body, breakLabel, continueLabel);
+            var body = BindLoopBody(syntax.Body, out var bodyLabel, out var breakLabel, out var continueLabel);
+            return new BoundWhileStatement(condition, body, bodyLabel, breakLabel, continueLabel);
         }
 
         private BoundStatement BindDoWhileStatement(DoWhileStatementSyntax syntax)
         {
-            var body = BindLoopBody(syntax.Body, out var breakLabel, out var continueLabel);
+            var body = BindLoopBody(syntax.Body, out var bodyLabel, out var breakLabel, out var continueLabel);
             var condition = BindExpression(syntax.Condition, TypeSymbol.Bool);
-            return new BoundDoWhileStatement(body, condition, breakLabel, continueLabel);
+            return new BoundDoWhileStatement(body, condition, bodyLabel, breakLabel, continueLabel);
         }
 
         private BoundStatement BindForStatement(ForStatementSyntax syntax)
@@ -256,16 +256,17 @@ namespace Syron.CodeAnalysis.Binding
             _scope = new BoundScope(_scope);
 
             var variable = BindVariable(syntax.Identifier, isReadOnly: true, TypeSymbol.Int);
-            var body = BindLoopBody(syntax.Body, out var breakLabel, out var continueLabel);
+            var body = BindLoopBody(syntax.Body, out var bodyLabel, out var breakLabel, out var continueLabel);
 
             _scope = _scope.Parent;
 
-            return new BoundForStatement(variable, lowerBound, upperBound, body, breakLabel, continueLabel);
+            return new BoundForStatement(variable, bodyLabel, lowerBound, upperBound, body, breakLabel, continueLabel);
         }
 
-        private BoundStatement BindLoopBody(StatementSyntax body, out BoundLabel breakLabel, out BoundLabel continueLabel)
+        private BoundStatement BindLoopBody(StatementSyntax body, out BoundLabel bodyLabel, out BoundLabel breakLabel, out BoundLabel continueLabel)
         {
             _labelCounter++;
+            bodyLabel = new BoundLabel($"body{_labelCounter}");
             breakLabel = new BoundLabel($"break{_labelCounter}");
             continueLabel = new BoundLabel($"continue{_labelCounter}");
 
@@ -453,10 +454,26 @@ namespace Syron.CodeAnalysis.Binding
 
             if (syntax.Arguments.Count != function.Parameters.Length)
             {
-                _diagnostics.ReportParameterCountMismatch(syntax.Span, function.Name, function.Parameters.Length, syntax.Arguments.Count);
+                TextSpan span;
+                if (syntax.Arguments.Count > function.Parameters.Length)
+                {
+                    SyntaxNode firstExceedingNode;
+                    if (function.Parameters.Length > 0)
+                        firstExceedingNode = syntax.Arguments.GetSeparator(function.Parameters.Length - 1);
+                    else
+                        firstExceedingNode = syntax.Arguments[0];
+                    var lastExceedingArgument = syntax.Arguments[syntax.Arguments.Count - 1];
+                    span = TextSpan.FromBounds(firstExceedingNode.Span.Start, lastExceedingArgument.Span.End);
+                }
+                else
+                {
+                    span = syntax.CloseParenthesisToken.Span;
+                }
+                _diagnostics.ReportParameterCountMismatch(span, function.Name, function.Parameters.Length, syntax.Arguments.Count);
                 return new BoundErrorExpression();
             }
 
+            bool hasErrors = false;
             for (var i = 0; i < syntax.Arguments.Count; i++)
             {
                 var argument = boundArguments[i];
@@ -465,9 +482,16 @@ namespace Syron.CodeAnalysis.Binding
                 if (argument.Type != parameter.Type)
                 {
                     _diagnostics.ReportParameterTypeMismatch(syntax.Arguments[i].Span, function.Name, parameter.Name, parameter.Type, argument.Type);
-                    return new BoundErrorExpression();
+
+                    if (argument.Type != TypeSymbol.Error)
+                        _diagnostics.ReportParameterTypeMismatch(syntax.Arguments[i].Span, function.Name, parameter.Name, parameter.Type, argument.Type);
+
+                    hasErrors = true;
                 }
             }
+
+            if (hasErrors)
+                return new BoundErrorExpression();
 
             return new BoundCallExpression(function, boundArguments.ToImmutable());
         }

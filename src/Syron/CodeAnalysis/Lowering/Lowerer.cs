@@ -62,7 +62,7 @@ namespace Syron.CodeAnalysis.Lowering
                 // ---->
                 //
                 // gotoFalse <condition> end
-                // <then>  
+                // <then>
                 // end:
 
                 var endLabel = GenerateLabel();
@@ -120,12 +120,10 @@ namespace Syron.CodeAnalysis.Lowering
             // gotoTrue <condition> body
             // break:
 
-            var bodyLabel = GenerateLabel();
-
             var gotoContinue = new BoundGotoStatement(node.ContinueLabel);
-            var bodyLabelStatement = new BoundLabelStatement(bodyLabel);
+            var bodyLabelStatement = new BoundLabelStatement(node.BodyLabel);
             var continueLabelStatement = new BoundLabelStatement(node.ContinueLabel);
-            var gotoTrue = new BoundConditionalGotoStatement(bodyLabel, node.Condition);
+            var gotoTrue = new BoundConditionalGotoStatement(node.BodyLabel, node.Condition);
             var breakLabelStatement = new BoundLabelStatement(node.BreakLabel);
 
             var result = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(
@@ -148,22 +146,23 @@ namespace Syron.CodeAnalysis.Lowering
             //
             // ----->
             //
-            // continue:
+            // body:
             // <body>
-            // goto check
-            // check:
-            // gotoTrue <condition> continue
+            // continue:
+            // gotoTrue <condition> body
             // break:
 
+            var bodyLabelStatement = new BoundLabelStatement(node.BodyLabel);
             var continueLabelStatement = new BoundLabelStatement(node.ContinueLabel);
-            var gotoTrue = new BoundConditionalGotoStatement(node.ContinueLabel, node.Condition);
+            var gotoTrue = new BoundConditionalGotoStatement(node.BodyLabel, node.Condition);
             var breakLabelStatement = new BoundLabelStatement(node.BreakLabel);
 
             var result = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(
-              continueLabelStatement,
-              node.Body,
-              gotoTrue,
-              breakLabelStatement
+                bodyLabelStatement,
+                node.Body,
+                continueLabelStatement,
+                gotoTrue,
+                breakLabelStatement
             ));
 
             return RewriteStatement(result);
@@ -184,7 +183,7 @@ namespace Syron.CodeAnalysis.Lowering
             //          <body>
             //          continue:
             //          <var> = <var> + 1
-            //      }   
+            //      }
             // }
 
             var variableDeclaration = new BoundVariableDeclaration(node.Variable, node.LowerBound);
@@ -203,22 +202,23 @@ namespace Syron.CodeAnalysis.Lowering
                 new BoundAssignmentExpression(
                     node.Variable,
                     new BoundBinaryExpression(
-                            variableExpression,
-                            BoundBinaryOperator.Bind(SyntaxKind.PlusToken, TypeSymbol.Int, TypeSymbol.Int),
-                            new BoundLiteralExpression(1)
+                        variableExpression,
+                        BoundBinaryOperator.Bind(SyntaxKind.PlusToken, TypeSymbol.Int, TypeSymbol.Int),
+                        new BoundLiteralExpression(1)
                     )
                 )
             );
 
             var whileBody = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(
-                node.Body,
-                continueLabelStatement,
-                increment
+                    node.Body,
+                    continueLabelStatement,
+                    increment
             ));
 
             var whileStatement = new BoundWhileStatement(
                 condition,
                 whileBody,
+                node.BodyLabel,
                 node.BreakLabel,
                 GenerateLabel()
             );
