@@ -187,7 +187,7 @@ namespace Syron.CodeAnalysis.Syntax
                     return "function";
 
                 default:
-                    return null;
+                    return null!;
             }
         }
     }

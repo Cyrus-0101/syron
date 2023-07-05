@@ -41,7 +41,7 @@ namespace Syron.CodeAnalysis.Binding
                     return op;
             }
 
-            return null;
+            return null!;
         }
     }
 }

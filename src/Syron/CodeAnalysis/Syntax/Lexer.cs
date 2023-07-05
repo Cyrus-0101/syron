@@ -13,7 +13,7 @@ namespace Syron.CodeAnalysis.Syntax
 
         private int _start;
         private SyntaxKind _kind;
-        private object _value;
+        private object _value = null!;
 
         public Lexer(SourceText text)
         {
@@ -40,7 +40,7 @@ namespace Syron.CodeAnalysis.Syntax
         {
             _start = _position;
             _kind = SyntaxKind.BadToken;
-            _value = null;
+            _value = null!;
 
             switch (Current)
             {
@@ -211,7 +211,7 @@ namespace Syron.CodeAnalysis.Syntax
             if (text == null)
                 text = _text.ToString(_start, length);
 
-            return new SyntaxToken(_kind, _start, text, _value);
+            return new SyntaxToken(_kind, _start, text, _value!);
         }
 
         private void ReadString()

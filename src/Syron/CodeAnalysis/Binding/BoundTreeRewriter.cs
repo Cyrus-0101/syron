@@ -47,7 +47,7 @@ namespace Syron.CodeAnalysis.Binding
 
         protected virtual BoundStatement RewriteBlockStatement(BoundBlockStatement node)
         {
-            ImmutableArray<BoundStatement>.Builder builder = null;
+            ImmutableArray<BoundStatement>.Builder builder = null!;
 
             for (var i = 0; i < node.Statements.Length; i++)
             {
@@ -91,7 +91,7 @@ namespace Syron.CodeAnalysis.Binding
             if (condition == node.Condition && thenStatement == node.ThenStatement && elseStatement == node.ElseStatement)
                 return node;
 
-            return new BoundIfStatement(condition, thenStatement, elseStatement);
+            return new BoundIfStatement(condition, thenStatement, elseStatement!);
         }
 
         protected virtual BoundStatement RewriteWhileStatement(BoundWhileStatement node)
@@ -213,7 +213,7 @@ namespace Syron.CodeAnalysis.Binding
 
         protected virtual BoundExpression RewriteCallExpression(BoundCallExpression node)
         {
-            ImmutableArray<BoundExpression>.Builder builder = null;
+            ImmutableArray<BoundExpression>.Builder builder = null!;
 
             for (var i = 0; i < node.Arguments.Length; i++)
             {

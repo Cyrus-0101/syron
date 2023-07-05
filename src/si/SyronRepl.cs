@@ -22,7 +22,7 @@ namespace Syron
 {
     internal sealed class SyronRepl : Repl
     {
-        private Compilation _previous;
+        private Compilation _previous = null!;
         private bool _showTree;
         private bool _showProgram;
         private readonly Dictionary<VariableSymbol, object> _variables = new Dictionary<VariableSymbol, object>();
@@ -78,7 +78,7 @@ namespace Syron
                     Console.Clear();
                     break;
                 case "#reset":
-                    _previous = null;
+                    _previous = null!;
                     _variables.Clear();
                     break;
                 default:

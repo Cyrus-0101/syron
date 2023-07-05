@@ -12,9 +12,9 @@ namespace Syron.CodeAnalysis
         private readonly BoundProgram _program;
         private readonly Dictionary<VariableSymbol, object> _globals;
         private readonly Stack<Dictionary<VariableSymbol, object>> _locals = new Stack<Dictionary<VariableSymbol, object>>();
-        private Random _random;
+        private Random _random = new Random();
 
-        private object _lastValue;
+        private object _lastValue = null!;
 
         public Evaluator(BoundProgram program, Dictionary<VariableSymbol, object> variables)
         {
@@ -215,13 +215,13 @@ namespace Syron.CodeAnalysis
         {
             if (node.Function == BuiltInFunctions.Input)
             {
-                return Console.ReadLine();
+                return Console.ReadLine()!;
             }
             else if (node.Function == BuiltInFunctions.Write)
             {
                 var message = (string)EvaluateExpression(node.Arguments[0]);
                 Console.WriteLine(message);
-                return null;
+                return null!;
             }
             else if (node.Function == BuiltInFunctions.Random)
             {
@@ -260,7 +260,7 @@ namespace Syron.CodeAnalysis
             else if (node.Type == TypeSymbol.Int)
                 return Convert.ToInt64(value);
             else if (node.Type == TypeSymbol.String)
-                return Convert.ToString(value);
+                return Convert.ToString(value)!;
             else
                 throw new Exception($"Unexpected type {node.Type}");
         }

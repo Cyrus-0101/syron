@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 
 using Syron.CodeAnalysis.Lowering;
 using Syron.CodeAnalysis.Symbols;
@@ -34,7 +31,7 @@ namespace Syron.CodeAnalysis.Binding
         public static BoundGlobalScope BindGlobalScope(BoundGlobalScope previous, CompilationUnitSyntax syntax)
         {
             var parentScope = CreateParentScope(previous);
-            var binder = new Binder(parentScope, function: null);
+            var binder = new Binder(parentScope, function: null!);
 
             foreach (var function in syntax.Members.OfType<FunctionDeclarationSyntax>())
                 binder.BindFunctionDeclaration(function);
@@ -147,7 +144,7 @@ namespace Syron.CodeAnalysis.Binding
 
         private static BoundScope CreateRootScope()
         {
-            var result = new BoundScope(null);
+            var result = new BoundScope(null!);
 
             foreach (var f in BuiltInFunctions.GetAll())
                 result.TryDeclareFunction(f);
@@ -220,7 +217,7 @@ namespace Syron.CodeAnalysis.Binding
         private TypeSymbol BindTypeClause(TypeClauseSyntax syntax)
         {
             if (syntax == null)
-                return null;
+                return null!;
 
             var type = LookupType(syntax.Identifier.Text);
             if (type == null)
@@ -234,7 +231,7 @@ namespace Syron.CodeAnalysis.Binding
             var condition = BindExpression(syntax.Condition, TypeSymbol.Bool);
             var thenStatement = BindStatement(syntax.ThenStatement);
             var elseStatement = syntax.ElseClause == null ? null : BindStatement(syntax.ElseClause.ElseStatement);
-            return new BoundIfStatement(condition, thenStatement, elseStatement);
+            return new BoundIfStatement(condition, thenStatement, elseStatement!);
         }
 
         private BoundStatement BindWhileStatement(WhileStatementSyntax syntax)
@@ -529,7 +526,7 @@ namespace Syron.CodeAnalysis.Binding
                 case "string":
                     return TypeSymbol.String;
                 default:
-                    return null;
+                    return null!;
             }
         }
     }

@@ -7,7 +7,7 @@ namespace Syron.CodeAnalysis.Binding
 {
     internal sealed class BoundScope
     {
-        private Dictionary<string, Symbol> _symbols;
+        private Dictionary<string, Symbol> _symbols = null!;
 
         public BoundScope(BoundScope parent)
         {
@@ -43,7 +43,7 @@ namespace Syron.CodeAnalysis.Binding
         private bool TryLookupSymbol<TSymbol>(string name, out TSymbol symbol)
             where TSymbol : Symbol
         {
-            symbol = null;
+            symbol = null!;
 
             if (_symbols != null && _symbols.TryGetValue(name, out var declaredSymbol))
             {

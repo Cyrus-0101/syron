@@ -19,7 +19,7 @@ namespace Syron.CodeAnalysis.Symbols
         internal static IEnumerable<FunctionSymbol> GetAll() => typeof(BuiltInFunctions)
                                                                     .GetFields(BindingFlags.Public | BindingFlags.Static)
                                                                     .Where(f => f.FieldType == typeof(FunctionSymbol))
-                                                                    .Select(f => (FunctionSymbol)f.GetValue(null));
+                                                                    .Select(f => (FunctionSymbol)f.GetValue(null)!);
     }
 
 }

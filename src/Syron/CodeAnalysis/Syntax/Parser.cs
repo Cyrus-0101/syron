@@ -62,7 +62,7 @@ namespace Syron.CodeAnalysis.Syntax
                 return NextToken();
 
             _diagnostics.ReportUnexpectedToken(Current.Span, Current.Kind, kind);
-            return new SyntaxToken(kind, Current.Position, null, null);
+            return new SyntaxToken(kind, Current.Position, null!, null!);
         }
 
         public CompilationUnitSyntax ParseCompilationUnit()
@@ -236,7 +236,7 @@ namespace Syron.CodeAnalysis.Syntax
         private TypeClauseSyntax ParseOptionalTypeClause()
         {
             if (Current.Kind != SyntaxKind.ColonToken)
-                return null;
+                return null!;
 
             return ParseTypeClause();
         }
@@ -260,7 +260,7 @@ namespace Syron.CodeAnalysis.Syntax
         private ElseClauseSyntax ParseElseClause()
         {
             if (Current.Kind != SyntaxKind.ElseKeyword)
-                return null;
+                return null!;
 
             var keyword = NextToken();
             var statement = ParseStatement();

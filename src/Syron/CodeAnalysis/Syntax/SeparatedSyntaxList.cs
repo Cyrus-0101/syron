@@ -23,7 +23,7 @@ namespace Syron.CodeAnalysis.Syntax
         public SyntaxToken GetSeparator(int index)
         {
             if (index == Count - 1)
-                return null;
+                return null!;
 
             return (SyntaxToken)_nodesAndSeparators[index * 2 + 1];
         }

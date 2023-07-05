@@ -71,7 +71,7 @@ namespace Syron.Tests.CodeAnalysis
             using (var reader = new StringReader(text))
             {
                 string line;
-                while ((line = reader.ReadLine()) != null)
+                while ((line = reader.ReadLine()!) != null)
                     lines.Add(line);
             }
 
