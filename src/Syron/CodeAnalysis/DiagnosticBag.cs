@@ -154,6 +154,12 @@ namespace Syron.CodeAnalysis
             Report(span, message);
         }
 
+        public void ReportAllPathsMustReturn(TextSpan span)
+        {
+            var message = $"ERROR: Not all code paths return a value.";
+            Report(span, message);
+        }
+
         public void ReportInvalidReturn(TextSpan span)
         {
             var message = $"ERROR: The keyword 'return' can only be used inside of functions.";
