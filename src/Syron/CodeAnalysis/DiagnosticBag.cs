@@ -132,7 +132,7 @@ namespace Syron.CodeAnalysis
 
         public void ReportParameterTypeMismatch(TextSpan span, string name, string parameterName, TypeSymbol expectedType, TypeSymbol actualType)
         {
-            var message = $"ERROR: Function '{name}' requires parameter '{parameterName}' to be of type {expectedType} but was given {actualType}.";
+            var message = $"ERROR: Function '{name}' requires parameter '{parameterName}' to be of type '{expectedType}' but was given '{actualType}'.";
             Report(span, message);
         }
 
@@ -168,7 +168,7 @@ namespace Syron.CodeAnalysis
 
         public void ReportInvalidReturnExpression(TextSpan span, string functionName)
         {
-            var message = $"ERROR: Since the function '{functionName}' doesn't return a value the 'return' keyword cannot be followed by an expression.";
+            var message = $"ERROR: Since the function '{functionName}' does not return a value the 'return' keyword cannot be followed by an expression.";
             Report(span, message);
         }
 

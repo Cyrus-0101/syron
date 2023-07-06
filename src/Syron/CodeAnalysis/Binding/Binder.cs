@@ -112,8 +112,12 @@ namespace Syron.CodeAnalysis.Binding
             var type = BindTypeClause(syntax.Type) ?? TypeSymbol.Void;
 
             var function = new FunctionSymbol(syntax.Identifier.Text, parameters.ToImmutable(), type, syntax);
-            if (!_scope.TryDeclareFunction(function))
+
+            if (function.Declaration.Identifier.Text != null &&
+                !_scope.TryDeclareFunction(function))
+            {
                 _diagnostics.ReportSymbolAlreadyDeclared(syntax.Identifier.Span, function.Name);
+            }
         }
 
         private static BoundScope CreateParentScope(BoundGlobalScope previous)
@@ -518,8 +522,6 @@ namespace Syron.CodeAnalysis.Binding
 
                 if (argument.Type != parameter.Type)
                 {
-                    _diagnostics.ReportParameterTypeMismatch(syntax.Arguments[i].Span, function.Name, parameter.Name, parameter.Type, argument.Type);
-
                     if (argument.Type != TypeSymbol.Error)
                         _diagnostics.ReportParameterTypeMismatch(syntax.Arguments[i].Span, function.Name, parameter.Name, parameter.Type, argument.Type);
 
