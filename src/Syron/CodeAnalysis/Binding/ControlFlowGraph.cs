@@ -1,3 +1,5 @@
+using System.CodeDom.Compiler;
+
 using Syron.CodeAnalysis.Symbols;
 using Syron.CodeAnalysis.Syntax;
 
@@ -5,11 +7,11 @@ namespace Syron.CodeAnalysis.Binding
 {
     internal sealed class ControlFlowGraph
     {
-        private ControlFlowGraph(BasicBlock start, BasicBlock end, List<BasicBlock> block, List<BasicBlockBranch> branches)
+        private ControlFlowGraph(BasicBlock start, BasicBlock end, List<BasicBlock> blocks, List<BasicBlockBranch> branches)
         {
             Start = start;
             End = end;
-            Blocks = block;
+            Blocks = blocks;
             Branches = branches;
         }
 
@@ -20,9 +22,10 @@ namespace Syron.CodeAnalysis.Binding
 
         public sealed class BasicBlock
         {
-
             public BasicBlock()
-            { }
+            {
+            }
+
             public BasicBlock(bool isStart)
             {
                 IsStart = isStart;
@@ -42,14 +45,13 @@ namespace Syron.CodeAnalysis.Binding
                 if (IsEnd)
                     return "<End>";
 
-                using (var stringWriter = new StringWriter())
+                using (var writer = new StringWriter())
+                using (var indentedWriter = new IndentedTextWriter(writer))
                 {
                     foreach (var statement in Statements)
-                    {
-                        statement.WriteTo(stringWriter);
-                    }
+                        statement.WriteTo(indentedWriter);
 
-                    return stringWriter.ToString();
+                    return writer.ToString();
                 }
             }
         }
@@ -262,14 +264,14 @@ namespace Syron.CodeAnalysis.Binding
         {
             string Quote(string text)
             {
-                return "\"" + text.Replace("\"", "\\\"") + "\"";
+                return "\"" + text.TrimEnd().Replace("\\", "\\\\").Replace("\"", "\\\"").Replace(Environment.NewLine, "\\l") + "\"";
             }
 
             writer.WriteLine("digraph G {");
 
             var blockIds = new Dictionary<BasicBlock, string>();
 
-            for (var i = 0; i < Blocks.Count; i++)
+            for (int i = 0; i < Blocks.Count; i++)
             {
                 var id = $"N{i}";
                 blockIds.Add(Blocks[i], id);
@@ -278,8 +280,8 @@ namespace Syron.CodeAnalysis.Binding
             foreach (var block in Blocks)
             {
                 var id = blockIds[block];
-                var label = Quote(block.ToString().Replace(Environment.NewLine, "\\l"));
-                writer.WriteLine($"    {id} [label={label} shape = box];");
+                var label = Quote(block.ToString());
+                writer.WriteLine($"    {id} [label = {label}, shape = box]");
             }
 
             foreach (var branch in Branches)
@@ -287,7 +289,7 @@ namespace Syron.CodeAnalysis.Binding
                 var fromId = blockIds[branch.From];
                 var toId = blockIds[branch.To];
                 var label = Quote(branch.ToString());
-                writer.WriteLine($"    {fromId} -> {toId} [label={label}];");
+                writer.WriteLine($"    {fromId} -> {toId} [label = {label}]");
             }
 
             writer.WriteLine("}");
@@ -309,10 +311,8 @@ namespace Syron.CodeAnalysis.Binding
 
             foreach (var branch in graph.End.Incoming)
             {
-
-                var lastStatement = branch.From.Statements.LastOrDefault();
-
-                if (lastStatement == null || lastStatement.Kind != BoundNodeKind.ReturnStatement)
+                var lastStatement = branch.From.Statements.Last();
+                if (lastStatement.Kind != BoundNodeKind.ReturnStatement)
                     return false;
 
             }
