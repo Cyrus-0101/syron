@@ -11,8 +11,8 @@ namespace Syron.CodeAnalysis.Binding
     {
         private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
         private readonly FunctionSymbol _function;
-        private Stack<(BoundLabel BreakLabel, BoundLabel ContinueLabel)> _loopStack = new Stack<(BoundLabel BreakLabel, BoundLabel ContinueLabel)>();
 
+        private Stack<(BoundLabel BreakLabel, BoundLabel ContinueLabel)> _loopStack = new Stack<(BoundLabel BreakLabel, BoundLabel ContinueLabel)>();
         private int _labelCounter;
         private BoundScope _scope;
 
@@ -70,6 +70,10 @@ namespace Syron.CodeAnalysis.Binding
                     var binder = new Binder(parentScope, function);
                     var body = binder.BindStatement(function.Declaration.Body);
                     var loweredBody = Lowerer.Lower(body);
+
+                    if (function.Type != TypeSymbol.Void && !ControlFlowGraph.AllPathsReturn(loweredBody))
+                        binder._diagnostics.ReportAllPathsMustReturn(function.Declaration.Identifier.Span);
+
                     functionBodies.Add(function, loweredBody);
 
                     diagnostics.AddRange(binder.Diagnostics);
@@ -106,12 +110,12 @@ namespace Syron.CodeAnalysis.Binding
 
             var type = BindTypeClause(syntax.Type) ?? TypeSymbol.Void;
 
-            if (type != TypeSymbol.Void)
-                _diagnostics.RNM_ReportFunctionsAreUnsupported(syntax.Type.Span);
-
             var function = new FunctionSymbol(syntax.Identifier.Text, parameters.ToImmutable(), type, syntax);
-            if (!_scope.TryDeclareFunction(function))
+            if (function.Declaration.Identifier.Text != null &&
+                !_scope.TryDeclareFunction(function))
+            {
                 _diagnostics.ReportSymbolAlreadyDeclared(syntax.Identifier.Span, function.Name);
+            }
         }
 
         private static BoundScope CreateParentScope(BoundGlobalScope previous)
@@ -179,6 +183,8 @@ namespace Syron.CodeAnalysis.Binding
                     return BindBreakStatement((BreakStatementSyntax)syntax);
                 case SyntaxKind.ContinueStatement:
                     return BindContinueStatement((ContinueStatementSyntax)syntax);
+                case SyntaxKind.ReturnStatement:
+                    return BindReturnStatement((ReturnStatementSyntax)syntax);
                 case SyntaxKind.ExpressionStatement:
                     return BindExpressionStatement((ExpressionStatementSyntax)syntax);
                 default:
@@ -208,7 +214,7 @@ namespace Syron.CodeAnalysis.Binding
             var type = BindTypeClause(syntax.TypeClause);
             var initializer = BindExpression(syntax.Initializer);
             var variableType = type ?? initializer.Type;
-            var variable = BindVariable(syntax.Identifier, isReadOnly, variableType);
+            var variable = BindVariableDeclaration(syntax.Identifier, isReadOnly, variableType);
             var convertedInitializer = BindConversion(syntax.Initializer.Span, initializer, variableType);
 
             return new BoundVariableDeclaration(variable, convertedInitializer);
@@ -237,15 +243,15 @@ namespace Syron.CodeAnalysis.Binding
         private BoundStatement BindWhileStatement(WhileStatementSyntax syntax)
         {
             var condition = BindExpression(syntax.Condition, TypeSymbol.Bool);
-            var body = BindLoopBody(syntax.Body, out var bodyLabel, out var breakLabel, out var continueLabel);
-            return new BoundWhileStatement(condition, body, bodyLabel, breakLabel, continueLabel);
+            var body = BindLoopBody(syntax.Body, out var breakLabel, out var continueLabel);
+            return new BoundWhileStatement(condition, body, breakLabel, continueLabel);
         }
 
         private BoundStatement BindDoWhileStatement(DoWhileStatementSyntax syntax)
         {
-            var body = BindLoopBody(syntax.Body, out var bodyLabel, out var breakLabel, out var continueLabel);
+            var body = BindLoopBody(syntax.Body, out var breakLabel, out var continueLabel);
             var condition = BindExpression(syntax.Condition, TypeSymbol.Bool);
-            return new BoundDoWhileStatement(body, condition, bodyLabel, breakLabel, continueLabel);
+            return new BoundDoWhileStatement(body, condition, breakLabel, continueLabel);
         }
 
         private BoundStatement BindForStatement(ForStatementSyntax syntax)
@@ -255,18 +261,17 @@ namespace Syron.CodeAnalysis.Binding
 
             _scope = new BoundScope(_scope);
 
-            var variable = BindVariable(syntax.Identifier, isReadOnly: true, TypeSymbol.Int);
-            var body = BindLoopBody(syntax.Body, out var bodyLabel, out var breakLabel, out var continueLabel);
+            var variable = BindVariableDeclaration(syntax.Identifier, isReadOnly: true, TypeSymbol.Int);
+            var body = BindLoopBody(syntax.Body, out var breakLabel, out var continueLabel);
 
             _scope = _scope.Parent;
 
-            return new BoundForStatement(variable, bodyLabel, lowerBound, upperBound, body, breakLabel, continueLabel);
+            return new BoundForStatement(variable, lowerBound, upperBound, body, breakLabel, continueLabel);
         }
 
-        private BoundStatement BindLoopBody(StatementSyntax body, out BoundLabel bodyLabel, out BoundLabel breakLabel, out BoundLabel continueLabel)
+        private BoundStatement BindLoopBody(StatementSyntax body, out BoundLabel breakLabel, out BoundLabel continueLabel)
         {
             _labelCounter++;
-            bodyLabel = new BoundLabel($"body{_labelCounter}");
             breakLabel = new BoundLabel($"break{_labelCounter}");
             continueLabel = new BoundLabel($"continue{_labelCounter}");
 
@@ -299,6 +304,33 @@ namespace Syron.CodeAnalysis.Binding
 
             var continueLabel = _loopStack.Peek().ContinueLabel;
             return new BoundGotoStatement(continueLabel);
+        }
+
+        private BoundStatement BindReturnStatement(ReturnStatementSyntax syntax)
+        {
+            var expression = syntax.Expression == null ? null : BindExpression(syntax.Expression);
+
+            if (_function == null)
+            {
+                _diagnostics.ReportInvalidReturn(syntax.ReturnKeyword.Span);
+            }
+            else
+            {
+                if (_function.Type == TypeSymbol.Void)
+                {
+                    if (expression != null)
+                        _diagnostics.ReportInvalidReturnExpression(syntax.Expression!.Span, _function.Name);
+                }
+                else
+                {
+                    if (expression == null)
+                        _diagnostics.ReportMissingReturnExpression(syntax.ReturnKeyword.Span, _function.Type);
+                    else
+                        expression = BindConversion(syntax.Expression!.Span, expression, _function.Type);
+                }
+            }
+
+            return new BoundReturnStatement(expression!);
         }
 
         private BoundStatement BindExpressionStatement(ExpressionStatementSyntax syntax)
@@ -368,11 +400,9 @@ namespace Syron.CodeAnalysis.Binding
                 return new BoundErrorExpression();
             }
 
-            if (!_scope.TryLookupVariable(name, out var variable))
-            {
-                _diagnostics.ReportUndefinedName(syntax.IdentifierToken.Span, name);
+            var variable = BindVariableReference(name, syntax.IdentifierToken.Span);
+            if (variable == null)
                 return new BoundErrorExpression();
-            }
 
             return new BoundVariableExpression(variable);
         }
@@ -382,11 +412,9 @@ namespace Syron.CodeAnalysis.Binding
             var name = syntax.IdentifierToken.Text;
             var boundExpression = BindExpression(syntax.Expression);
 
-            if (!_scope.TryLookupVariable(name, out var variable))
-            {
-                _diagnostics.ReportUndefinedName(syntax.IdentifierToken.Span, name);
+            var variable = BindVariableReference(name, syntax.IdentifierToken.Span);
+            if (variable == null)
                 return boundExpression;
-            }
 
             if (variable.IsReadOnly)
                 _diagnostics.ReportCannotAssign(syntax.EqualsToken.Span, name);
@@ -446,9 +474,17 @@ namespace Syron.CodeAnalysis.Binding
                 boundArguments.Add(boundArgument);
             }
 
-            if (!_scope.TryLookupFunction(syntax.Identifier.Text, out var function))
+            var symbol = _scope.TryLookupSymbol(syntax.Identifier.Text);
+            if (symbol == null)
             {
                 _diagnostics.ReportUndefinedFunction(syntax.Identifier.Span, syntax.Identifier.Text);
+                return new BoundErrorExpression();
+            }
+
+            var function = symbol as FunctionSymbol;
+            if (function == null)
+            {
+                _diagnostics.ReportNotAFunction(syntax.Identifier.Span, syntax.Identifier.Text);
                 return new BoundErrorExpression();
             }
 
@@ -481,15 +517,11 @@ namespace Syron.CodeAnalysis.Binding
 
                 if (argument.Type != parameter.Type)
                 {
-                    _diagnostics.ReportParameterTypeMismatch(syntax.Arguments[i].Span, function.Name, parameter.Name, parameter.Type, argument.Type);
-
                     if (argument.Type != TypeSymbol.Error)
                         _diagnostics.ReportParameterTypeMismatch(syntax.Arguments[i].Span, function.Name, parameter.Name, parameter.Type, argument.Type);
-
                     hasErrors = true;
                 }
             }
-
             if (hasErrors)
                 return new BoundErrorExpression();
 
@@ -525,7 +557,7 @@ namespace Syron.CodeAnalysis.Binding
             return new BoundConversionExpression(type, expression);
         }
 
-        private VariableSymbol BindVariable(SyntaxToken identifier, bool isReadOnly, TypeSymbol type)
+        private VariableSymbol BindVariableDeclaration(SyntaxToken identifier, bool isReadOnly, TypeSymbol type)
         {
             var name = identifier.Text ?? "?";
             var declare = !identifier.IsMissing;
@@ -537,6 +569,23 @@ namespace Syron.CodeAnalysis.Binding
                 _diagnostics.ReportSymbolAlreadyDeclared(identifier.Span, name);
 
             return variable;
+        }
+
+        private VariableSymbol BindVariableReference(string name, TextSpan span)
+        {
+            switch (_scope.TryLookupSymbol(name))
+            {
+                case VariableSymbol variable:
+                    return variable;
+
+                case null:
+                    _diagnostics.ReportUndefinedVariable(span, name);
+                    return null!;
+
+                default:
+                    _diagnostics.ReportNotAVariable(span, name);
+                    return null!;
+            }
         }
 
         private TypeSymbol LookupType(string name)

@@ -12,6 +12,7 @@ namespace Syron.CodeAnalysis.Binding
         LabelStatement,
         GotoStatement,
         ConditionalGotoStatement,
+        ReturnStatement,
         ExpressionStatement,
 
         // Expressions
@@ -23,5 +24,6 @@ namespace Syron.CodeAnalysis.Binding
         BinaryExpression,
         ErrorExpression,
         ConversionExpression,
+
     }
 }

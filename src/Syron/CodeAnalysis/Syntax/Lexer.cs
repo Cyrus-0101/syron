@@ -211,12 +211,12 @@ namespace Syron.CodeAnalysis.Syntax
             if (text == null)
                 text = _text.ToString(_start, length);
 
-            return new SyntaxToken(_kind, _start, text, _value!);
+            return new SyntaxToken(_kind, _start, text, _value);
         }
 
         private void ReadString()
         {
-            // Skip the initial quote
+            // Skip the current quote
             _position++;
 
             var sb = new StringBuilder();
@@ -236,18 +236,15 @@ namespace Syron.CodeAnalysis.Syntax
                     case '"':
                         if (Lookahead == '"')
                         {
-                            // Skip the second quote
                             sb.Append(Current);
                             _position += 2;
                         }
                         else
                         {
-                            // Skip the final quote
                             _position++;
                             done = true;
                         }
                         break;
-
                     default:
                         sb.Append(Current);
                         _position++;
@@ -275,7 +272,7 @@ namespace Syron.CodeAnalysis.Syntax
             var length = _position - _start;
             var text = _text.ToString(_start, length);
             if (!int.TryParse(text, out var value))
-                _diagnostics.ReportInvalidNumber(new TextSpan(_start, length), text, TypeSymbol.Bool);
+                _diagnostics.ReportInvalidNumber(new TextSpan(_start, length), text, TypeSymbol.Int);
 
             _value = value;
             _kind = SyntaxKind.NumberToken;

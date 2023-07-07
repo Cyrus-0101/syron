@@ -10,8 +10,8 @@ namespace Syron.CodeAnalysis.Binding
             Expression = expression;
         }
 
-        public override TypeSymbol Type { get; }
         public override BoundNodeKind Kind => BoundNodeKind.ConversionExpression;
+        public override TypeSymbol Type { get; }
         public BoundExpression Expression { get; }
     }
 }

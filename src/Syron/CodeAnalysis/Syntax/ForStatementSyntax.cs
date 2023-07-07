@@ -12,6 +12,7 @@ namespace Syron.CodeAnalysis.Syntax
             UpperBound = upperBound;
             Body = body;
         }
+
         public override SyntaxKind Kind => SyntaxKind.ForStatement;
         public SyntaxToken Keyword { get; }
         public SyntaxToken Identifier { get; }

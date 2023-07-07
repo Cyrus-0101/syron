@@ -7,7 +7,18 @@
       "type": "process",
       "args": [
         "build",
-        "${workspaceFolder}/src/sc/si.csproj",
+        "${workspaceFolder}/src/Syron.sln",
+        "${workspaceFolder}/src/syron.sln"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/src/si/si.csproj",
         "/property:GenerateFullPaths=true",
         "/consoleloggerparameters:NoSummary"
       ],
@@ -19,7 +30,7 @@
       "type": "process",
       "args": [
         "publish",
-        "${workspaceFolder}/src/sc/si.csproj",
+        "${workspaceFolder}/src/si/si.csproj",
         "/property:GenerateFullPaths=true",
         "/consoleloggerparameters:NoSummary"
       ],
@@ -33,7 +44,7 @@
         "watch",
         "run",
         "--project",
-        "${workspaceFolder}/src/sc/si.csproj"
+        "${workspaceFolder}/src/si/si.csproj"
       ],
       "problemMatcher": "$msCompile"
     }

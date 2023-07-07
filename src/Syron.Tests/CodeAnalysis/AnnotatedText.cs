@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
 using System.Text;
-using Syron.CodeAnalysis;
 using Syron.CodeAnalysis.Text;
 
 namespace Syron.Tests.CodeAnalysis

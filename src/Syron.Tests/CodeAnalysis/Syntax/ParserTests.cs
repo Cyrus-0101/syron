@@ -1,8 +1,4 @@
-using System.Collections.Generic;
-using Xunit;
-
 using Syron.CodeAnalysis.Syntax;
-
 
 namespace Syron.Tests.CodeAnalysis.Syntax
 {
@@ -17,7 +13,7 @@ namespace Syron.Tests.CodeAnalysis.Syntax
             var op1Text = SyntaxFacts.GetText(op1);
             var op2Text = SyntaxFacts.GetText(op2);
             var text = $"a {op1Text} b {op2Text} c";
-            ExpressionSyntax expression = ParseExpression(text);
+            var expression = ParseExpression(text);
 
             if (op1Precedence >= op2Precedence)
             {
@@ -74,7 +70,7 @@ namespace Syron.Tests.CodeAnalysis.Syntax
             var unaryText = SyntaxFacts.GetText(unaryKind);
             var binaryText = SyntaxFacts.GetText(binaryKind);
             var text = $"{unaryText} a {binaryText} b";
-            ExpressionSyntax expression = ParseExpression(text);
+            var expression = ParseExpression(text);
 
             if (unaryPrecedence >= binaryPrecedence)
             {
@@ -121,13 +117,9 @@ namespace Syron.Tests.CodeAnalysis.Syntax
         private static ExpressionSyntax ParseExpression(string text)
         {
             var syntaxTree = SyntaxTree.Parse(text);
-
             var root = syntaxTree.Root;
-
             var member = Assert.Single(root.Members);
-
             var globalStatement = Assert.IsType<GlobalStatementSyntax>(member);
-
             return Assert.IsType<ExpressionStatementSyntax>(globalStatement.Statement).Expression;
         }
 

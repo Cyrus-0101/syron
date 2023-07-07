@@ -70,9 +70,15 @@ namespace Syron.CodeAnalysis
             Report(span, message);
         }
 
-        public void ReportUndefinedName(TextSpan span, string name)
+        public void ReportUndefinedVariable(TextSpan span, string name)
         {
             var message = $"ERROR: Variable '{name}' doesn't exist.";
+            Report(span, message);
+        }
+
+        public void ReportNotAVariable(TextSpan span, string name)
+        {
+            var message = $"ERROR: '{name}' is not a variable.";
             Report(span, message);
         }
 
@@ -118,6 +124,12 @@ namespace Syron.CodeAnalysis
             Report(span, message);
         }
 
+        public void ReportNotAFunction(TextSpan span, string name)
+        {
+            var message = $"ERROR: '{name}' is not a function.";
+            Report(span, message);
+        }
+
         public void ReportReservedKeyword(TextSpan span, string name)
         {
             var message = $"ERROR: '{name}' is a reserved keyword and cannot be used as an identifier.";
@@ -126,13 +138,13 @@ namespace Syron.CodeAnalysis
 
         public void ReportParameterCountMismatch(TextSpan span, string name, int expectedCount, int count)
         {
-            var message = $"ERROR: Function '{name}' requires {expectedCount} parameters but was given {count}.";
+            var message = $"ERROR: Function '{name}' requires {expectedCount} parameter(s) but was given {count}.";
             Report(span, message);
         }
 
         public void ReportParameterTypeMismatch(TextSpan span, string name, string parameterName, TypeSymbol expectedType, TypeSymbol actualType)
         {
-            var message = $"ERROR: Function '{name}' requires parameter '{parameterName}' to be of type {expectedType} but was given {actualType}.";
+            var message = $"ERROR: Function '{name}' requires parameter '{parameterName}' to be of type '{expectedType}' but was given '{actualType}'.";
             Report(span, message);
         }
 
@@ -154,9 +166,27 @@ namespace Syron.CodeAnalysis
             Report(span, message);
         }
 
-        public void RNM_ReportFunctionsAreUnsupported(TextSpan span)
+        public void ReportAllPathsMustReturn(TextSpan span)
         {
-            var message = $"ERROR: Functions are unsupported.";
+            var message = $"ERROR: Not all code paths return a value.";
+            Report(span, message);
+        }
+
+        public void ReportInvalidReturn(TextSpan span)
+        {
+            var message = $"ERROR: The keyword 'return' can only be used inside of functions.";
+            Report(span, message);
+        }
+
+        public void ReportInvalidReturnExpression(TextSpan span, string functionName)
+        {
+            var message = $"ERROR: Since the function '{functionName}' does not return a value the 'return' keyword cannot be followed by an expression.";
+            Report(span, message);
+        }
+
+        public void ReportMissingReturnExpression(TextSpan span, TypeSymbol returnType)
+        {
+            var message = $"ERROR: An expression of type '{returnType}' is expected.";
             Report(span, message);
         }
     }

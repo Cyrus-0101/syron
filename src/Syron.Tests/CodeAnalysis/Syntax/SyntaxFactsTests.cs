@@ -1,17 +1,12 @@
-using System;
-using Xunit;
-using System.Collections.Generic;
-
 using Syron.CodeAnalysis.Syntax;
-using Syron.CodeAnalysis.Text;
 
 namespace Syron.Tests.CodeAnalysis.Syntax
 {
-    public class SyntaxFactsTests
+    public class SyntaxFactTests
     {
         [Theory]
         [MemberData(nameof(GetSyntaxKindData))]
-        public void SyntaxFacts_GetText_RoundTrips(SyntaxKind kind)
+        public void SyntaxFact_GetText_RoundTrips(SyntaxKind kind)
         {
             var text = SyntaxFacts.GetText(kind);
             if (text == null)
@@ -27,10 +22,7 @@ namespace Syron.Tests.CodeAnalysis.Syntax
         {
             var kinds = (SyntaxKind[])Enum.GetValues(typeof(SyntaxKind));
             foreach (var kind in kinds)
-            {
                 yield return new object[] { kind };
-            }
         }
     }
-
 }

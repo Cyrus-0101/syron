@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Diagnostics;
-using Syron.CodeAnalysis.Binding;
+﻿using Syron.CodeAnalysis.Binding;
 using Syron.CodeAnalysis.Symbols;
 
 namespace Syron.CodeAnalysis
@@ -69,10 +65,13 @@ namespace Syron.CodeAnalysis
                     case BoundNodeKind.LabelStatement:
                         index++;
                         break;
+                    case BoundNodeKind.ReturnStatement:
+                        var rs = (BoundReturnStatement)s;
+                        _lastValue = rs.Expression == null ? null! : EvaluateExpression(rs.Expression);
+                        return _lastValue;
                     default:
                         throw new Exception($"Unexpected node {s.Kind}");
                 }
-
             }
 
             return _lastValue;
