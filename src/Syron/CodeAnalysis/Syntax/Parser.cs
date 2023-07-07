@@ -304,8 +304,8 @@ namespace Syron.CodeAnalysis.Syntax
             var currentLine = _text.GetLineIndex(Current.Span.Start);
             var isEof = Current.Kind == SyntaxKind.EndOfFileToken;
             var sameLine = !isEof && keywordLine == currentLine;
-            var expression = sameLine ? ParseExpression() : null;
-            return new ReturnStatementSyntax(keyword, expression!);
+            var expression = sameLine ? ParseExpression() : null!;
+            return new ReturnStatementSyntax(keyword, expression);
         }
 
         private ExpressionStatementSyntax ParseExpressionStatement()

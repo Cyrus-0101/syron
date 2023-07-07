@@ -31,6 +31,7 @@ namespace Syron.CodeAnalysis.Binding
                 IsStart = isStart;
                 IsEnd = !isStart;
             }
+
             public bool IsStart { get; }
             public bool IsEnd { get; }
             public List<BoundStatement> Statements { get; } = new List<BoundStatement>();
@@ -46,10 +47,9 @@ namespace Syron.CodeAnalysis.Binding
                     return "<End>";
 
                 using (var writer = new StringWriter())
-                using (var indentedWriter = new IndentedTextWriter(writer))
                 {
                     foreach (var statement in Statements)
-                        statement.WriteTo(indentedWriter);
+                        statement.WriteTo(writer);
 
                     return writer.ToString();
                 }
@@ -82,6 +82,7 @@ namespace Syron.CodeAnalysis.Binding
         {
             private List<BoundStatement> _statements = new List<BoundStatement>();
             private List<BasicBlock> _blocks = new List<BasicBlock>();
+
             public List<BasicBlock> Build(BoundBlockStatement block)
             {
                 foreach (var statement in block.Statements)
@@ -175,7 +176,7 @@ namespace Syron.CodeAnalysis.Binding
                                 var cgs = (BoundConditionalGotoStatement)statement;
                                 var thenBlock = _blockFromLabel[cgs.Label];
                                 var elseBlock = next;
-                                var negatedCondition = Negate(cgs.Condition);
+                                var negatedCondition = Negate(cgs.Condition); ;
                                 var thenCondition = cgs.JumpIfTrue ? cgs.Condition : negatedCondition;
                                 var elseCondition = cgs.JumpIfTrue ? negatedCondition : cgs.Condition;
                                 Connect(current, thenBlock, thenCondition);
@@ -204,7 +205,6 @@ namespace Syron.CodeAnalysis.Binding
                         RemoveBlock(blocks, block);
                         goto ScanAgain;
                     }
-
                 }
 
                 blocks.Insert(0, _start);
@@ -264,7 +264,7 @@ namespace Syron.CodeAnalysis.Binding
         {
             string Quote(string text)
             {
-                return "\"" + text.TrimEnd().Replace("\\", "\\\\").Replace("\"", "\\\"").Replace(Environment.NewLine, "\\l") + "\"";
+                return "\"" + text.Replace("\"", "\\\"") + "\"";
             }
 
             writer.WriteLine("digraph G {");
@@ -280,8 +280,8 @@ namespace Syron.CodeAnalysis.Binding
             foreach (var block in Blocks)
             {
                 var id = blockIds[block];
-                var label = Quote(block.ToString());
-                writer.WriteLine($"    {id} [label = {label}, shape = box]");
+                var label = Quote(block.ToString().Replace(Environment.NewLine, "\\l"));
+                writer.WriteLine($"    {id} [label = {label} shape = box]");
             }
 
             foreach (var branch in Branches)

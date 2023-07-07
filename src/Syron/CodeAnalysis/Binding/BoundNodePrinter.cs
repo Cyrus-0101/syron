@@ -1,4 +1,5 @@
 using System.CodeDom.Compiler;
+
 using Syron.IO;
 using Syron.CodeAnalysis.Symbols;
 using Syron.CodeAnalysis.Syntax;
@@ -182,7 +183,7 @@ namespace Syron.CodeAnalysis.Binding
 
         private static void WriteForStatement(BoundForStatement node, IndentedTextWriter writer)
         {
-            writer.WriteKeyword(SyntaxKind.ForKeyword.ToString());
+            writer.WriteKeyword(SyntaxKind.ForKeyword);
             writer.WriteSpace();
             writer.WriteIdentifier(node.Variable.Name);
             writer.WriteSpace();
@@ -227,7 +228,6 @@ namespace Syron.CodeAnalysis.Binding
             writer.WriteLine();
         }
 
-
         private static void WriteReturnStatement(BoundReturnStatement node, IndentedTextWriter writer)
         {
             writer.WriteKeyword(SyntaxKind.ReturnKeyword);
@@ -252,7 +252,7 @@ namespace Syron.CodeAnalysis.Binding
 
         private static void WriteLiteralExpression(BoundLiteralExpression node, IndentedTextWriter writer)
         {
-            var value = node.Value.ToString();
+            var value = node.Value.ToString()!;
 
             if (node.Type == TypeSymbol.Bool)
             {
@@ -260,11 +260,11 @@ namespace Syron.CodeAnalysis.Binding
             }
             else if (node.Type == TypeSymbol.Int)
             {
-                writer.WriteNumber(value!);
+                writer.WriteNumber(value);
             }
             else if (node.Type == TypeSymbol.String)
             {
-                value = "\"" + value!.Replace("\"", "\"\"") + "\"";
+                value = "\"" + value.Replace("\"", "\"\"") + "\"";
                 writer.WriteString(value);
             }
             else

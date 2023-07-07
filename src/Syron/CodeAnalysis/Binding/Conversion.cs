@@ -4,20 +4,20 @@ namespace Syron.CodeAnalysis.Binding
 {
     internal sealed class Conversion
     {
-        public static readonly Conversion Identity = new Conversion(true, true, true);
-        public static readonly Conversion Implicit = new Conversion(true, false, true);
-        public static readonly Conversion Explicit = new Conversion(true, false, false);
-        public static readonly Conversion None = new Conversion(false, false, false);
+        public static readonly Conversion None = new Conversion(exists: false, isIdentity: false, isImplicit: false);
+        public static readonly Conversion Identity = new Conversion(exists: true, isIdentity: true, isImplicit: true);
+        public static readonly Conversion Implicit = new Conversion(exists: true, isIdentity: false, isImplicit: true);
+        public static readonly Conversion Explicit = new Conversion(exists: true, isIdentity: false, isImplicit: false);
 
         private Conversion(bool exists, bool isIdentity, bool isImplicit)
         {
             Exists = exists;
-            IsImplicit = isImplicit;
             IsIdentity = isIdentity;
+            IsImplicit = isImplicit;
         }
 
-        public bool IsIdentity { get; }
         public bool Exists { get; }
+        public bool IsIdentity { get; }
         public bool IsImplicit { get; }
         public bool IsExplicit => Exists && !IsImplicit;
 
@@ -34,7 +34,7 @@ namespace Syron.CodeAnalysis.Binding
 
             if (from == TypeSymbol.String)
             {
-                if (to == TypeSymbol.Int)
+                if (to == TypeSymbol.Bool || to == TypeSymbol.Int)
                     return Conversion.Explicit;
             }
 

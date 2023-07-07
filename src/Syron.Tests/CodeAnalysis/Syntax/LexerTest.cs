@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Xunit;
-
 using Syron.CodeAnalysis.Syntax;
 using Syron.CodeAnalysis.Text;
 
@@ -13,12 +8,10 @@ namespace Syron.Tests.CodeAnalysis.Syntax
         [Fact]
         public void Lexer_Lexes_UnterminatedString()
         {
-
-            const string text = "\"hello world";
-
+            var text = "\"text";
             var tokens = SyntaxTree.ParseTokens(text, out var diagnostics);
-            var token = Assert.Single(tokens);
 
+            var token = Assert.Single(tokens);
             Assert.Equal(SyntaxKind.StringToken, token.Kind);
             Assert.Equal(text, token.Text);
 
@@ -27,9 +20,8 @@ namespace Syron.Tests.CodeAnalysis.Syntax
             Assert.Equal("ERROR: Unterminated string literal.", diagnostic.Message);
         }
 
-
         [Fact]
-        public void Lexer_Tests_CoversAllTokens()
+        public void Lexer_Covers_AllTokens()
         {
             var tokenKinds = Enum.GetValues(typeof(SyntaxKind))
                                  .Cast<SyntaxKind>()
@@ -199,9 +191,6 @@ namespace Syron.Tests.CodeAnalysis.Syntax
 
             if (t1Kind == SyntaxKind.PipeToken && t2Kind == SyntaxKind.PipePipeToken)
                 return true;
-
-
-
 
             return false;
         }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Diagnostics;
-using Syron.CodeAnalysis.Binding;
+﻿using Syron.CodeAnalysis.Binding;
 using Syron.CodeAnalysis.Symbols;
 
 namespace Syron.CodeAnalysis
@@ -76,7 +72,6 @@ namespace Syron.CodeAnalysis
                     default:
                         throw new Exception($"Unexpected node {s.Kind}");
                 }
-
             }
 
             return _lastValue;

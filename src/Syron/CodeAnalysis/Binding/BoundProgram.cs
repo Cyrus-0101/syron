@@ -1,4 +1,3 @@
-
 using System.Collections.Immutable;
 using Syron.CodeAnalysis.Symbols;
 

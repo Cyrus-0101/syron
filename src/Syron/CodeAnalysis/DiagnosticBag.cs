@@ -70,9 +70,15 @@ namespace Syron.CodeAnalysis
             Report(span, message);
         }
 
-        public void ReportUndefinedName(TextSpan span, string name)
+        public void ReportUndefinedVariable(TextSpan span, string name)
         {
             var message = $"ERROR: Variable '{name}' doesn't exist.";
+            Report(span, message);
+        }
+
+        public void ReportNotAVariable(TextSpan span, string name)
+        {
+            var message = $"ERROR: '{name}' is not a variable.";
             Report(span, message);
         }
 
@@ -118,6 +124,12 @@ namespace Syron.CodeAnalysis
             Report(span, message);
         }
 
+        public void ReportNotAFunction(TextSpan span, string name)
+        {
+            var message = $"ERROR: '{name}' is not a function.";
+            Report(span, message);
+        }
+
         public void ReportReservedKeyword(TextSpan span, string name)
         {
             var message = $"ERROR: '{name}' is a reserved keyword and cannot be used as an identifier.";
@@ -126,7 +138,7 @@ namespace Syron.CodeAnalysis
 
         public void ReportParameterCountMismatch(TextSpan span, string name, int expectedCount, int count)
         {
-            var message = $"ERROR: Function '{name}' requires {expectedCount} parameters but was given {count}.";
+            var message = $"ERROR: Function '{name}' requires {expectedCount} parameter(s) but was given {count}.";
             Report(span, message);
         }
 

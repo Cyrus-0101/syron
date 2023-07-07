@@ -206,7 +206,7 @@ namespace Syron
                 }
             }
 
-            if (key.KeyChar >= ' ')
+            if (key.Key != ConsoleKey.Backspace && key.KeyChar >= ' ')
                 HandleTyping(document, view, key.KeyChar.ToString());
         }
 

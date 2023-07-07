@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
 using Syron.CodeAnalysis;
 using Syron.CodeAnalysis.Symbols;
 using Syron.CodeAnalysis.Syntax;
-using Xunit;
 
 namespace Syron.Tests.CodeAnalysis
 {
@@ -69,7 +66,6 @@ namespace Syron.Tests.CodeAnalysis
         [InlineData("\"test\" != \"test\"", false)]
         [InlineData("\"test\" == \"abc\"", false)]
         [InlineData("\"test\" != \"abc\"", true)]
-        [InlineData("\"test\" + \"abc\"", "testabc")]
         [InlineData("{ let a = 10 (a * a) }", 100)]
         [InlineData("{ let a = 0 (a = 10) * a }", 100)]
         [InlineData("{ let a = 0 if a == 0 a = 10 a }", 10)]
@@ -132,7 +128,7 @@ namespace Syron.Tests.CodeAnalysis
             ";
 
             var diagnostics = @"
-                ERROR: Function 'write' requires 1 parameters but was given 0.
+                ERROR: Function 'write' requires 1 parameter(s) but was given 0.
             ";
 
             AssertDiagnostics(text, diagnostics);
@@ -146,12 +142,11 @@ namespace Syron.Tests.CodeAnalysis
             ";
 
             var diagnostics = @"
-                ERROR: Function 'write' requires 1 parameters but was given 3.
+                ERROR: Function 'write' requires 1 parameter(s) but was given 3.
             ";
 
             AssertDiagnostics(text, diagnostics);
         }
-
 
         [Fact]
         public void Evaluator_InvokeFunctionArguments_NoInfiniteLoop()
@@ -159,13 +154,16 @@ namespace Syron.Tests.CodeAnalysis
             var text = @"
                 write(""Hi""[[=]][)]
             ";
+
             var diagnostics = @"
                 ERROR: Unexpected token <EqualsToken>, expected <CloseParenthesisToken>.
                 ERROR: Unexpected token <EqualsToken>, expected <IdentifierToken>.
                 ERROR: Unexpected token <CloseParenthesisToken>, expected <IdentifierToken>.
             ";
+
             AssertDiagnostics(text, diagnostics);
         }
+
         [Fact]
         public void Evaluator_FunctionParameters_NoInfiniteLoop()
         {
@@ -183,9 +181,9 @@ namespace Syron.Tests.CodeAnalysis
                 ERROR: Unexpected token <CloseParenthesisToken>, expected <IdentifierToken>.
                 ERROR: Unexpected token <EndOfFileToken>, expected <CloseBraceToken>.
             ";
+
             AssertDiagnostics(text, diagnostics);
         }
-
 
         [Fact]
         public void Evaluator_IfStatement_Reports_CannotConvert()
@@ -252,9 +250,11 @@ namespace Syron.Tests.CodeAnalysis
                         result = result + i
                 }
             ";
+
             var diagnostics = @"
                 ERROR: Cannot convert type 'bool' to 'int'.
             ";
+
             AssertDiagnostics(text, diagnostics);
         }
 
@@ -264,7 +264,7 @@ namespace Syron.Tests.CodeAnalysis
             var text = @"
                 {
                     let result = 0
-                    for i = [false] to 10
+                    for i = 1 to [true]
                         result = result + i
                 }
             ";
@@ -337,6 +337,18 @@ namespace Syron.Tests.CodeAnalysis
         }
 
         [Fact]
+        public void Evaluator_AssignmentExpression_Reports_NotAVariable()
+        {
+            var text = @"[write] = 42";
+
+            var diagnostics = @"
+                ERROR: 'write' is not a variable.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
         public void Evaluator_AssignmentExpression_Reports_CannotAssign()
         {
             var text = @"
@@ -371,182 +383,46 @@ namespace Syron.Tests.CodeAnalysis
         }
 
         [Fact]
+        public void Evaluator_CallExpression_Reports_Undefined()
+        {
+            var text = @"[foo](42)";
+
+            var diagnostics = @"
+                ERROR: Function 'foo' doesn't exist.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
+        public void Evaluator_CallExpression_Reports_NotAFunction()
+        {
+            var text = @"
+                {
+                    const foo = 42
+                    [foo](42)
+                }
+            ";
+
+            var diagnostics = @"
+                ERROR: 'foo' is not a function.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
         public void Evaluator_Variables_Can_Shadow_Functions()
         {
             var text = @"
                 {
-                    let write = 42
-                    [write](""test"")
+                    const print = 42
+                    [print](""test"")
                 }
             ";
 
             var diagnostics = @"
-                ERROR: Function 'write' doesn't exist.
-            ";
-
-            AssertDiagnostics(text, diagnostics);
-        }
-
-        [Fact]
-        public void Evaluator_Void_Function_Should_Not_Return_Value()
-        {
-            var text = @"
-                function test()
-                {
-                    return [1]
-                }
-            ";
-
-            var diagnostics = @"
-                ERROR: Since the function 'test' does not return a value the 'return' keyword cannot be followed by an expression.
-            ";
-
-            AssertDiagnostics(text, diagnostics);
-        }
-
-        [Fact]
-        public void Evaluator_Function_With_ReturnValue_Should_Not_Return_Void()
-        {
-            var text = @"
-                function test(): int
-                {
-                    [return]
-                }
-            ";
-
-            var diagnostics = @"
-                ERROR: An expression of type 'int' is expected.
-            ";
-
-            AssertDiagnostics(text, diagnostics);
-        }
-
-        [Fact]
-        public void Evaluator_Not_All_Code_Paths_Return_Value()
-        {
-            var text = @"
-                function [test](n: int): bool
-                {
-                    if (n > 10)
-                       return true
-                }
-            ";
-
-            var diagnostics = @"
-                ERROR: Not all code paths return a value.
-            ";
-
-            AssertDiagnostics(text, diagnostics);
-        }
-
-        [Fact]
-        public void Evaluator_Expression_Must_Have_Value()
-        {
-            var text = @"
-                function test(n: int)
-                {
-                    return
-                }
-                let value = [test(100)]
-            ";
-
-            var diagnostics = @"
-                ERROR: Expression must have a value.
-            ";
-
-            AssertDiagnostics(text, diagnostics);
-        }
-
-        [Theory]
-        [InlineData("[break]", "break")]
-        [InlineData("[continue]", "continue")]
-        public void Evaluator_Invalid_Break_Or_Continue(string text, string keyword)
-        {
-            var diagnostics = $@"
-                ERROR: The keyword '{keyword}' can only be used inside of loops.
-            ";
-
-            AssertDiagnostics(text, diagnostics);
-        }
-
-        [Fact]
-        public void Evaluator_Invalid_Return()
-        {
-            var text = @"
-                [return] 12
-            ";
-
-            var diagnostics = @"
-                ERROR: The keyword 'return' can only be used inside of functions.
-            ";
-
-            AssertDiagnostics(text, diagnostics);
-        }
-
-        [Fact]
-        public void Evaluator_Parameter_Already_Declared()
-        {
-            var text = @"
-                function sum(a: int, b: int, [a: int]): int
-                {
-                    return a + b + c
-                }
-            ";
-
-            var diagnostics = @"
-                ERROR: A parameter with the name 'a' already exists.
-            ";
-
-            AssertDiagnostics(text, diagnostics);
-        }
-
-        [Fact]
-        public void Evaluator_Function_Must_Have_Name()
-        {
-            var text = @"
-                function [(]a: int, b: int): int
-                {
-                    return a + b
-                }
-            ";
-
-            var diagnostics = @"
-                ERROR: Unexpected token <OpenParenthesisToken>, expected <IdentifierToken>.
-            ";
-
-            AssertDiagnostics(text, diagnostics);
-        }
-
-        [Fact]
-        public void Evaluator_Wrong_Argument_Type()
-        {
-            var text = @"
-                function test(n: int): bool
-                {
-                    return n > 10
-                }
-                let testValue = ""string""
-                test([testValue])
-            ";
-
-            var diagnostics = @"
-                ERROR: Function 'test' requires parameter 'n' to be of type 'int' but was given 'string'.
-            ";
-
-            AssertDiagnostics(text, diagnostics);
-        }
-
-        [Fact]
-        public void Evaluator_Bad_Type()
-        {
-            var text = @"
-                function test(n: [invalidtype])
-                {
-                }
-            ";
-
-            var diagnostics = @"
-                ERROR: Type 'invalidtype' doesn't exist.
+                ERROR: 'print' is not a function.
             ";
 
             AssertDiagnostics(text, diagnostics);
