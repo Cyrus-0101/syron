@@ -1,0 +1,3 @@
+write("What is your name?")
+let name = input()
+write("Hello" + name)
