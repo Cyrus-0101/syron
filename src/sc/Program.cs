@@ -3,6 +3,13 @@ using Syron.CodeAnalysis.Symbols;
 using Syron.CodeAnalysis.Syntax;
 using Syron.IO;
 
+//   _________
+//  /   _____/__.__._______  ____   ____  
+//  \_____  <   |  |\_  __ \/  _ \ /    \ 
+//  /        \___  | |  | \(  <_> )   |  \
+// /_______  / ____| |__|   \____/|___|  /
+//         \/\/               
+
 namespace Syron
 {
     internal static class Program

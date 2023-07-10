@@ -1,5 +1,3 @@
-using Xunit;
-
 using Syron.CodeAnalysis.Text;
 
 //   _________
@@ -8,7 +6,6 @@ using Syron.CodeAnalysis.Text;
 //  /        \___  | |  | \(  <_> )   |  \
 // /_______  / ____| |__|   \____/|___|  /
 //         \/\/                        \/ 
-
 
 namespace Syron.Tests.CodeAnalysis.Syntax
 {

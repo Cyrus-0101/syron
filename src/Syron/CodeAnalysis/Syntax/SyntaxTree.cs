@@ -8,7 +8,6 @@ using Syron.CodeAnalysis.Text;
 // /_______  / ____| |__|   \____/|___|  /
 //         \/\/                        \/ 
 
-
 namespace Syron.CodeAnalysis.Syntax
 {
     public sealed class SyntaxTree

@@ -5,7 +5,6 @@
 // /_______  / ____| |__|   \____/|___|  /
 //         \/\/                        \/ 
 
-
 namespace Syron.CodeAnalysis.Syntax
 {
     public sealed class UnaryExpressionSyntax : ExpressionSyntax

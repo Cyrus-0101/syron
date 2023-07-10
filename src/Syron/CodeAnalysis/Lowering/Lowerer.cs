@@ -1,9 +1,15 @@
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
+
 using Syron.CodeAnalysis.Binding;
 using Syron.CodeAnalysis.Symbols;
 using Syron.CodeAnalysis.Syntax;
+
+//   _________
+//  /   _____/__.__._______  ____   ____  
+//  \_____  <   |  |\_  __ \/  _ \ /    \ 
+//  /        \___  | |  | \(  <_> )   |  \
+// /_______  / ____| |__|   \____/|___|  /
+//         \/\/               
 
 namespace Syron.CodeAnalysis.Lowering
 {
