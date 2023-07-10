@@ -1,3 +1,2 @@
-write("What is your name?")
-let name = input()
-write("Hello " + name)
+const name = getName()
+write("Hello " + name + " :D")
