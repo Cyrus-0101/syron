@@ -7,12 +7,12 @@ namespace Syron.IO
 {
     public static class TextWriterExtensions
     {
-        private static bool IsConsoleOut(this TextWriter writer)
+        private static bool IsConsole(this TextWriter writer)
         {
             if (writer == Console.Out)
                 return true;
 
-            if (writer is IndentedTextWriter iw && iw.InnerWriter.IsConsoleOut())
+            if (writer is IndentedTextWriter iw && iw.InnerWriter.IsConsole())
                 return true;
 
             return false;
@@ -20,13 +20,13 @@ namespace Syron.IO
 
         private static void SetForeground(this TextWriter writer, ConsoleColor color)
         {
-            if (writer.IsConsoleOut())
+            if (writer.IsConsole())
                 Console.ForegroundColor = color;
         }
 
         private static void ResetColor(this TextWriter writer)
         {
-            if (writer.IsConsoleOut())
+            if (writer.IsConsole())
                 Console.ResetColor();
         }
 
@@ -80,39 +80,48 @@ namespace Syron.IO
             writer.ResetColor();
         }
 
-        public static void WriteDiagnostics(this TextWriter writer, IEnumerable<Diagnostic> diagnostics, SyntaxTree syntaxTree)
+        public static void WriteDiagnostics(this TextWriter writer, IEnumerable<Diagnostic> diagnostics)
         {
-            foreach (var diagnostic in diagnostics.OrderBy(diag => diag.Span.Start).ThenBy(d => d.Span.Length))
+            foreach (var diagnostic in diagnostics
+                .OrderBy(d => d.Location.Filename)
+                .ThenBy(d => d.Location.Span.Start)
+                .ThenBy(d => d.Location.Span.Length))
             {
-                var lineIndex = syntaxTree.Text.GetLineIndex(diagnostic.Span.Start);
-                var line = syntaxTree.Text.Lines[lineIndex];
-                var lineNumber = lineIndex + 1;
-                var character = diagnostic.Span.Start - line.Start + 1;
+                var text = diagnostic.Location.Text;
+                var fileName = diagnostic.Location.Filename;
+                var startLine = diagnostic.Location.StartLine + 1;
+                var startCharacter = diagnostic.Location.StartCharacter + 1;
+                var endLine = diagnostic.Location.EndLine + 1;
+                var endCharacter = diagnostic.Location.EndCharacter + 1;
 
-                Console.WriteLine();
+                var span = diagnostic.Location.Span;
+                var lineIndex = text.GetLineIndex(span.Start);
+                var line = text.Lines[lineIndex];
 
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.Write($"({lineNumber}, {character}): ");
-                Console.WriteLine(diagnostic);
-                Console.ResetColor();
+                writer.WriteLine();
 
-                var prefixSpan = TextSpan.FromBounds(line.Start, diagnostic.Span.Start);
-                var suffixSpan = TextSpan.FromBounds(diagnostic.Span.End, line.End);
+                writer.SetForeground(ConsoleColor.DarkRed);
+                writer.Write($"{fileName} ({startLine}: {startCharacter}, {endLine}: {endCharacter}): ");
+                writer.WriteLine(diagnostic);
+                writer.ResetColor();
 
-                var prefix = syntaxTree.Text.ToString(prefixSpan);
-                var error = syntaxTree.Text.ToString(diagnostic.Span);
-                var suffix = syntaxTree.Text.ToString(suffixSpan);
+                var prefixSpan = TextSpan.FromBounds(line.Start, span.Start);
+                var suffixSpan = TextSpan.FromBounds(span.End, line.End);
 
-                Console.Write("    ");
-                Console.Write(prefix);
+                var prefix = text.ToString(prefixSpan);
+                var error = text.ToString(span);
+                var suffix = text.ToString(suffixSpan);
 
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.Write(error);
-                Console.ResetColor();
+                writer.Write("    ");
+                writer.Write(prefix);
 
-                Console.Write(suffix);
+                writer.SetForeground(ConsoleColor.DarkRed);
+                writer.Write(error);
+                writer.ResetColor();
 
-                Console.WriteLine();
+                writer.Write(suffix);
+
+                writer.WriteLine();
             }
 
             Console.WriteLine();

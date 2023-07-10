@@ -5,11 +5,7 @@
       "label": "build",
       "command": "dotnet",
       "type": "process",
-      "args": [
-        "build",
-        "${workspaceFolder}/src/Syron.sln",
-        "${workspaceFolder}/src/syron.sln"
-      ],
+      "args": ["build", "${workspaceFolder}/src/syron.sln"],
       "problemMatcher": "$msCompile"
     },
     {
@@ -21,9 +17,27 @@
         "--project",
         "${workspaceFolder}/src/sc/sc.csproj",
         "--",
-        "${workspaceFolder}/samples/hello/hello-world.sy"
+        "${fileDirName}"
       ],
-      "problemMatcher": "$msCompile"
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "problemMatcher": {
+        "fileLocation": "absolute",
+        "pattern": [
+          {
+            "regexp": "^(.*)\\((\\d,\\d\\,\\d\\,\\d\\))\\: (.*)$",
+            "file": 1,
+            "location": 2,
+            "message": 3
+          }
+        ]
+      }
     }
   ]
 }
