@@ -34,14 +34,15 @@ namespace Syron.CodeAnalysis.Binding
             var binder = new Binder(parentScope, function: null!);
 
             var functionDeclarations = syntaxTrees
-                .SelectMany(st => st.Root.Members)
-                .OfType<FunctionDeclarationSyntax>();
+                                                .SelectMany(st => st.Root.Members)
+                                                .OfType<FunctionDeclarationSyntax>();
 
             foreach (var function in functionDeclarations)
                 binder.BindFunctionDeclaration(function);
 
-            var globalStatements = syntaxTrees.SelectMany(st => st.Root.Members)
-                                              .OfType<GlobalStatementSyntax>();
+            var globalStatements = syntaxTrees
+                                            .SelectMany(st => st.Root.Members)
+                                            .OfType<GlobalStatementSyntax>();
 
             var statements = ImmutableArray.CreateBuilder<BoundStatement>();
 
