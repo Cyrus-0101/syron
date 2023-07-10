@@ -10,7 +10,10 @@ namespace Syron.IO
         private static bool IsConsole(this TextWriter writer)
         {
             if (writer == Console.Out)
-                return true;
+                return !Console.IsOutputRedirected;
+
+            if (writer == Console.Error)
+                return !Console.IsErrorRedirected && !Console.IsOutputRedirected; // Color codes are always output to Console.Out
 
             if (writer is IndentedTextWriter iw && iw.InnerWriter.IsConsole())
                 return true;
@@ -101,7 +104,10 @@ namespace Syron.IO
                 writer.WriteLine();
 
                 writer.SetForeground(ConsoleColor.DarkRed);
-                writer.Write($"{fileName} ({startLine}: {startCharacter}, {endLine}: {endCharacter}): ");
+                // Add a hyphen after filename if filename exists
+                if (fileName != null)
+                    fileName += " |";
+                writer.Write($"{fileName} ({startLine}: {startCharacter}) - ({endLine}: {endCharacter}): ");
                 writer.WriteLine(diagnostic);
                 writer.ResetColor();
 
