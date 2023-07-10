@@ -2,8 +2,7 @@ namespace Syron.CodeAnalysis.Syntax
 {
     public sealed class ReturnStatementSyntax : StatementSyntax
     {
-        public ReturnStatementSyntax(SyntaxTree syntaxTree, SyntaxToken returnKeyword, ExpressionSyntax expression)
-                : base(syntaxTree)
+        public ReturnStatementSyntax(SyntaxToken returnKeyword, ExpressionSyntax expression)
         {
             ReturnKeyword = returnKeyword;
             Expression = expression;

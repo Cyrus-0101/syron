@@ -2,9 +2,7 @@ namespace Syron.CodeAnalysis.Syntax
 {
     internal class BreakStatementSyntax : StatementSyntax
     {
-        public BreakStatementSyntax(SyntaxTree syntaxTree, SyntaxToken keyword)
-            : base(syntaxTree)
-
+        public BreakStatementSyntax(SyntaxToken keyword)
         {
             Keyword = keyword;
         }

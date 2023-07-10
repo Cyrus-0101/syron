@@ -2,8 +2,7 @@ namespace Syron.CodeAnalysis.Syntax
 {
     public sealed class ElseClauseSyntax : SyntaxNode
     {
-        public ElseClauseSyntax(SyntaxTree syntaxTree, SyntaxToken elseKeyword, StatementSyntax elseStatement)
-            : base(syntaxTree)
+        public ElseClauseSyntax(SyntaxToken elseKeyword, StatementSyntax elseStatement)
         {
             ElseKeyword = elseKeyword;
             ElseStatement = elseStatement;

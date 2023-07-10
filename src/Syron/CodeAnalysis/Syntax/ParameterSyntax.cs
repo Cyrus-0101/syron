@@ -2,8 +2,7 @@ namespace Syron.CodeAnalysis.Syntax
 {
     public sealed class ParameterSyntax : SyntaxNode
     {
-        public ParameterSyntax(SyntaxTree syntaxTree, SyntaxToken identifier, TypeClauseSyntax type)
-            : base(syntaxTree)
+        public ParameterSyntax(SyntaxToken identifier, TypeClauseSyntax type)
         {
             Identifier = identifier;
             Type = type;

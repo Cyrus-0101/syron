@@ -1,2 +1,0 @@
-const name = getName()
-write("Hello " + name + " :D")

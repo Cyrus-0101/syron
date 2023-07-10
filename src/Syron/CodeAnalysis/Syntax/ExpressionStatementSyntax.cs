@@ -2,8 +2,7 @@ namespace Syron.CodeAnalysis.Syntax
 {
     public sealed class ExpressionStatementSyntax : StatementSyntax
     {
-        public ExpressionStatementSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression)
-            : base(syntaxTree)
+        public ExpressionStatementSyntax(ExpressionSyntax expression)
         {
             Expression = expression;
         }

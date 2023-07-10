@@ -2,8 +2,7 @@ namespace Syron.CodeAnalysis.Syntax
 {
     public sealed class GlobalStatementSyntax : MemberSyntax
     {
-        public GlobalStatementSyntax(SyntaxTree syntaxTree, StatementSyntax statement)
-            : base(syntaxTree)
+        public GlobalStatementSyntax(StatementSyntax statement)
         {
             Statement = statement;
         }

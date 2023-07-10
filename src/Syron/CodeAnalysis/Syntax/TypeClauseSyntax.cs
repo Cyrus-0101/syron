@@ -2,9 +2,7 @@ namespace Syron.CodeAnalysis.Syntax
 {
     public sealed class TypeClauseSyntax : SyntaxNode
     {
-        public TypeClauseSyntax(SyntaxTree syntaxTree, SyntaxToken colonToken, SyntaxToken identifier)
-                : base(syntaxTree)
-
+        public TypeClauseSyntax(SyntaxToken colonToken, SyntaxToken identifier)
         {
             ColonToken = colonToken;
             Identifier = identifier;

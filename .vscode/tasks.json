@@ -5,39 +5,48 @@
       "label": "build",
       "command": "dotnet",
       "type": "process",
-      "args": ["build", "${workspaceFolder}/src/syron.sln"],
+      "args": [
+        "build",
+        "${workspaceFolder}/src/Syron.sln",
+        "${workspaceFolder}/src/syron.sln"
+      ],
       "problemMatcher": "$msCompile"
     },
     {
-      "label": "sc",
+      "label": "build",
       "command": "dotnet",
       "type": "process",
       "args": [
+        "build",
+        "${workspaceFolder}/src/si/si.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "publish",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "publish",
+        "${workspaceFolder}/src/si/si.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "watch",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "watch",
         "run",
         "--project",
-        "${workspaceFolder}/src/sc/sc.csproj",
-        "--",
-        "${fileDirname}"
+        "${workspaceFolder}/src/si/si.csproj"
       ],
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": true,
-        "panel": "shared",
-        "showReuseMessage": false,
-        "clear": true
-      },
-      "problemMatcher": {
-        "fileLocation": "absolute",
-        "pattern": [
-          {
-            "regexp": "^(.*)\\((\\d,\\d\\,\\d\\,\\d\\))\\: (.*)$",
-            "file": 1,
-            "location": 2,
-            "message": 3
-          }
-        ]
-      }
+      "problemMatcher": "$msCompile"
     }
   ]
 }

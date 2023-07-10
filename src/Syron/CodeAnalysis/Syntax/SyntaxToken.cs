@@ -12,8 +12,7 @@ namespace Syron.CodeAnalysis.Syntax
 {
     public sealed class SyntaxToken : SyntaxNode
     {
-        public SyntaxToken(SyntaxTree syntaxTree, SyntaxKind kind, int position, string text, object value)
-            : base(syntaxTree)
+        public SyntaxToken(SyntaxKind kind, int position, string text, object value)
         {
             Kind = kind;
             Position = position;

@@ -11,13 +11,13 @@ namespace Syron.CodeAnalysis
 {
     public sealed class Diagnostic
     {
-        public Diagnostic(TextLocation location, string message)
+        public Diagnostic(TextSpan span, string message)
         {
-            Location = location;
+            Span = span;
             Message = message;
         }
 
-        public TextLocation Location { get; }
+        public TextSpan Span { get; }
         public string Message { get; }
 
         public override string ToString() => Message;

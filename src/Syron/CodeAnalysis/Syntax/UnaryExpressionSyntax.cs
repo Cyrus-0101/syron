@@ -10,9 +10,7 @@ namespace Syron.CodeAnalysis.Syntax
 {
     public sealed class UnaryExpressionSyntax : ExpressionSyntax
     {
-        public UnaryExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken operatorToken, ExpressionSyntax operand)
-                : base(syntaxTree)
-
+        public UnaryExpressionSyntax(SyntaxToken operatorToken, ExpressionSyntax operand)
         {
             OperatorToken = operatorToken;
             Operand = operand;

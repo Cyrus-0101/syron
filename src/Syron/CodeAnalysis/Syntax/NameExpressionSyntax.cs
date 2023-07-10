@@ -2,8 +2,7 @@ namespace Syron.CodeAnalysis.Syntax
 {
     public sealed class NameExpressionSyntax : ExpressionSyntax
     {
-        public NameExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken identifierToken)
-            : base(syntaxTree)
+        public NameExpressionSyntax(SyntaxToken identifierToken)
         {
             IdentifierToken = identifierToken;
         }

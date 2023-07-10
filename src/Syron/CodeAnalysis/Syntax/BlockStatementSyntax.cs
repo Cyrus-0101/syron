@@ -4,12 +4,9 @@ namespace Syron.CodeAnalysis.Syntax
 {
     public sealed class BlockStatementSyntax : StatementSyntax
     {
-        public BlockStatementSyntax(SyntaxTree syntaxTree,
-                                    SyntaxToken openBraceToken,
-                                    ImmutableArray<StatementSyntax> statements,
-                                    SyntaxToken closeBraceToken)
-            : base(syntaxTree)
-
+        public BlockStatementSyntax(SyntaxToken openBraceToken,
+            ImmutableArray<StatementSyntax> statements,
+            SyntaxToken closeBraceToken)
         {
             OpenBraceToken = openBraceToken;
             Statements = statements;

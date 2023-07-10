@@ -2,8 +2,7 @@ namespace Syron.CodeAnalysis.Syntax
 {
     internal class ContinueStatementSyntax : StatementSyntax
     {
-        public ContinueStatementSyntax(SyntaxTree syntaxTree, SyntaxToken keyword)
-            : base(syntaxTree)
+        public ContinueStatementSyntax(SyntaxToken keyword)
         {
             Keyword = keyword;
         }
