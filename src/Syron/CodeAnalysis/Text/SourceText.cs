@@ -14,15 +14,16 @@ namespace Syron.CodeAnalysis.Text
     {
         private readonly string _text;
 
-        private SourceText(string text)
+        private SourceText(string text, string filename)
         {
             _text = text;
+            Filename = filename;
             Lines = ParseLines(this, text);
         }
 
-        public static SourceText From(string text)
+        public static SourceText From(string text, string filename = "")
         {
-            return new SourceText(text);
+            return new SourceText(text, filename);
         }
 
         private static ImmutableArray<TextLine> ParseLines(SourceText sourceText, string text)
@@ -82,6 +83,8 @@ namespace Syron.CodeAnalysis.Text
         public char this[int index] => _text[index];
 
         public int Length => _text.Length;
+
+        public string Filename { get; }
 
         public int GetLineIndex(int position)
         {

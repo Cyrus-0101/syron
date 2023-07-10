@@ -8,16 +8,17 @@ namespace Syron.CodeAnalysis.Syntax
     {
         private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
         private readonly SourceText _text;
-
+        private readonly SyntaxTree _syntaxTree;
         private int _position;
 
         private int _start;
         private SyntaxKind _kind;
         private object _value = null!;
 
-        public Lexer(SourceText text)
+        public Lexer(SyntaxTree syntaxTree)
         {
-            _text = text;
+            _syntaxTree = syntaxTree;
+            _text = syntaxTree.Text;
         }
 
         public DiagnosticBag Diagnostics => _diagnostics;
@@ -199,7 +200,9 @@ namespace Syron.CodeAnalysis.Syntax
                     }
                     else
                     {
-                        _diagnostics.ReportBadCharacter(_position, Current);
+                        var span = new TextSpan(_position, 1);
+                        var location = new TextLocation(_text, span);
+                        _diagnostics.ReportBadCharacter(location, Current);
                         _position++;
                     }
                     break;
@@ -211,7 +214,7 @@ namespace Syron.CodeAnalysis.Syntax
             if (text == null)
                 text = _text.ToString(_start, length);
 
-            return new SyntaxToken(_kind, _start, text, _value);
+            return new SyntaxToken(_syntaxTree, _kind, _start, text, _value);
         }
 
         private void ReadString()
@@ -230,7 +233,8 @@ namespace Syron.CodeAnalysis.Syntax
                     case '\r':
                     case '\n':
                         var span = new TextSpan(_start, 1);
-                        _diagnostics.ReportUnterminatedString(span);
+                        var location = new TextLocation(_text, span);
+                        _diagnostics.ReportUnterminatedString(location);
                         done = true;
                         break;
                     case '"':
@@ -272,7 +276,11 @@ namespace Syron.CodeAnalysis.Syntax
             var length = _position - _start;
             var text = _text.ToString(_start, length);
             if (!int.TryParse(text, out var value))
-                _diagnostics.ReportInvalidNumber(new TextSpan(_start, length), text, TypeSymbol.Int);
+            {
+                var span = new TextSpan(_start, length);
+                var location = new TextLocation(_text, span);
+                _diagnostics.ReportInvalidNumber(location, text, TypeSymbol.Int);
+            }
 
             _value = value;
             _kind = SyntaxKind.NumberToken;
