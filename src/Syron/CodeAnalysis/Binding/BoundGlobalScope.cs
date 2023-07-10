@@ -9,6 +9,13 @@
 using System.Collections.Immutable;
 using Syron.CodeAnalysis.Symbols;
 
+//   _________
+//  /   _____/__.__._______  ____   ____  
+//  \_____  <   |  |\_  __ \/  _ \ /    \ 
+//  /        \___  | |  | \(  <_> )   |  \
+// /_______  / ____| |__|   \____/|___|  /
+//         \/\/               
+
 namespace Syron.CodeAnalysis.Binding
 {
     internal sealed class BoundGlobalScope

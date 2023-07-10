@@ -2,6 +2,13 @@ using System.Text;
 using Syron.CodeAnalysis.Symbols;
 using Syron.CodeAnalysis.Text;
 
+//   _________
+//  /   _____/__.__._______  ____   ____  
+//  \_____  <   |  |\_  __ \/  _ \ /    \ 
+//  /        \___  | |  | \(  <_> )   |  \
+// /_______  / ____| |__|   \____/|___|  /
+//         \/\/               
+
 namespace Syron.CodeAnalysis.Syntax
 {
     internal sealed class Lexer

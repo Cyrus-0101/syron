@@ -5,3 +5,12 @@
 > Have you considered Syron? -- A type safe JavaScript alternative.
 
 This repo is a compiler made in C#. More details to come.
+
+```c#
+//   _________
+//  /   _____/__.__._______  ____   ____  
+//  \_____  <   |  |\_  __ \/  _ \ /    \ 
+//  /        \___  | |  | \(  <_> )   |  \
+// /_______  / ____| |__|   \____/|___|  /
+//         \/\/               
+```

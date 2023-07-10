@@ -5,6 +5,13 @@ using Syron.CodeAnalysis.Symbols;
 using Syron.CodeAnalysis.Syntax;
 using Syron.CodeAnalysis.Text;
 
+//   _________
+//  /   _____/__.__._______  ____   ____  
+//  \_____  <   |  |\_  __ \/  _ \ /    \ 
+//  /        \___  | |  | \(  <_> )   |  \
+// /_______  / ____| |__|   \____/|___|  /
+//         \/\/               
+
 namespace Syron.CodeAnalysis.Binding
 {
     internal sealed class Binder
