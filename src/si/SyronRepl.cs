@@ -54,37 +54,31 @@ namespace Syron
             }
         }
 
-        protected override void EvaluateMetaCommand(string input)
+        [MetaCommand("showTree", "Show parse trees.")]
+        private void EvaluateShowTree()
         {
-            switch (input)
-            {
-                case "#help":
-                    Console.WriteLine("#showTree   - Show parse trees.");
-                    Console.WriteLine("#showProgram - Show bound tree.");
-                    Console.WriteLine("#clear      - Clear the screen.");
-                    Console.WriteLine("#reset      - Reset the REPL.");
-                    Console.WriteLine("#help       - Show this help text.");
-                    break;
-                case "#showTree":
-                    _showTree = !_showTree;
-                    Console.WriteLine(_showTree ? "Showing parse trees." : "Not showing parse trees.");
-                    break;
-                case "#showProgram":
-                    _showProgram = !_showProgram;
-                    Console.WriteLine(_showProgram ? "Showing bound tree." : "Not showing bound tree.");
-                    break;
-                case "#clear":
-                case "#cls":
-                    Console.Clear();
-                    break;
-                case "#reset":
-                    _previous = null!;
-                    _variables.Clear();
-                    break;
-                default:
-                    base.EvaluateMetaCommand(input);
-                    break;
-            }
+            _showTree = !_showTree;
+            Console.WriteLine(_showTree ? "Showing parse trees." : "Not showing parse trees.");
+        }
+
+        [MetaCommand("showProgram", "Showing bound tree.")]
+        private void EvaluateShowProgram()
+        {
+            _showProgram = !_showProgram;
+            Console.WriteLine(_showProgram ? "Showing bound tree." : "Not showing bound tree.");
+        }
+
+        [MetaCommand("clear", "Clear the screen.")]
+        private void EvaluateClear()
+        {
+            Console.Clear();
+        }
+
+        [MetaCommand("reset", "Reset the REPL. Clears all previous submissions.")]
+        private void EvaluateReset()
+        {
+            _previous = null!;
+            _variables.Clear();
         }
 
         protected override bool IsCompleteSubmission(string text)

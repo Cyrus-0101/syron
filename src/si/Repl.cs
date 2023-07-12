@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Reflection;
+using System.Text;
 
 //   _________
 //  /   _____/__.__._______  ____   ____  
@@ -17,6 +19,29 @@ namespace Syron
         private int _submissionHistoryIndex;
 
         private bool _done;
+
+        protected Repl()
+        {
+            InitializeMetaCommands();
+        }
+
+        private void InitializeMetaCommands()
+        {
+            var methods = GetType().GetMethods(BindingFlags.Public |
+                                                BindingFlags.NonPublic | BindingFlags.Static |
+                                                BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+            foreach (var method in methods)
+            {
+                var attribute = (MetaCommandAttribute)method.GetCustomAttribute(typeof(MetaCommandAttribute))!;
+
+                if (attribute == null)
+                    continue;
+
+                var metaCommands = new MetaCommand(attribute.Name, attribute.Description!, method);
+                _metaCommands.Add(metaCommands);
+
+            }
+        }
 
         public void Run()
         {
@@ -396,11 +421,94 @@ namespace Syron
             Console.Write(line);
         }
 
-        protected virtual void EvaluateMetaCommand(string input)
+        private void EvaluateMetaCommand(string input)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Invalid command {input}.");
-            Console.ResetColor();
+            // Parse Arguments
+
+            // #dump getname
+            // #load samples/hello/hello-world.sy
+            // #load "samples/hello world/hello-world.sy"
+
+            var args = new List<string>();
+            var position = 1;
+            var inQuotes = false;
+            var sb = new StringBuilder();
+
+            while (position < input.Length)
+            {
+                var c = input[position];
+                var l = position + 1 >= input.Length ? '\0' : input[position + 1];
+
+
+                if (char.IsWhiteSpace(c))
+                {
+                    if (!inQuotes)
+                        CommitPendingArgument();
+                    else
+                        sb.Append(c);
+                }
+                else if (c == '\"')
+                {
+                    if (!inQuotes)
+                        inQuotes = true;
+                    else if (l == '\"')
+                    {
+                        sb.Append(c);
+                        position++;
+                    }
+                    else
+                        inQuotes = false;
+                }
+                else
+                {
+                    sb.Append(c);
+                }
+
+                position++;
+            }
+
+            CommitPendingArgument();
+
+            void CommitPendingArgument()
+            {
+                var arg = sb.ToString();
+
+                if (!string.IsNullOrWhiteSpace(arg))
+                    args.Add(arg);
+
+                sb.Clear();
+            }
+
+            var commandName = args.FirstOrDefault();
+
+            if (args.Count > 0)
+                args.RemoveAt(0);
+
+            var command = _metaCommands.SingleOrDefault(mc => mc.Name == commandName);
+
+            if (command == null)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Invalid command {input}.");
+                Console.ResetColor();
+                return;
+            }
+
+            var parameters = command.Method.GetParameters();
+
+            if (args.Count != parameters.Length)
+            {
+                var parameterNames = string.Join(",", parameters.Select(p => $"<{p.Name}>"));
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"ERROR: Invalid number of arguments for command {input}, given {args.Count} expected {parameters.Length}.");
+                Console.ResetColor();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"USAGE: '#{command.Name}' expected {parameterNames} - {parameters.Length} arguments, but got {args.Count}.");
+                Console.ResetColor();
+                return;
+            }
+
+            command.Method.Invoke(this, args.ToArray());
         }
 
         protected abstract bool IsCompleteSubmission(string text);
@@ -425,36 +533,51 @@ namespace Syron
             Console.WriteLine("Welcome to Syron programming language!");
             Console.WriteLine("Type '#help' to see the list of available commands.");
             Console.WriteLine("Type ' ' to exit the program.");
-            Console.WriteLine("Type '#cls' or '#clear' to clear the screen.");
+            Console.WriteLine("Type '#clear' to clear the screen.");
             Console.WriteLine("Type '#showProgram' to toggle bound tree display.");
             Console.WriteLine("Type '#showTree' to toggle parse tree display.");
             Console.WriteLine("Type '#reset' to reset the program.");
         }
 
-        private sealed class MetaCommandAttribute : Attribute
+        [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+        protected sealed class MetaCommandAttribute : Attribute
         {
-            public string Name { get; }
-            public MethodInfo Method { get; }
-
-            public MetaCommandAttribute(string name, MethodInfo method)
+            public MetaCommandAttribute(string name, string description)
             {
                 Name = name;
-                Method = method;
+                Description = description;
             }
+
+            public string Name { get; }
+            public string Description { get; }
         }
 
-        [MetaCommand("help")]
-        private void EvaluateHelp()
+        private sealed class MetaCommand
         {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Available commands:");
-            Console.WriteLine("#help - show this help message");
-            Console.WriteLine("#cls - clear the screen");
-            Console.WriteLine("#clear - clear the screen");
-            Console.WriteLine("#showProgram - toggle bound tree display");
-            Console.WriteLine("#showTree - toggle parse tree display");
-            Console.WriteLine("#reset - reset the program");
-            Console.ResetColor();
+            public MetaCommand(string name, string description, MethodInfo method)
+            {
+                Name = name;
+                Description = description;
+                Method = method;
+
+            }
+
+            public string Name { get; }
+            public string Description { get; }
+            public MethodInfo Method { get; }
+        }
+
+        [MetaCommand("help", "Show the help message")]
+        protected void EvaluateHelp()
+        {
+
+            var maxNameLength = _metaCommands.Max(x => x.Name.Length);
+            foreach (var metaCommand in _metaCommands.OrderBy(x => x.Name))
+            {
+                var paddedName = metaCommand.Name.PadRight(maxNameLength);
+                Console.WriteLine($"#{paddedName} - {metaCommand.Description}");
+            }
+
         }
     }
 }
