@@ -94,7 +94,46 @@ namespace Syron
                 Console.WriteLine($"ERROR: File does not exist - '{path}'");
                 Console.ResetColor();
                 return;
+            }
+
+            var text = File.ReadAllText(path);
+            EvaluateSubmission(text);
         }
+
+        [MetaCommand("ls", "Lists all the symbols.")]
+        private void EvaluateLs()
+        {
+            if (_previous == null)
+                return;
+
+            var symbols = _previous.GetSymbols().OrderBy(s => s.Kind).ThenBy(s => s.Name);
+
+            foreach (var symbol in symbols)
+            {
+                symbol.WriteTo(Console.Out);
+                Console.WriteLine();
+            }
+        }
+
+        [MetaCommand("dump", "Shows bound tree of a given function.")]
+        private void EvaluateDump(string functionName)
+        {
+            if (_previous == null)
+                return;
+
+            var symbol = _previous.GetSymbols().OfType<FunctionSymbol>().SingleOrDefault(s => s.Name == functionName);
+
+            if (symbol == null)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"ERROR: Function '{functionName}' does not exist.");
+                Console.ResetColor();
+                return;
+            }
+
+            _previous.EmitTree(symbol, Console.Out);
+        }
+
 
         protected override bool IsCompleteSubmission(string text)
         {
