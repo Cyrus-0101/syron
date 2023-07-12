@@ -82,6 +82,18 @@ namespace Syron
         {
             _previous = null!;
             _variables.Clear();
+            ClearSubmissions();
+        }
+
+        [MetaCommand("load", "Loads a script from a file.")]
+        private void EvaluateLoad(string path)
+        {
+            if (!File.Exists(path))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"ERROR: File does not exist - '{path}'");
+                Console.ResetColor();
+                return;
         }
 
         protected override bool IsCompleteSubmission(string text)
