@@ -191,5 +191,60 @@ namespace Syron
                 Console.Out.WriteDiagnostics(result.Diagnostics);
             }
         }
+
+        private static string GetSubmissionsDirectory()
+        {
+            var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var submissionsDirectory = Path.Combine(localAppData, "Syron", "Submissions");
+            return submissionsDirectory;
+        }
+
+        private void LoadSubmissions()
+        {
+            var submissionsDirectory = GetSubmissionsDirectory();
+
+            if (!Directory.Exists(submissionsDirectory))
+                return;
+
+            var files = Directory.GetFiles(submissionsDirectory).OrderBy(f => f);
+
+            if (!files.Any())
+                return;
+
+            _loadingSubmission = true;
+
+            foreach (var file in files)
+            {
+                var text = File.ReadAllText(file);
+                EvaluateSubmission(text);
+            }
+
+            _loadingSubmission = false;
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"Loaded {files.Count()} submissions");
+            Console.ResetColor();
+        }
+
+        private static void ClearSubmissions()
+        {
+            Directory.Delete(GetSubmissionsDirectory(), recursive: true);
+        }
+
+        private static void SaveSubmission(string text)
+        {
+
+            if (_loadingSubmission)
+                return;
+
+            var submissionsDirectory = GetSubmissionsDirectory();
+            Directory.CreateDirectory(submissionsDirectory);
+
+            var count = Directory.GetFiles(submissionsDirectory).Length;
+            var name = $"submission{count:0000}";
+            var fileName = Path.Combine(submissionsDirectory, $"{name}.sy");
+
+            File.WriteAllText(fileName, text);
+        }
     }
 }
