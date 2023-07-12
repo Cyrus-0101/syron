@@ -3,6 +3,8 @@ using System.Collections.Specialized;
 using System.Reflection;
 using System.Text;
 
+using Syron.IO;
+
 //   _________
 //  /   _____/__.__._______  ____   ____  
 //  \_____  <   |  |\_  __ \/  _ \ /    \ 
@@ -500,10 +502,10 @@ namespace Syron
             {
                 var parameterNames = string.Join(",", parameters.Select(p => $"<{p.Name}>"));
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"ERROR: Invalid number of arguments for command {input}, given {args.Count} expected {parameters.Length}.");
+                Console.WriteLine($"ERROR: Invalid number of arguments for command '{input}', given {args.Count} expected {parameters.Length}.");
                 Console.ResetColor();
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"USAGE: '#{command.Name}' expected {parameterNames} - {parameters.Length} arguments, but got {args.Count}.");
+                Console.WriteLine($"USAGE: '#{command.Name}' expected {parameters.Length} arguments, but got {args.Count}.");
                 Console.ResetColor();
                 return;
             }
@@ -575,7 +577,17 @@ namespace Syron
             foreach (var metaCommand in _metaCommands.OrderBy(x => x.Name))
             {
                 var paddedName = metaCommand.Name.PadRight(maxNameLength);
-                Console.WriteLine($"#{paddedName} - {metaCommand.Description}");
+
+                Console.Out.WritePunctuation("#");
+                Console.Out.WriteIdentifier(paddedName);
+                Console.Out.WriteSpace();
+                Console.Out.WriteSpace();
+                Console.Out.WriteSpace();
+
+                Console.Out.WritePunctuation(metaCommand.Description);
+                Console.Out.WriteLine();
+
+                // Console.WriteLine($"#{paddedName} - {metaCommand.Description}");
             }
 
         }
