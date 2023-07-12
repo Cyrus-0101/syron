@@ -25,7 +25,13 @@ namespace Syron
         private Compilation _previous = null!;
         private bool _showTree;
         private bool _showProgram;
+        private static bool _loadingSubmission;
         private readonly Dictionary<VariableSymbol, object> _variables = new Dictionary<VariableSymbol, object>();
+
+        public SyronRepl()
+        {
+            LoadSubmissions();
+        }
 
         protected override void RenderLine(string line)
         {
@@ -128,6 +134,8 @@ namespace Syron
                     Console.ResetColor();
                 }
                 _previous = compilation;
+
+                SaveSubmission(text);
             }
             else
             {
