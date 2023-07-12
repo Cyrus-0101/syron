@@ -264,7 +264,7 @@ namespace Syron.CodeAnalysis
             if (node.Type == TypeSymbol.Bool)
                 return Convert.ToBoolean(value);
             else if (node.Type == TypeSymbol.Int)
-                return Convert.ToInt64(value);
+                return Convert.ToInt32(value);
             else if (node.Type == TypeSymbol.String)
                 return Convert.ToString(value)!;
             else

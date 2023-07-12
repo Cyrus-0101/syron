@@ -12,7 +12,8 @@ namespace Syron
 {
     internal abstract class Repl
     {
-        private List<string> _submissionHistory = new List<string>();
+        private readonly List<MetaCommand> _metaCommands = new List<MetaCommand>();
+        private readonly List<string> _submissionHistory = new List<string>();
         private int _submissionHistoryIndex;
 
         private bool _done;
@@ -406,7 +407,7 @@ namespace Syron
 
         protected abstract void EvaluateSubmission(string text);
 
-        private static void WelcomeMessage()
+        protected static void WelcomeMessage()
         {
             var startText = @"
               _________
@@ -430,5 +431,30 @@ namespace Syron
             Console.WriteLine("Type '#reset' to reset the program.");
         }
 
+        private sealed class MetaCommandAttribute : Attribute
+        {
+            public string Name { get; }
+            public MethodInfo Method { get; }
+
+            public MetaCommandAttribute(string name, MethodInfo method)
+            {
+                Name = name;
+                Method = method;
+            }
+        }
+
+        [MetaCommand("help")]
+        private void EvaluateHelp()
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Available commands:");
+            Console.WriteLine("#help - show this help message");
+            Console.WriteLine("#cls - clear the screen");
+            Console.WriteLine("#clear - clear the screen");
+            Console.WriteLine("#showProgram - toggle bound tree display");
+            Console.WriteLine("#showTree - toggle parse tree display");
+            Console.WriteLine("#reset - reset the program");
+            Console.ResetColor();
+        }
     }
 }
