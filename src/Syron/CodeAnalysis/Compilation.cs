@@ -31,6 +31,8 @@ namespace Syron.CodeAnalysis
 
         public Compilation Previous { get; }
         public ImmutableArray<SyntaxTree> SyntaxTrees { get; }
+        public ImmutableArray<FunctionSymbol> Functions => GlobalScope.Functions;
+        public ImmutableArray<VariableSymbol> Variables => GlobalScope.Variables;
 
         internal BoundGlobalScope GlobalScope
         {
@@ -43,6 +45,29 @@ namespace Syron.CodeAnalysis
                 }
 
                 return _globalScope;
+            }
+        }
+
+        public IEnumerable<Symbol> GetSymbols()
+        {
+            var submission = this;
+            var seenSymbolNames = new HashSet<string>();
+
+            while (submission != null)
+            {
+                foreach (var variables in submission.Variables)
+                {
+                    if (seenSymbolNames.Add(variables.Name))
+                        yield return variables;
+                }
+
+                foreach (var functions in submission.Functions)
+                {
+                    if (seenSymbolNames.Add(functions.Name))
+                        yield return functions;
+                }
+
+                submission = submission.Previous;
             }
         }
 
@@ -99,6 +124,18 @@ namespace Syron.CodeAnalysis
                     functionBody.Value.WriteTo(writer);
                 }
             }
+        }
+
+        public void EmitTree(FunctionSymbol symbol, TextWriter writer)
+        {
+            var program = Binder.BindProgram(GlobalScope);
+
+            if (!program.Functions.TryGetValue(symbol, out var body))
+                return;
+
+            symbol.WriteTo(writer);
+            body.WriteTo(writer);
+
         }
     }
 }
