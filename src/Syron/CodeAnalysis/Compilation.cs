@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
+using ReflectionBindingFlags = System.Reflection.BindingFlags;
 
 using Syron.CodeAnalysis.Binding;
-using Syron.CodeAnalysis.Lowering;
 using Syron.CodeAnalysis.Symbols;
 using Syron.CodeAnalysis.Syntax;
 
@@ -31,6 +31,8 @@ namespace Syron.CodeAnalysis
 
         public Compilation Previous { get; }
         public ImmutableArray<SyntaxTree> SyntaxTrees { get; }
+        public ImmutableArray<FunctionSymbol> Functions => GlobalScope.Functions;
+        public ImmutableArray<VariableSymbol> Variables => GlobalScope.Variables;
 
         internal BoundGlobalScope GlobalScope
         {
@@ -43,6 +45,44 @@ namespace Syron.CodeAnalysis
                 }
 
                 return _globalScope;
+            }
+        }
+
+        public IEnumerable<Symbol> GetSymbols()
+        {
+            var submission = this;
+            var seenSymbolNames = new HashSet<string>();
+
+            while (submission != null)
+            {
+                const ReflectionBindingFlags bindingFlags =
+                    ReflectionBindingFlags.Static |
+                    ReflectionBindingFlags.Public |
+                    ReflectionBindingFlags.NonPublic;
+
+                var builtInFunctions = typeof(BuiltInFunctions)
+                    .GetFields(bindingFlags)
+                    .Where(fi => fi.FieldType == typeof(FunctionSymbol))
+                    .Select(fi => (FunctionSymbol)fi.GetValue(obj: null)!)
+                    .ToList();
+
+                foreach (var builtin in builtInFunctions)
+                    if (seenSymbolNames.Add(builtin.Name))
+                        yield return builtin;
+
+                foreach (var variables in submission.Variables)
+                {
+                    if (seenSymbolNames.Add(variables.Name))
+                        yield return variables;
+                }
+
+                foreach (var functions in submission.Functions)
+                {
+                    if (seenSymbolNames.Add(functions.Name))
+                        yield return functions;
+                }
+
+                submission = submission.Previous;
             }
         }
 
@@ -99,6 +139,20 @@ namespace Syron.CodeAnalysis
                     functionBody.Value.WriteTo(writer);
                 }
             }
+        }
+
+        public void EmitTree(FunctionSymbol symbol, TextWriter writer)
+        {
+            var program = Binder.BindProgram(GlobalScope);
+
+            symbol.WriteTo(writer);
+            writer.WriteLine();
+
+            if (!program.Functions.TryGetValue(symbol, out var body))
+                return;
+
+            body.WriteTo(writer);
+
         }
     }
 }
