@@ -89,6 +89,8 @@ namespace Syron
         [MetaCommand("load", "Loads a script from a file.")]
         private void EvaluateLoad(string path)
         {
+            path = Path.GetFullPath(path);
+
             if (!File.Exists(path))
             {
                 Console.ForegroundColor = ConsoleColor.Red;
