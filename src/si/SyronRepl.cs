@@ -23,6 +23,7 @@ namespace Syron
         private bool _showTree;
         private bool _showProgram;
         private static bool _loadingSubmission;
+        private static readonly Compilation emptyCompilation = new Compilation();
         private readonly Dictionary<VariableSymbol, object> _variables = new Dictionary<VariableSymbol, object>();
 
         public SyronRepl()
@@ -103,7 +104,7 @@ namespace Syron
         [MetaCommand("ls", "Lists all the symbols.")]
         private void EvaluateLs()
         {
-            var compilation = _previous ?? new Compilation();
+            var compilation = _previous ?? emptyCompilation;
             var symbols = compilation.GetSymbols().OrderBy(s => s.Kind).ThenBy(s => s.Name);
 
             foreach (var symbol in symbols)
@@ -116,7 +117,7 @@ namespace Syron
         [MetaCommand("dump", "Shows bound tree of a given function.")]
         private void EvaluateDump(string functionName)
         {
-            var compilation = _previous ?? new Compilation();
+            var compilation = _previous ?? emptyCompilation;
             var symbol = compilation.GetSymbols().OfType<FunctionSymbol>().SingleOrDefault(f => f.Name == functionName);
 
             if (symbol == null)
