@@ -500,7 +500,7 @@ namespace Syron
 
             if (args.Count != parameters.Length)
             {
-                var parameterNames = string.Join(",", parameters.Select(p => $"<{p.Name}>"));
+                var parameterNames = string.Join(" ", parameters.Select(p => $"<{p.Name}>"));
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"ERROR: Invalid number of arguments for command '{input}', given {args.Count} expected {parameters.Length}.");
                 Console.ResetColor();
