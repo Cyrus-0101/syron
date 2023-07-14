@@ -222,10 +222,6 @@ namespace Syron
             }
 
             _loadingSubmission = false;
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Loaded {files.Count()} submissions");
-            Console.ResetColor();
         }
 
         private static void ClearSubmissions()
