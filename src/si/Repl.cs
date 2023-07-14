@@ -518,7 +518,7 @@ namespace Syron
 
         protected abstract void EvaluateSubmission(string text);
 
-        protected static void WelcomeMessage()
+        void WelcomeMessage()
         {
             var startText = @"
               _________
@@ -535,11 +535,7 @@ namespace Syron
 
             Console.WriteLine("Welcome to Syron programming language!");
             Console.WriteLine("Type '#help' to see the list of available commands.");
-            Console.WriteLine("Type ' ' to exit the program.");
-            Console.WriteLine("Type '#clear' to clear the screen.");
-            Console.WriteLine("Type '#showProgram' to toggle bound tree display.");
-            Console.WriteLine("Type '#showTree' to toggle parse tree display.");
-            Console.WriteLine("Type '#reset' to reset the program.");
+            EvaluateHelp();
         }
 
         [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
@@ -587,8 +583,6 @@ namespace Syron
 
                 Console.Out.WritePunctuation(metaCommand.Description);
                 Console.Out.WriteLine();
-
-                // Console.WriteLine($"#{paddedName} - {metaCommand.Description}");
             }
 
         }
