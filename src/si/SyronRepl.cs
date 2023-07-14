@@ -103,10 +103,8 @@ namespace Syron
         [MetaCommand("ls", "Lists all the symbols.")]
         private void EvaluateLs()
         {
-            if (_previous == null)
-                return;
-
-            var symbols = _previous.GetSymbols().OrderBy(s => s.Kind).ThenBy(s => s.Name);
+            var compilation = _previous ?? new Compilation();
+            var symbols = compilation.GetSymbols().OrderBy(s => s.Kind).ThenBy(s => s.Name);
 
             foreach (var symbol in symbols)
             {
@@ -118,10 +116,8 @@ namespace Syron
         [MetaCommand("dump", "Shows bound tree of a given function.")]
         private void EvaluateDump(string functionName)
         {
-            if (_previous == null)
-                return;
-
-            var symbol = _previous.GetSymbols().OfType<FunctionSymbol>().SingleOrDefault(s => s.Name == functionName);
+            var compilation = _previous ?? new Compilation();
+            var symbol = compilation.GetSymbols().OfType<FunctionSymbol>().SingleOrDefault(f => f.Name == functionName);
 
             if (symbol == null)
             {
@@ -131,7 +127,7 @@ namespace Syron
                 return;
             }
 
-            _previous.EmitTree(symbol, Console.Out);
+            compilation.EmitTree(symbol, Console.Out);
         }
 
 

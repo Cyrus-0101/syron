@@ -145,10 +145,12 @@ namespace Syron.CodeAnalysis
         {
             var program = Binder.BindProgram(GlobalScope);
 
+            symbol.WriteTo(writer);
+            writer.WriteLine();
+
             if (!program.Functions.TryGetValue(symbol, out var body))
                 return;
 
-            symbol.WriteTo(writer);
             body.WriteTo(writer);
 
         }
