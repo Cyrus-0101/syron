@@ -231,7 +231,6 @@ namespace Syron
 
         private static void SaveSubmission(string text)
         {
-
             if (_loadingSubmission)
                 return;
 
