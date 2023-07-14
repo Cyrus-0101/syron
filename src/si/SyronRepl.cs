@@ -204,7 +204,7 @@ namespace Syron
             if (!Directory.Exists(submissionsDirectory))
                 return;
 
-            var files = Directory.GetFiles(submissionsDirectory).OrderBy(f => f);
+            var files = Directory.GetFiles(submissionsDirectory).OrderBy(f => f).ToArray();
 
             if (!files.Any())
                 return;
