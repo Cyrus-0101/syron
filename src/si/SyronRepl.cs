@@ -180,6 +180,7 @@ namespace Syron
                     Console.WriteLine(result.Value);
                     Console.ResetColor();
                 }
+
                 _previous = compilation;
 
                 SaveSubmission(text);
@@ -229,7 +230,7 @@ namespace Syron
             Directory.Delete(GetSubmissionsDirectory(), recursive: true);
         }
 
-        private static void SaveSubmission(string text)
+        private void SaveSubmission(string text)
         {
             if (_loadingSubmission)
                 return;
