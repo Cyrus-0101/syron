@@ -186,14 +186,12 @@ namespace Syron
             }
             else
             {
-
                 Console.Out.WriteDiagnostics(result.Diagnostics);
             }
         }
 
         private static string GetSubmissionsDirectory()
         {
-            // Instead of local app data, use /usr/home/Desktop/Syron/Submissions
             var homeDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             var submissionsDirectory = Path.Combine(homeDirectory, "Syron", "Submissions", ".");
             return submissionsDirectory;
