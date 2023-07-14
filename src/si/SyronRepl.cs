@@ -209,6 +209,10 @@ namespace Syron
             if (files.Length == 0)
                 return;
 
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"Loaded {files.Length} submission(s)");
+            Console.ResetColor();
+
             _loadingSubmission = true;
 
             foreach (var file in files)
