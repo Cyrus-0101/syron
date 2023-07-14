@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
+using ReflectionBindingFlags = System.Reflection.BindingFlags;
 
 using Syron.CodeAnalysis.Binding;
-using Syron.CodeAnalysis.Lowering;
 using Syron.CodeAnalysis.Symbols;
 using Syron.CodeAnalysis.Syntax;
 
@@ -55,6 +55,21 @@ namespace Syron.CodeAnalysis
 
             while (submission != null)
             {
+                const ReflectionBindingFlags bindingFlags =
+                    ReflectionBindingFlags.Static |
+                    ReflectionBindingFlags.Public |
+                    ReflectionBindingFlags.NonPublic;
+
+                var builtInFunctions = typeof(BuiltInFunctions)
+                    .GetFields(bindingFlags)
+                    .Where(fi => fi.FieldType == typeof(FunctionSymbol))
+                    .Select(fi => (FunctionSymbol)fi.GetValue(obj: null)!)
+                    .ToList();
+
+                foreach (var builtin in builtInFunctions)
+                    if (seenSymbolNames.Add(builtin.Name))
+                        yield return builtin;
+
                 foreach (var variables in submission.Variables)
                 {
                     if (seenSymbolNames.Add(variables.Name))
