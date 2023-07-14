@@ -206,7 +206,7 @@ namespace Syron
 
             var files = Directory.GetFiles(submissionsDirectory).OrderBy(f => f).ToArray();
 
-            if (!files.Any())
+            if (files.Length == 0)
                 return;
 
             _loadingSubmission = true;
