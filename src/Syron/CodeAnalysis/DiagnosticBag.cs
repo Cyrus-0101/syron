@@ -188,5 +188,11 @@ namespace Syron.CodeAnalysis
             var message = $"ERROR: An expression of type '{returnType}' is expected.";
             Report(location, message);
         }
+
+        public void ReportInvalidExpressionStatement(TextLocation location)
+        {
+            var message = $"ERROR: Only assignment and call expressions can be used as a statement.";
+            Report(location, message);
+        }
     }
 }
