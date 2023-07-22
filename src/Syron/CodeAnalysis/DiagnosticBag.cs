@@ -141,12 +141,6 @@ namespace Syron.CodeAnalysis
             Report(location, message);
         }
 
-        public void ReportParameterTypeMismatch(TextLocation location, string name, string parameterName, TypeSymbol expectedType, TypeSymbol actualType)
-        {
-            var message = $"ERROR: Function '{name}' requires parameter '{parameterName}' to be of type '{expectedType}' but was given '{actualType}'.";
-            Report(location, message);
-        }
-
         public void ReportExpressionMustHaveValue(TextLocation location)
         {
             var message = $"ERROR: Expression must have a value.";

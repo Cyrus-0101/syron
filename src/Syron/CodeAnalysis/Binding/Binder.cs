@@ -543,21 +543,13 @@ namespace Syron.CodeAnalysis.Binding
                 return new BoundErrorExpression();
             }
 
-            bool hasErrors = false;
             for (var i = 0; i < syntax.Arguments.Count; i++)
             {
+                var argLocation = syntax.Arguments[i].Location;
                 var argument = boundArguments[i];
                 var parameter = function.Parameters[i];
-
-                if (argument.Type != parameter.Type)
-                {
-                    if (argument.Type != TypeSymbol.Error)
-                        _diagnostics.ReportParameterTypeMismatch(syntax.Arguments[i].Location, function.Name, parameter.Name, parameter.Type, argument.Type);
-                    hasErrors = true;
-                }
+                boundArguments[i] = BindConversion(syntax.Arguments[i].Location, argument, parameter.Type);
             }
-            if (hasErrors)
-                return new BoundErrorExpression();
 
             return new BoundCallExpression(function, boundArguments.ToImmutable());
         }
