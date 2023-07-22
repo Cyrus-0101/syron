@@ -73,9 +73,12 @@ namespace Syron.CodeAnalysis
                     .Select(fi => (FunctionSymbol)fi.GetValue(obj: null)!)
                     .ToList();
 
-                foreach (var builtin in builtInFunctions)
-                    if (seenSymbolNames.Add(builtin.Name))
-                        yield return builtin;
+
+                foreach (var functions in submission.Functions)
+                {
+                    if (seenSymbolNames.Add(functions.Name))
+                        yield return functions;
+                }
 
                 foreach (var variables in submission.Variables)
                 {
@@ -83,11 +86,10 @@ namespace Syron.CodeAnalysis
                         yield return variables;
                 }
 
-                foreach (var functions in submission.Functions)
-                {
-                    if (seenSymbolNames.Add(functions.Name))
-                        yield return functions;
-                }
+                foreach (var builtin in builtInFunctions)
+                    if (seenSymbolNames.Add(builtin.Name))
+                        yield return builtin;
+
 
                 submission = submission.Previous;
             }
