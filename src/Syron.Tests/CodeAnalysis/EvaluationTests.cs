@@ -596,7 +596,7 @@ namespace Syron.Tests.CodeAnalysis
             ";
 
             var diagnostics = @"
-                ERROR: Function 'test' requires parameter 'n' to be of type 'int' but was given 'string'.
+                ERROR: Cannot convert type 'string' to 'int'. An explicit conversion exists (are you missing a cast?)
             ";
 
             AssertDiagnostics(text, diagnostics);
