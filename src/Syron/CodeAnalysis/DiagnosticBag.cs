@@ -165,12 +165,6 @@ namespace Syron.CodeAnalysis
             Report(location, message);
         }
 
-        public void ReportInvalidReturn(TextLocation location)
-        {
-            var message = $"ERROR: The keyword 'return' can only be used inside of functions.";
-            Report(location, message);
-        }
-
         public void ReportInvalidReturnExpression(TextLocation location, string functionName)
         {
             var message = $"ERROR: Since the function '{functionName}' does not return a value the 'return' keyword cannot be followed by an expression.";
@@ -186,6 +180,24 @@ namespace Syron.CodeAnalysis
         public void ReportInvalidExpressionStatement(TextLocation location)
         {
             var message = $"ERROR: Only assignment and call expressions can be used as a statement.";
+            Report(location, message);
+        }
+
+        public void ReportOnlyOneFileCanHaveGlobalStatements(TextLocation location)
+        {
+            var message = $"ERROR: At most one file can have global statements.";
+            Report(location, message);
+        }
+
+        public void ReportMustHaveCorrectSignature(TextLocation location)
+        {
+            var message = $"ERROR: Main function must not take arguments and return anything.";
+            Report(location, message);
+        }
+
+        public void ReportCannotMixMainAndGlobalStatements(TextLocation location)
+        {
+            var message = $"ERROR: Cannot declare main function when global statements are used.";
             Report(location, message);
         }
     }
