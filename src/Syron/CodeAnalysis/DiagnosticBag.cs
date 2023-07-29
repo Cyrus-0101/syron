@@ -171,6 +171,12 @@ namespace Syron.CodeAnalysis
             Report(location, message);
         }
 
+        public void ReportInvalidReturnWithValueInGlobalStatements(TextLocation location)
+        {
+            var message = $"ERROR: The 'return' keyword cannot be followed by an expression in global statements.";
+            Report(location, message);
+        }
+
         public void ReportMissingReturnExpression(TextLocation location, TypeSymbol returnType)
         {
             var message = $"ERROR: An expression of type '{returnType}' is expected.";
