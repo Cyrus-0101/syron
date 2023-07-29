@@ -23,7 +23,7 @@ namespace Syron
         private bool _showTree;
         private bool _showProgram;
         private static bool _loadingSubmission;
-        private static readonly Compilation emptyCompilation = new Compilation();
+        private static readonly Compilation emptyCompilation = Compilation.CreateScript(null!);
         private readonly Dictionary<VariableSymbol, object> _variables = new Dictionary<VariableSymbol, object>();
 
         public SyronRepl()
@@ -159,10 +159,7 @@ namespace Syron
         protected override void EvaluateSubmission(string text)
         {
             var syntaxTree = SyntaxTree.Parse(text);
-
-            var compilation = _previous == null
-                                ? new Compilation(syntaxTree)
-                                : _previous.ContinueWith(syntaxTree);
+            var compilation = Compilation.CreateScript(_previous!, syntaxTree);
 
             if (_showTree)
                 syntaxTree.Root.WriteTo(Console.Out);
@@ -227,7 +224,10 @@ namespace Syron
 
         private static void ClearSubmissions()
         {
-            Directory.Delete(GetSubmissionsDirectory(), recursive: true);
+            var dir = GetSubmissionsDirectory();
+
+            if (Directory.Exists(dir))
+                Directory.Delete(dir, recursive: true);
         }
 
         private void SaveSubmission(string text)
