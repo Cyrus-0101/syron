@@ -43,7 +43,13 @@
       "label": "sc -assembly",
       "type": "shell",
       "command": "dotnet",
-      "args": ["run", "--", "../../samples/hello/hello.sy"],
+      "args": [
+        "run",
+        "--",
+        "../../samples/hello/hello.sy",
+        "-r",
+        "/usr/share/dotnet/sdk/7.0.306/ref/mscorlib.dll"
+      ],
       "options": {
         "cwd": "${workspaceFolder}/src/sc"
       },
