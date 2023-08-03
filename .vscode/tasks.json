@@ -38,6 +38,19 @@
           }
         ]
       }
+    },
+    {
+      "label": "sc -assembly",
+      "type": "shell",
+      "command": "dotnet",
+      "args": ["run", "--", "../../samples/hello/hello.sy"],
+      "options": {
+        "cwd": "${workspaceFolder}/src/sc"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
     }
   ]
 }
