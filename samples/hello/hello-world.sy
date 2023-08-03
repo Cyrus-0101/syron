@@ -1,6 +1,0 @@
-function main() {
-    const name = getName()
-  
-    write("Hello " + name + " :D")
-    write("Enter a number to find the sum of all numbers from 1 to that number:")
-}

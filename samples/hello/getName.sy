@@ -1,5 +1,0 @@
-function getName(): string {
-    write("What is your name?")
-    const name: string = input()
-    return name
-}
