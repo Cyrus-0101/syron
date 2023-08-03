@@ -185,7 +185,7 @@ namespace Syron.CodeAnalysis.Lowering
             // ---->
             //
             // {
-            //      var <var> = <lower>
+            //      let <var> = <lower>
             //      let upperBound = <upper>
             //      while (<var> <= upperBound)
             //      {
