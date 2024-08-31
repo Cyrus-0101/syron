@@ -1,0 +1,27 @@
+function reverseVowels(s) {
+    const vowels = new Array(128).fill(false);
+    'aeiouAEIOU'.split('').forEach(c => {
+        vowels[c.charCodeAt(0)] = true;
+    });
+
+    const cs = s.split('');
+    let i = 0, j = cs.length - 1;
+    
+    while (i < j) {
+        while (i < j && !vowels[cs[i].charCodeAt(0)]) {
+            ++i;
+        }
+        while (i < j && !vowels[cs[j].charCodeAt(0)]) {
+            --j;
+        }
+        if (i < j) {
+            let t = cs[i];
+            cs[i] = cs[j];
+            cs[j] = t;
+            ++i;
+            --j;
+        }
+    }
+
+    return cs.join('');
+}
